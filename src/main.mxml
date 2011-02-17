@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:sf="http://www.spicefactory.org/parsley"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   addedToStage="application1_addedToStageHandler(event)"
+			   >
+	
+	<fx:Declarations>
+		<sf:ContextBuilder config="MainConfig"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import controlers.World;
+			
+			[Inject]
+			[Bindable]
+			public  var world :World;
+			
+			protected function application1_addedToStageHandler(event:Event):void
+			{
+				dispatchEvent(new Event('configureIOC', true));
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:Button  label="{ world.name }" />
+	
+</s:Application>

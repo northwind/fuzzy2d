@@ -1,0 +1,7 @@
+# 安装parsley 2.4，并成功运行hello world ( 2.4 有warning)  
+场景框架设计 layer scene
+创建MAP类
+绘制2.5等距视图
+放置物件、选择物件
+排序
+移植寻路算法
