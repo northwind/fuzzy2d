@@ -15,17 +15,18 @@
 			import controlers.World;
 			
 			[Inject]
-			[Bindable]
 			public  var world :World;
 			
 			protected function application1_addedToStageHandler(event:Event):void
 			{
 				dispatchEvent(new Event('configureIOC', true));
+				
+				btn.label = world.name;
 			}
 
 		]]>
 	</fx:Script>
 	
-	<s:Button  label="{ world.name }" />
+	<s:Button id="btn" />
 	
 </s:Application>
