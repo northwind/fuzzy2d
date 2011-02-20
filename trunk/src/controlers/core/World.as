@@ -1,10 +1,14 @@
 package controlers.core
 {
 	
+	import controlers.core.debug.Stats;
+	import controlers.core.log.Logger;
+	import controlers.core.log.impl.TextAreaWriter;
+	import controlers.core.screen.impl.BaseScreenManager;
+	
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
-	import controlers.core.debug.Stats;
 	
 	/**
 	 * 单例，整个游戏的通用设置，包括物理特性等。 
@@ -15,8 +19,14 @@ package controlers.core
 	{
 		public var name :String = "2.5d world"; 
 		
-		private var area:Sprite;
+		private var _area:Sprite;
 		private var stats:Sprite;
+		
+		[Inject]
+		public var logger:Logger;
+		[Inject]
+		public var screenMgr:BaseScreenManager;
+		
 		
 		public function World()
 		{
@@ -24,8 +34,9 @@ package controlers.core
 		
 		public function init(  area:Sprite  ) : void
 		{
-			this.area = area;
+			logger.info( "world init!" );
 			
+			this._area = area;
 			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );		
 		}
 		
@@ -36,14 +47,14 @@ package controlers.core
 		{
 			if ( !stats ){
 				stats =  new Stats( x, y );
-				this.area.addChild( stats );
+				this._area.addChild( stats );
 			}
 		}
 		
 		public function hideStats() : void
 		{
 			if ( stats ){
-				this.area.removeChild( stats );
+				this._area.removeChild( stats );
 				stats = null;
 			}
 		}
@@ -55,8 +66,11 @@ package controlers.core
 		
 		public function get stage():Stage
 		{
-			return area.stage;
+			return _area.stage;
 		}
-		
+		public function get area():Sprite
+		{
+			return _area;
+		}		
 	}
 }
