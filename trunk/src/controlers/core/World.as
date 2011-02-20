@@ -1,9 +1,12 @@
 package controlers.core
 {
 	
+	import controlers.core.debug.ICommandManamger;
 	import controlers.core.debug.Stats;
+	import controlers.core.debug.impl.BaseCommandManager;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
+	import controlers.core.screen.IScreenManager;
 	import controlers.core.screen.impl.BaseScreenManager;
 	
 	import flash.display.Sprite;
@@ -22,11 +25,8 @@ package controlers.core
 		private var _area:Sprite;
 		private var stats:Sprite;
 		
-		[Inject]
-		public var logger:Logger;
-		[Inject]
-		public var screenMgr:BaseScreenManager;
-		
+		public var screenMgr:IScreenManager;
+		public var commandMgr:ICommandManamger;
 		
 		public function World()
 		{
@@ -34,10 +34,20 @@ package controlers.core
 		
 		public function init(  area:Sprite  ) : void
 		{
-			logger.info( "world init!" );
+			Logger.info( "world init!" );
+			
+			this.initManagers();
 			
 			this._area = area;
-			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );		
+			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );
+			
+			
+		}
+		
+		protected function initManagers() :void
+		{
+			this.screenMgr = new BaseScreenManager();
+			this.commandMgr = new BaseCommandManager();
 		}
 		
 		/**

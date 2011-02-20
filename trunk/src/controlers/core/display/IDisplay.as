@@ -18,6 +18,8 @@ package controlers.core.display
 		
 		function hide() : void;
 		
+		function toggle() : void;
+		
 		function destroy() : void;
 	}
 }
