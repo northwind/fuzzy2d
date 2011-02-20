@@ -1,6 +1,6 @@
-package controlers.display.impl
+package controlers.core.display.impl
 {
-	import controlers.display.IDisplay;
+	import controlers.core.display.IDisplay;
 	
 	import events.DisplayEvent;
 	

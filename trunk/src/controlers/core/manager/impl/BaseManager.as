@@ -1,8 +1,8 @@
-package controlers.manager.impl
+package controlers.core.manager.impl
 {
-	import controlers.manager.IItem;
-	import controlers.manager.IManager;
-	import controlers.manager.events.ManagerEvent;
+	import controlers.core.manager.IItem;
+	import controlers.core.manager.IManager;
+	import controlers.core.manager.events.ManagerEvent;
 	
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;

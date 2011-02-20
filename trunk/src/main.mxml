@@ -13,7 +13,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import controlers.World;
+			import controlers.core.World;
 			import controlers.screen.impl.BaseScreenManager;
 			
 			import flash.display.Sprite;

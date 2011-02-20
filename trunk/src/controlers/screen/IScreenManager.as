@@ -1,6 +1,6 @@
 package controlers.screen
 {
-	import controlers.manager.IManager;
+	import controlers.core.manager.IManager;
 
 	public interface IScreenManager extends IManager
 	{

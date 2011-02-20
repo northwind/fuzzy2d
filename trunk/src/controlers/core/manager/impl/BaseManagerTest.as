@@ -1,6 +1,6 @@
-package controlers.manager.impl
+package controlers.core.manager.impl
 {
-	import controlers.manager.events.ManagerEvent;
+	import controlers.core.manager.events.ManagerEvent;
 	
 	import flexunit.framework.Assert;
 	

@@ -1,4 +1,4 @@
-package controlers.manager.events
+package controlers.core.manager.events
 {
 	import flash.events.Event;
 	

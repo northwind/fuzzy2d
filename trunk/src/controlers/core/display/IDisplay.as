@@ -1,4 +1,4 @@
-package controlers.display
+package controlers.core.display
 {
 	[Event(name="show", type="events.DisplayEvent")]
 	
