@@ -1,7 +1,7 @@
-package controlers.manager.impl
+package controlers.core.manager.impl
 {
-	import controlers.manager.IItem;
-	import controlers.manager.IManager;
+	import controlers.core.manager.IItem;
+	import controlers.core.manager.IManager;
 	
 	public class BaseItem implements IItem
 	{

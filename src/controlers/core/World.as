@@ -1,10 +1,10 @@
-package controlers
+package controlers.core
 {
-	import controlers.debug.Stats;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import controlers.core.debug.Stats;
 	
 	/**
 	 * 单例，整个游戏的通用设置，包括物理特性等。 

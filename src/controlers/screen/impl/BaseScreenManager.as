@@ -1,6 +1,6 @@
 package controlers.screen.impl
 {
-	import controlers.manager.impl.BaseManager;
+	import controlers.core.manager.impl.BaseManager;
 	import controlers.screen.IScreenManager;
 	
 	public class BaseScreenManager extends BaseManager implements IScreenManager

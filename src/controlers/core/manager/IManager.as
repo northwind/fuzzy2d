@@ -1,10 +1,10 @@
-package controlers.manager
+package controlers.core.manager
 {
-	[Event(name="reg", type="controlers.manager.events.ManagerEvent")]
+	[Event(name="reg", type="controlers.core.manager.events.ManagerEvent")]
 	
-	[Event(name="unreg", type="controlers.manager.events.ManagerEvent")]
+	[Event(name="unreg", type="controlers.core.manager.events.ManagerEvent")]
 	
-	[Event(name="dismiss", type="controlers.manager.events.ManagerEvent")]
+	[Event(name="dismiss", type="controlers.core.manager.events.ManagerEvent")]
 	
 	public interface IManager
 	{

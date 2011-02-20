@@ -21,7 +21,7 @@
  * 	07.12.13		1.0		Mr.doob			+ First version
  **/
 
-package controlers.debug
+package controlers.core.debug
 {
     import flash.display.Bitmap;
     import flash.display.BitmapData;

@@ -1,4 +1,4 @@
-package controlers.manager
+package controlers.core.manager
 {
 	public interface IItem
 	{

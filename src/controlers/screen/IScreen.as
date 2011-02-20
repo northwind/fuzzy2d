@@ -1,7 +1,7 @@
 package controlers.screen
 {
-	import controlers.display.IDisplay;
-	import controlers.manager.IItem;
+	import controlers.core.display.IDisplay;
+	import controlers.core.manager.IItem;
 
 	public interface IScreen extends IDisplay, IItem
 	{
