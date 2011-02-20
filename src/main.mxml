@@ -14,7 +14,8 @@
 	<fx:Script>
 		<![CDATA[
 			import controlers.core.World;
-			import controlers.screen.impl.BaseScreenManager;
+			import controlers.core.log.impl.TextAreaWriter;
+			import controlers.core.screen.impl.BaseScreenManager;
 			
 			import flash.display.Sprite;
 			
@@ -33,16 +34,14 @@
 				ui.addChild(area);
 				this.addElement( ui );
 				
+				world.logger.writer = new TextAreaWriter( this.logarea );
 				world.init( area );
 				world.showStats( 100, 100 );
 				
-				btn.label = world.name;
-				
-				var sm :BaseScreenManager = new BaseScreenManager();
+				var sm :BaseScreenManager = world.screenMgr;
 				sm.goto( "first screen" );
 				
 			}
-
 
 			protected function btn_clickHandler(event:MouseEvent):void
 			{
@@ -52,6 +51,7 @@
 		]]>
 	</fx:Script>
 	
-	<s:Button id="btn" click="btn_clickHandler(event)" />
+	<s:Button label="关闭状态栏" id="btn" click="btn_clickHandler(event)" />
+	<s:TextArea enabled="true" editable="false" width="600" height="400" id="logarea" bottom="0" right="0" />
 	
 </s:Application>
