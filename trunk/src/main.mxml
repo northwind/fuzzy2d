@@ -3,6 +3,7 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:sf="http://www.spicefactory.org/parsley"
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   frameRate="60" 
 			   addedToStage="application1_addedToStageHandler(event)"
 			   >
 	
@@ -15,12 +16,25 @@
 			import controlers.World;
 			import controlers.screen.impl.BaseScreenManager;
 			
+			import flash.display.Sprite;
+			
+			import mx.core.UIComponent;
+			
 			[Inject]
 			public  var world :World;
 			
 			protected function application1_addedToStageHandler(event:Event):void
 			{
 				dispatchEvent(new Event('configureIOC', true));
+				
+				// flex 中采用UIComponent 替代 Sprite
+				var area : Sprite = new Sprite();
+				var ui:UIComponent=new UIComponent(); 
+				ui.addChild(area);
+				this.addElement( ui );
+				
+				world.init( area );
+				world.showStats( 100, 100 );
 				
 				btn.label = world.name;
 				
@@ -29,9 +43,15 @@
 				
 			}
 
+
+			protected function btn_clickHandler(event:MouseEvent):void
+			{
+				world.hideStats();
+			}
+
 		]]>
 	</fx:Script>
 	
-	<s:Button id="btn" />
+	<s:Button id="btn" click="btn_clickHandler(event)" />
 	
 </s:Application>
