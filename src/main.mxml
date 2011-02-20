@@ -15,7 +15,9 @@
 		<![CDATA[
 			import controlers.core.World;
 			import controlers.core.log.impl.TextAreaWriter;
+			import controlers.core.screen.IScreenManager;
 			import controlers.core.screen.impl.BaseScreenManager;
+			import controlers.core.log.Logger;
 			
 			import flash.display.Sprite;
 			
@@ -34,11 +36,12 @@
 				ui.addChild(area);
 				this.addElement( ui );
 				
-				world.logger.writer = new TextAreaWriter( this.logarea );
+				Logger.init( new TextAreaWriter( this.logarea ) );
+				
 				world.init( area );
 				world.showStats( 100, 100 );
 				
-				var sm :BaseScreenManager = world.screenMgr;
+				var sm :IScreenManager = world.screenMgr;
 				sm.goto( "first screen" );
 				
 			}

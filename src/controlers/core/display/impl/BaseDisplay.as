@@ -43,6 +43,11 @@ package controlers.core.display.impl
 		{
 		}
 		
+		public function toggle() : void
+		{
+			this.visible == true ? hide() : show();
+		}
+		
 		public function destroy():void
 		{
 			this.onDestroy();

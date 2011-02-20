@@ -72,6 +72,16 @@ package controlers.core.manager.impl
 			return _count;
 		}
 		
+		public function getAll ()	: Object
+		{
+			var ret :Object = {};
+			
+			for( var key:String in items ){
+				ret[ key ] = items[ key ];			
+			}
+			return ret;
+		}
+		
 		public function dismiss():void
 		{
 			for( var key:String in items ){

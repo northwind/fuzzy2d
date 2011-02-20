@@ -6,9 +6,6 @@ package controlers.core.screen.impl
 	
 	public class BaseScreenManager extends BaseManager implements IScreenManager
 	{
-		[Inject]
-		public var logger:Logger;
-		
 		public function BaseScreenManager()
 		{
 			super();
@@ -16,7 +13,7 @@ package controlers.core.screen.impl
 		
 		public function goto(name:String):void
 		{
-			logger.info( "BaseScreenManager - goto : " + name );
+			Logger.info( "BaseScreenManager - goto : " + name );
 		}
 	}
 }

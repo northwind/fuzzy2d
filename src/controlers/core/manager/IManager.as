@@ -19,9 +19,11 @@ package controlers.core.manager
 		 * 
 		 */		
 		function get( key :String ) : IItem ;
+
+		function getAll ()	: Object;
 		
 		function has( key :String ) :Boolean;
-		
+
 		function get count() :int;
 		/**
 		 * 销毁所有对象 
