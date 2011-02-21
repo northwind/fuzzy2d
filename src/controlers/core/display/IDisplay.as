@@ -12,7 +12,7 @@ package controlers.core.display
 	 * @author norris
 	 * 
 	 */	
-	public interface IDisplay
+	public interface IDisplay 
 	{
 		function show() : void;
 		

@@ -10,7 +10,7 @@
 	<fx:Declarations>
 		<sf:ContextBuilder config="MainConfig"/>
 	</fx:Declarations>
-	
+	 
 	<fx:Script>
 		<![CDATA[
 			import controlers.core.World;

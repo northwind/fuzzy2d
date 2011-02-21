@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects 
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns="http://www.spicefactory.org/parsley" xmlns:controlers="controlers.*" xmlns:debug="controlers.core.debug.*" xmlns:core="controlers.core.*" xmlns:log="controlers.core.log.*" >
+	xmlns="http://www.spicefactory.org/parsley" xmlns:controlers="controlers.*" xmlns:debug="controlers.core.debug.*" xmlns:core="controlers.core.*" xmlns:log="controlers.core.log.*" xmlns:impl="controlers.core.debug.impl.*" xmlns:impl1="controlers.core.screen.impl.*" >
 	
 	<fx:Declarations>
 	
 		<core:World />
+		<impl:BaseDebugManager />
+		<impl1:BaseScreenManager />
 		
 	</fx:Declarations>
 	

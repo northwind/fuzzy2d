@@ -1,37 +1,52 @@
 package controlers.core.debug.impl
 {
-	import controlers.core.debug.ICommandManamger;
+	import controlers.core.debug.IDebugManamger;
 	import controlers.core.debug.IConsole;
 	import controlers.core.log.Logger;
 	import controlers.core.manager.impl.BaseManager;
 	
+	import flash.display.Sprite;
+	
 	import org.spicefactory.parsley.core.messaging.command.Command;
 	
-	public class BaseCommandManager extends BaseManager implements ICommandManamger
+	public class BaseDebugManager extends BaseManager implements IDebugManamger
 	{
 		private var _enable :Boolean = true;
 		private var prefix:String = "C:\>";
 		public var console :IConsole;
 		
+		private var container:Sprite;
 		
-		public function BaseCommandManager()
+		public function BaseDebugManager()
 		{
 			super();
-			this.init();
 		}
 		
-		protected function init() : void
+		public function init( container:Sprite ) : void
 		{
-			console = new BaseConsole();
+			if ( container == null ){
+				Logger.error( "BaseCommandManager init : container is null " );
+				return;
+			}
 			
+			this.container = container;
+			this.console = new BaseConsole();
+			this.console.onEnter( this.excute );
+			
+			this.container.addChild( console as Sprite );
+			
+			addInternalCommands();
+		}
+		
+		protected function addInternalCommands() : void
+		{
 			this.registerCommand( "help", this.onHelp, "list command." );
 			this.registerCommand( "clear", this.console.clear, "clear console." );
 			this.registerCommand( "exit", this.console.hide, "exit console." );
 			
 			this.registerCommand( "fps", function () :void {
 				this.console.toggle();
-			}, "toggle an fps indicator." );
-			
+			}, "toggle an fps indicator." );			
 		}
 		
 		private function onHelp() : void
@@ -62,9 +77,11 @@ package controlers.core.debug.impl
 		 */		
 		public function excute(line:String ):void
 		{
+			Logger.debug( "line : " + line );
+			
 			var arr:Array = line.split( " " );
 			var method:String = arr[0] , 
-				   args:Array = arr[ 1 ] || arr[ 1 ].split( "," );
+				   args:Array = arr.length > 1 ?  arr[ 1 ].split( "," ) : [];
 			
 			if ( method == "" ){
 				console.writeLine( prefix );
