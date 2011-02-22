@@ -39,7 +39,6 @@
 				Logger.init( new TextAreaWriter( this.logarea ) );
 				
 				world.init( area );
-				world.showStats( 100, 100 );
 				
 				var sm :IScreenManager = world.screenMgr;
 				sm.goto( "first screen" );

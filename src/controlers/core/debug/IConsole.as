@@ -6,7 +6,7 @@ package controlers.core.debug
 	
 	public interface IConsole extends IDisplay
 	{
-		function writeLine( content:String ) : void;
+		function writeLine( content:String,  color:uint = 0xffffff  ) : void;
 		
 		function clear() : void;
 		

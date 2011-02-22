@@ -49,13 +49,18 @@ package controlers.core
 		{
 //			this.screenMgr
 			this.commandMgr.init( this._area );
+			this.commandMgr.registerCommand( "fpson", this.showStats, "show fps indicator at [x,y]." );
+			this.commandMgr.registerCommand( "fpsoff", this.hideStats, "hide fps indicator." );
 		}
 		
 		/**
 		 *   显示当前状态  
 		 */		
-		public function showStats( x : int =0, y : int = 0 ) : void
+		public function showStats( sx : String = "0", sy : String = "0" ) : void
 		{
+			var x:int = parseInt( sx );
+			var y:int = parseInt( sy );
+			
 			if ( !stats ){
 				stats =  new Stats( x, y );
 				this._area.addChild( stats );

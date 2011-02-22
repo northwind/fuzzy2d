@@ -1,7 +1,7 @@
 package controlers.core.debug.impl
 {
-	import controlers.core.debug.IDebugManamger;
 	import controlers.core.debug.IConsole;
+	import controlers.core.debug.IDebugManamger;
 	import controlers.core.log.Logger;
 	import controlers.core.manager.impl.BaseManager;
 	
@@ -12,7 +12,7 @@ package controlers.core.debug.impl
 	public class BaseDebugManager extends BaseManager implements IDebugManamger
 	{
 		private var _enable :Boolean = true;
-		private var prefix:String = "C:\>";
+		private var prefix:String = "";
 		public var console :IConsole;
 		
 		private var container:Sprite;
@@ -43,15 +43,18 @@ package controlers.core.debug.impl
 			this.registerCommand( "help", this.onHelp, "list command." );
 			this.registerCommand( "clear", this.console.clear, "clear console." );
 			this.registerCommand( "exit", this.console.hide, "exit console." );
-			
-			this.registerCommand( "fps", function () :void {
-				this.console.toggle();
-			}, "toggle an fps indicator." );			
 		}
 		
-		private function onHelp() : void
+		private function onHelp() : String
 		{
+			var ret :String = "";
 			
+			var all:Object = this.getAll();
+			for( var key :String in all ){
+				ret += key + "  :  " + ( all[ key ] as Command ).desc + "\n";
+			} 
+			
+			return ret;	
 		}
 		
 		public function registerCommand( name:String, callback:Function, desc :String = "" ) : void
@@ -79,9 +82,22 @@ package controlers.core.debug.impl
 		{
 			Logger.debug( "line : " + line );
 			
-			var arr:Array = line.split( " " );
-			var method:String = arr[0] , 
-				   args:Array = arr.length > 1 ?  arr[ 1 ].split( "," ) : [];
+			var method:String, args:Array;
+			
+			line = line.replace( /^\s*/, "" ).replace( /\s*$/, "" );
+			
+			var n:int = line.indexOf( " " );
+			if ( n > -1 ){
+				method = line.substr(0, n );
+				args = line.substr(n+1, line.length ).split( "," );
+				//消除空格
+				for( var i : int =0 ; i < args.length; i ++ ){
+					args[ i ] = (args[ i ] as String).replace( /^\s*/, "" ).replace( /\s*$/, "" );
+				}				
+			}else{
+				method = "";
+				args = [];
+			}
 			
 			if ( method == "" ){
 				console.writeLine( prefix );
@@ -91,15 +107,15 @@ package controlers.core.debug.impl
 			var c:Command = this.get( method ) as Command;
 			
 			if ( c == null ){
-				console.writeLine( prefix + method + " is not a command." );
+				console.writeLine( prefix + method + " is not a command.", 0xff0000 );
 				return;				
 			}
 			
 			try{
-				c.callback.apply( args );
-				console.writeLine( prefix + method + " " + args.join(",") );
+				var ret:* = c.callback.apply( null, args );
+				console.writeLine( ret is String ? ret : "", 0x00ff00 );
 			}catch( e:Error ){
-				console.writeLine( prefix + " error : " + e.toString() );
+				console.writeLine( prefix + " error : " + e.toString(), 0xff0000 );
 			}
 		}
 		
