@@ -6,7 +6,7 @@ package
 		
 		//function getComponent( c:IComponent ) : void;
 		
-		function setup() : void;
+		//function setup() : void;
 		
 		function destroy() : void;
 		

@@ -2,6 +2,6 @@ package
 {
 	public interface IRole extends IEntity
 	{
-		function action() : void;
+		function action( method:String, params:Array, callback:Function = null ) : void;
 	}
 }

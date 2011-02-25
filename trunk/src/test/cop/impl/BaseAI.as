@@ -1,6 +1,8 @@
 package impl
 {
 	import flash.geom.Point;
+	
+	import org.osmf.layout.AbsoluteLayoutFacet;
 
 	public class BaseAI extends BaseComponent implements IAIable
 	{
@@ -23,6 +25,12 @@ package impl
 				this.attack.attack( "b" );
 				this.attack.attack( "c" );
 			}
+		}
+		
+		public function set attackValue( value:IAttackable ) : void
+		{
+			//test
+			trace("test");
 		}
 	}
 }

@@ -3,8 +3,10 @@ package
 	import flash.display.*;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	
 	import impl.BaseAI;
 	import impl.BaseAttack;
+	import impl.BaseCommand;
 	import impl.BaseFigure;
 	import impl.BaseMove;
 	import impl.BaseRole;
@@ -27,16 +29,17 @@ package
 				this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			}
 			
-			var a:BaseRole = new BaseRole();
-			a.addComponent( new BaseFigure() );
-			a.addComponent( new BaseAttack() );
-			a.addComponent( new BaseMove() );
+			var a:BaseRole = new BaseRole( new BaseCommand() );
+//			a.addComponent( new BaseFigure() );
+//			a.addComponent( new BaseAttack() );
+//			a.addComponent( new BaseMove() );
 			a.addComponent( new BaseAI() );
 			
-			a.setup();			
-			
-			a.action();
+			a.action( "move", [10,20], function ():void{
+				trace( "move callback" );
+			} );
 			
 		}
+		
 	}
 }
