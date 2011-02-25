@@ -2,26 +2,21 @@ package impl
 {
 	public class BaseRole extends BaseEntity implements IRole
 	{
-		private var ai:IAIable;
+		private var command:ICommandable;
 		
-		public function BaseRole()
+		public function BaseRole( command:ICommandable )
 		{
-			//TODO: implement function
+			this.command = command;
+			this.addComponent( command );
 		}
 		
-		override public function addComponent(c:IComponent):void
+		public function action( method:String, params:Array, callback:Function = null ) : void
 		{
-			super.addComponent( c );
-			
-			if ( c is IAIable ){
-				this.ai = c as IAIable;
-			}
-		}
-		
-		public function action() : void
-		{
-			if ( this.ai ){
-				this.ai.think();
+			if ( this.command ){
+				this.command.excute( method, params, callback );	
+			}else{
+				if ( callback != null )
+					callback.call( null );
 			}
 		}
 	}
