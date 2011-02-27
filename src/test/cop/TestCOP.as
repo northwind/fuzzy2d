@@ -3,6 +3,7 @@ package
 	import flash.display.*;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.utils.*;
 	
 	import impl.BaseAI;
 	import impl.BaseAttack;
@@ -35,11 +36,13 @@ package
 //			a.addComponent( new BaseMove() );
 			a.addComponent( new BaseAI() );
 			
-			a.action( "move", [10,20], function ():void{
-				trace( "move callback" );
-			} );
+			a.setup();
 			
+			a.action( "auto", [], function ():void{
+				trace( "auto callback" );
+			} );
 		}
 		
+
 	}
 }

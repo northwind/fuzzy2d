@@ -2,6 +2,6 @@ package
 {
 	public interface IAIable extends IComponent
 	{
-		function think() : void;
+		function think( callback:Function = null ) : void;
 	}
 }

@@ -8,13 +8,13 @@ package impl
 		
 		public function BaseMove()
 		{
-			//TODO: implement function
 			super();
 		}
 		
 		public function moveTo(p:Point):void
 		{
-			//TODO: implement function
+			trace( "BaseMove moveTo : " + p.toString() );
+			
 			if ( this.figure )
 				this.figure.walk( [], null );
 		}

@@ -1,4 +1,4 @@
-package
+package controlers.core.cop
 {
 	/**
 	 * IEntity 不知道内部的组件数量和属性
