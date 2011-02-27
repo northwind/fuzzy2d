@@ -3,13 +3,14 @@ package controlers.core.debug.impl
 	import controlers.core.debug.IConsole;
 	import controlers.core.debug.IDebugManamger;
 	import controlers.core.log.Logger;
-	import controlers.core.manager.impl.BaseManager;
+	import controlers.core.manager.impl.BaseStrictManager;
 	
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
 	
 	import org.spicefactory.parsley.core.messaging.command.Command;
 	
-	public class BaseDebugManager extends BaseManager implements IDebugManamger
+	public class BaseDebugManager extends BaseStrictManager implements IDebugManamger
 	{
 		private var _enable :Boolean = true;
 		private var prefix:String = "";
@@ -31,11 +32,18 @@ package controlers.core.debug.impl
 			
 			this.container = container;
 			this.console = new BaseConsole();
+			this.console.hide();
 			this.console.onEnter( this.excute );
 			
 			this.container.addChild( console as Sprite );
 			
 			addInternalCommands();
+			
+		}
+		
+		public function toggle() : void
+		{
+			this.console.toggle();
 		}
 		
 		protected function addInternalCommands() : void
