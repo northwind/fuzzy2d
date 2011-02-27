@@ -1,18 +1,22 @@
 package controlers.core.manager.impl
 {
-	import controlers.core.manager.IManager;
+	import controlers.core.manager.IItem;
+	import controlers.core.manager.IStrictManager;
+	import controlers.core.manager.events.ManagerEvent;
+	
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	
-	public class BaseManager implements IManager
+	public class BaseStrictManager extends EventDispatcher implements IStrictManager
 	{
 		private var items:Dictionary = new Dictionary();
 		private var _count:int = 0;
 		
-		public function BaseManager()
+		public function BaseStrictManager()
 		{
 		}
 		
-		public function reg(key:String, item: * ):void
+		public function reg(key:String, item:IItem ):void
 		{
 			if ( key == "" ){
 				//log
@@ -24,10 +28,12 @@ package controlers.core.manager.impl
 			}
 			
 			if ( !has( key ) ){
+				item.onReg( key, this );
 				
 				items[ key ] = item;
 				_count++;				
 				
+				this.dispatchEvent( new ManagerEvent( ManagerEvent.REG, key, item ) );
 			}  
 		}
 		
@@ -37,17 +43,21 @@ package controlers.core.manager.impl
 				//log
 				return;
 			}
-			var item : * = get( key );
+			var item : IItem = get( key );
 			if ( item == null ){
 				//log
 				return;
 			}
+
+			item.onUnreg( key, this );
 			
 			delete items[ key ];
 			_count--;
+			
+			this.dispatchEvent( new ManagerEvent( ManagerEvent.UNREG, key, item ) );
 		}
 		
-		public function get(key:String): *
+		public function get(key:String): IItem
 		{
 			return items[ key ]  ;
 		}
@@ -74,6 +84,11 @@ package controlers.core.manager.impl
 		
 		public function dismiss():void
 		{
+			for( var key:String in items ){
+				(items[ key ] as IItem).onDismiss( key, this );
+			}
+			
+			this.dispatchEvent( new ManagerEvent( ManagerEvent.DISMISS ) );			
 		}
 	}
 }

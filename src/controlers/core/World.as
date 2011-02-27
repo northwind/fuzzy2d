@@ -4,10 +4,13 @@ package controlers.core
 	import controlers.core.debug.IDebugManamger;
 	import controlers.core.debug.Stats;
 	import controlers.core.debug.impl.BaseDebugManager;
+	import controlers.core.input.IInputManager;
+	import controlers.core.input.impl.InputKey;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
 	import controlers.core.screen.IScreenManager;
 	import controlers.core.screen.impl.BaseScreenManager;
+	
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -29,6 +32,8 @@ package controlers.core
 		public var screenMgr:IScreenManager;
 		[Inject]
 		public var commandMgr:IDebugManamger;
+		[Inject]
+		public var inputMgr:IInputManager;
 		
 		public function World()
 		{
@@ -49,8 +54,10 @@ package controlers.core
 		{
 //			this.screenMgr
 			this.commandMgr.init( this._area );
-			this.commandMgr.registerCommand( "fpson", this.showStats, "show fps indicator at [x,y]." );
-			this.commandMgr.registerCommand( "fpsoff", this.hideStats, "hide fps indicator." );
+			this.commandMgr.registerCommand( "fps", this.showStats, "show/hide fps indicator at [x,y]." );
+			
+			this.inputMgr.init( this.stage );
+			this.inputMgr.on( InputKey.F12, this.commandMgr.toggle );
 		}
 		
 		/**

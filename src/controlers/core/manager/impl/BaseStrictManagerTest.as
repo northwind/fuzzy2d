@@ -1,8 +1,10 @@
 package controlers.core.manager.impl
 {
+	import controlers.core.manager.events.ManagerEvent;
+	
 	import flexunit.framework.Assert;
 	
-	public class BaseManagerTest
+	public class BaseStrictManagerTest
 	{		
 		[Before]
 		public function setUp():void
@@ -24,10 +26,16 @@ package controlers.core.manager.impl
 		{
 		}
 		
-		[Test]
-		public function testGet_count():void
+		private function createItem( s:String ) :BaseItem  
 		{
-			var bm :BaseManager = new BaseManager();
+			var item:BaseItem = new BaseItem();
+			return item;
+		}
+		
+		[Test]
+		public function testCount():void
+		{
+			var bm :BaseStrictManager = new BaseStrictManager();
 			bm.reg( "1", createItem("123") );
 			bm.reg( "2", createItem("123") );
 			bm.reg( "3", createItem("123") );
@@ -39,9 +47,13 @@ package controlers.core.manager.impl
 		[Test]
 		public function testDismiss():void
 		{
-			var bm :BaseManager = new BaseManager();
+			var bm :BaseStrictManager = new BaseStrictManager();
 			bm.reg( "1", createItem("123") );
 			bm.reg( "2", createItem("123") );
+			
+			bm.addEventListener( ManagerEvent.DISMISS, function ( event:ManagerEvent ) :void {
+				trace( "DISMISS" );
+			} );
 			
 			bm.dismiss();
 		}
@@ -49,7 +61,7 @@ package controlers.core.manager.impl
 		[Test]
 		public function testGet():void
 		{
-			var bm :BaseManager = new BaseManager();
+			var bm :BaseStrictManager = new BaseStrictManager();
 			var item :BaseItem = createItem("123");
 			bm.reg( "1", item );
 			
@@ -59,7 +71,7 @@ package controlers.core.manager.impl
 		[Test]
 		public function testHas():void
 		{
-			var bm :BaseManager = new BaseManager();
+			var bm :BaseStrictManager = new BaseStrictManager();
 			var item :BaseItem = createItem("123");
 			bm.reg( "1", item );
 			
@@ -69,7 +81,11 @@ package controlers.core.manager.impl
 		[Test]
 		public function testReg():void
 		{
-			var bm :BaseManager = new BaseManager();
+			var bm :BaseStrictManager = new BaseStrictManager();
+			
+			bm.addEventListener( ManagerEvent.REG, function ( event:ManagerEvent ) :void {
+				trace( "onreg key = " + event.key + " item = " + event.item );
+			} );
 			
 			bm.reg( "1", createItem("123") );
 			bm.reg( "1", createItem("123") );
@@ -78,17 +94,15 @@ package controlers.core.manager.impl
 		[Test]
 		public function testUnreg():void
 		{
-			var bm :BaseManager = new BaseManager();
+			var bm :BaseStrictManager = new BaseStrictManager();
+			
+			bm.addEventListener( ManagerEvent.UNREG, function ( event:ManagerEvent ) :void {
+				trace( "UNREG key = " + event.key + " item = " + event.item );
+			} );
 			
 			bm.reg( "1", createItem("123") );
 			bm.unreg( "2" );
 			bm.unreg( "1" );
-		}
-		
-		private function createItem( s:String ) :BaseItem  
-		{
-			var item:BaseItem = new BaseItem();
-			return item;
 		}
 	}
 }
