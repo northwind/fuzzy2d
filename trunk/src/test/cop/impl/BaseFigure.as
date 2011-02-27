@@ -4,23 +4,21 @@ package impl
 	{
 		public function BaseFigure()
 		{
-			//TODO: implement function
 			super();
 		}
 		
 		public function walk(points:Array, callback:Function):void
 		{
-			//TODO: implement function
+			trace( "BaseFigure walk to " + points.join(",") );
 		}
 		
 		public function turnLeft(callback:Function):void
 		{
-			//TODO: implement function
 		}
 		
 		public function attack(direct:String, callback:Function):void
 		{
-			//TODO: implement function
+			trace( "BaseFigure attack to " + direct );
 		}
 	}
 }

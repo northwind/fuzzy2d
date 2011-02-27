@@ -8,7 +8,11 @@ Please click on the "Refresh" icon in "FlexUnit Results" view to regenerate this
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600">
 	<fx:Script>
 		<![CDATA[
+			import controlers.core.cop.impl.BaseEntityTest;
 			import controlers.core.manager.impl.BaseManagerTest;
+			
+			private var controlers_core_cop_impl_BaseEntityTest_obj:controlers.core.cop.impl.BaseEntityTest;
+			
 			
 			private var controlers_manager_impl_BaseManagerTest_obj:controlers.core.manager.impl.BaseManagerTest;
 			

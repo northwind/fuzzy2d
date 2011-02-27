@@ -1,8 +1,10 @@
-package impl
+package controlers.core.cop.impl
 {
 	import controlers.core.cop.impl.ComponentInfo;
 	import controlers.core.cop.impl.ComponentInfoFactory;
-
+	import controlers.core.cop.IEntity;
+	import controlers.core.cop.IComponent;
+	
 	public class BaseEntity implements IEntity
 	{
 		private var components:Array = [];

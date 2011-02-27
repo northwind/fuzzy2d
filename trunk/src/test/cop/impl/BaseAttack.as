@@ -11,6 +11,7 @@ package impl
 		
 		public function attack(name:String):void
 		{
+			trace( "BaseAttack attack : " + name );
 			if ( this.figure )
 				this.figure.attack( "up" , null );
 		}
