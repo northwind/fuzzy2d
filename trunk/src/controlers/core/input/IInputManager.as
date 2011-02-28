@@ -4,6 +4,12 @@ package controlers.core.input
 	
 	import flash.display.Stage;
 	
+	/**
+	 * TODO 包括鼠标左右键 
+	 * TODO anyInput
+	 * @author sina
+	 * 
+	 */	
 	public interface IInputManager
 	{
 		function init( stage:Stage ) : void;
