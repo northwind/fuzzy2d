@@ -1,4 +1,4 @@
-package controlers.core.resource
+package resource
 {
 	import flash.events.IEventDispatcher;
 	

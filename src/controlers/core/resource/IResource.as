@@ -1,6 +1,8 @@
-package controlers.core.resource
+package resource
 {
-	public interface IResource
+	import flash.events.IEventDispatcher;
+	
+	public interface IResource extends IEventDispatcher
 	{
 		function get content () : *;
 		
