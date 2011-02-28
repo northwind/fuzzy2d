@@ -1,4 +1,4 @@
-package controlers.core.resource
+package resource
 {
 	public interface IResourceBundle
 	{
@@ -21,6 +21,8 @@ package controlers.core.resource
 		function load() : void;
 		
 		function freeAll() : void;
+		
+		//function isAllDone() : Boolean;
 		
 		function get speed() : uint;
 		
