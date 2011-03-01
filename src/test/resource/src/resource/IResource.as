@@ -14,12 +14,13 @@ package resource
 		
 		function get url() : String; 
 
-		function set finish( value:Boolean ) : void;
+		function get speed() : uint;
 		
-		function get finish() : Boolean;
+		function get bytesLoaded() : uint;
 		
+		function get bytesTotal() : uint;
 		//--------------------------
-		function free() : void;
+		function destroy() : void;
 		
 		function pause() : void;
 		
@@ -27,8 +28,15 @@ package resource
 		
 		function load() : void;
 		
-		function speed() : uint;
+		function reset() : void;
 		
+		function close() : void;
+		
+		//------------------------------------------------
 		function isFailed() :Boolean;
+		
+		function isFinish() :Boolean;
+		
+		function isLoading() :Boolean;
 	}
 }

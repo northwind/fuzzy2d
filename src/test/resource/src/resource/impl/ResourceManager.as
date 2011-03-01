@@ -57,6 +57,8 @@ package resource.impl
 				ret = (new type( name, url ) ) as IResource;	
 			}
 			
+			this.reg( name, ret );
+			
 			return ret;
 			
 		}
@@ -108,6 +110,9 @@ package resource.impl
 			
 			var resources:Array = this.getResources( this.parseName( name ) );
 			var count:int = 0, current:int = 0 ;
+			
+			//做为第一个参数传入onComplete
+			var event:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null );
 			
 			var tempProcess:Function = function() : void{
 				if ( onProcess )
@@ -178,24 +183,37 @@ package resource.impl
 			var resources:Array = this.getResources( this.parseName( name ) );
 			
 			for each ( var r :IResource in resources ){
-				
+				r.reset();
 			}
+			
+			this.load.apply( null, arguments );
 		}
 		
 		public function remove(name:Object):void
 		{
+			var names:Array = this.parseName( name );
+			
+			for each ( var name:String in names ){
+				this.unreg( name );
+			}
 		}
 		
-		public function pause(name:Object):void
+		public function stop(name:Object):void
 		{
-		}
-		
-		public function resume(name:Object):void
-		{
+			var resources:Array = this.getResources( this.parseName( name ) );
+			
+			for each ( var r :IResource in resources ){
+				r.pause();
+			}			
 		}
 		
 		public function destroyResource(name:Object):void
 		{
+			var resources:Array = this.getResources( this.parseName( name ) );
+			
+			for each ( var r :IResource in resources ){
+				r.destroy();
+			}
 		}
 		
 		public function getResource(name:String):IResource
@@ -222,6 +240,12 @@ package resource.impl
 		
 		public function destroyAll():void
 		{
+			var obj:Object = this.getAll();
+			
+			for each ( var r :IResource in obj ){
+				if ( r != null ) 
+					r.destroy();
+			}
 		}
 		
 		public function get isRunning() :Boolean
