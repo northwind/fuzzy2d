@@ -4,7 +4,7 @@ package
 	import flash.events.*;
 	
 	import resource.*;
-	import resource.impl.ResourceManager;
+	import resource.impl.*;
 	
 	public class TestResourceManager extends Sprite
 	{
@@ -39,11 +39,24 @@ package
 				[ "bigmap", "http://www.sinaimg.cn/cj/newjs/slg/images/bigmap/1-1.jpg" ]
 			];
 			
-			var resourceMgr:ResourceManager = new ResourceManager();
+			var resourceMgr:IResourceManager = new ResourceManager();
+			resourceMgr.local = "cn";
+			
+			var names:Array = [];
 			
 			for each( var item:Array in arr ){
-				resourceMgr.addResource( resourceMgr.createResource( item[0], item[1], onComplete ) );
-			}			
+				
+				resourceMgr.add( item[0] as String, item[1], ResourceBundle );
+				
+				names.push( item[0] );
+				
+				//resourceMgr.addResource( resourceMgr.createResource( item[0], item[1], onComplete ) );
+			}
+			
+			resourceMgr.load( names, function():void {}, onComplete );
+			
+			resourceMgr.remove( names );
+			
 		}
 		
 		private function onComplete() : void
