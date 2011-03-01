@@ -17,6 +17,7 @@ package resource.impl
 			this._name = name;
 			this._url = url;
 			
+			trace( name );
 		}
 		
 		public function get content():*

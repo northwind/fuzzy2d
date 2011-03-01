@@ -13,6 +13,10 @@ package resource
 		function set url( value:String ) : void;
 		
 		function get url() : String; 
+
+		function set finish( value:Boolean ) : void;
+		
+		function get finish() : Boolean;
 		
 		//--------------------------
 		function free() : void;
@@ -25,9 +29,6 @@ package resource
 		
 		function speed() : uint;
 		
-		function reload() : void;
-		
 		function isFailed() :Boolean;
-		
 	}
 }
