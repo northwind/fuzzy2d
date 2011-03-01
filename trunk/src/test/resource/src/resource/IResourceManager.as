@@ -19,9 +19,7 @@ package resource
 		
 		function remove( name:Object ) :void;
 		
-		function pause ( name:Object ) :void;
-		
-		function resume ( name:Object ) :void;
+		function stop ( name:Object ) :void;
 		
 		function destroyResource ( name:Object ) :void;
 		
