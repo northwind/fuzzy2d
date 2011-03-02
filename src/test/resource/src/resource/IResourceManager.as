@@ -11,7 +11,7 @@ package resource
 		function set local( value:String ) : void;
 		
 		//------------------------------
-		function add( name:String, url:String = null, type:Class = null ) :IResource;
+		function add( name:String, url:String = null, policy:Boolean = false, type:Class = null ) :IResource;
 		
 		function load( name:Object, onProcess:Function = null, onComplete:Function = null ) : void;
 		

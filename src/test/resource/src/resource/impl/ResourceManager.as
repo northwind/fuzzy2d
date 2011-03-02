@@ -1,6 +1,7 @@
 package resource.impl
 {
 	import flash.events.Event;
+	import flash.net.URLRequest;
 	
 	import resource.BaseManager;
 	import resource.IResource;
@@ -25,7 +26,7 @@ package resource.impl
 			_local = value;
 		}
 		
-		public function add(name:String, url:String=null, type:Class=null):IResource
+		public function add(name:String, url:String=null, policy:Boolean = false, type:Class=null ):IResource
 		{
 			if ( name == null || name == ""  ){
 				throw new Error( "ResourceManager createResource : name is empty." );
@@ -45,7 +46,7 @@ package resource.impl
 				typeof type;
 				var b :Boolean = type is IResource;
 				try{
-					ret = (new type( name, url ) ) as IResource;	
+					ret = (new type( name, url, policy ) ) as IResource;	
 				}catch( e:Error ){
 					//TODO log		
 					ret = null;
@@ -54,7 +55,7 @@ package resource.impl
 			
 			if ( ret == null ){
 				type = guessType( url );
-				ret = (new type( name, url ) ) as IResource;	
+				ret = (new type( name, url, policy ) ) as IResource;	
 			}
 			
 			this.reg( name, ret );
@@ -112,23 +113,25 @@ package resource.impl
 			var count:int = 0, current:int = 0 ;
 			
 			//做为第一个参数传入onComplete
-			var event:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null );
+			var eventComplete:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null );
 			
-			var tempProcess:Function = function() : void{
-				if ( onProcess )
-					onProcess.apply( null, arguments );
+			var tempProcess:Function = function( event:ResourceEvent ) : void{
+				if ( onProcess != null )
+					onProcess.call( null, event );
 			};
 			
 			var tempComplete:Function = function( event:ResourceEvent ) : void{
 				count++;
+				trace( "count = " + count );
 				
 				event.resource.removeEventListener( ResourceEvent.COMPLETE, tempComplete );
 				event.resource.removeEventListener( ResourceEvent.PROCESS, tempProcess );
 				
 				if ( count == resources.length ){
+					trace( "before call onComplete" );
 					//all done
-					if ( onComplete )
-						onComplete.call( null, resources );
+					if ( onComplete != null )
+						onComplete.call( null, eventComplete );
 					
 					//deal with _waitingfor
 					if ( _waitingfor.length > 0 ){
@@ -193,8 +196,8 @@ package resource.impl
 		{
 			var names:Array = this.parseName( name );
 			
-			for each ( var name:String in names ){
-				this.unreg( name );
+			for each ( var key:String in names ){
+				this.unreg( key );
 			}
 		}
 		
@@ -203,7 +206,7 @@ package resource.impl
 			var resources:Array = this.getResources( this.parseName( name ) );
 			
 			for each ( var r :IResource in resources ){
-				r.pause();
+				r.close();
 			}			
 		}
 		
@@ -226,6 +229,18 @@ package resource.impl
 
 		public function getResources( names:Array ) : Array
 		{
+			//排重
+			if ( names.length > 1 ){
+				var tmp:Object = {};
+				for each ( var keyName :String in names ){
+					tmp[ keyName ] = keyName;
+				}
+				names = [];
+				for each ( keyName  in tmp ){
+					names.push( keyName );
+				}
+			}
+			
 			var ret:Array = [];
 			
 			for each ( var key :String in names ){
