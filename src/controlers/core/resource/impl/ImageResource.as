@@ -1,21 +1,9 @@
-package resource.impl
+package controlers.core.resource.impl
 {
-	import flash.display.BitmapData;
-	import flash.events.IEventDispatcher;
-	
-	import resource.IResource;
-	
-	public class ImageResource extends BaseResource
+	public class ImageResource
 	{
-		public function ImageResource( name:String, url:String = null )
+		public function ImageResource()
 		{
-			super( name, url );
 		}
-		
-	   override  public function get content(): *
-		{
-			return null;
-		}
-		
 	}
 }

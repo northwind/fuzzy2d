@@ -1,196 +1,296 @@
-package resource.impl
+package controlers.core.resource.impl
 {
-	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
+	import controlers.core.log.Logger;
+	import controlers.core.manager.impl.BaseManager;
+	import controlers.core.resource.IResource;
+	import controlers.core.resource.IResourceManager;
+	import controlers.core.resource.event.ResourceEvent;
 	
-	import resource.event.ResourceEvent;
-	import resource.IResource;
-	import resource.IResourceBundle;
-	import resource.IResourceManager;
+	import flash.events.Event;
+	import flash.net.URLRequest;
+	import flash.utils.getTimer;
 	
-	public class ResourceManager extends EventDispatcher implements IResourceManager
+	public class ResourceManager extends BaseManager implements IResourceManager
 	{
-		private var _local:String = "cn";
+		private var _local:String = "zh";
+		private var _running :Boolean = false;
+		private var _waitingfor:Array = [];
 		
-		public function ResourceManager(target:IEventDispatcher=null)
+		public var threads:uint = 5;
+		
+		
+		public function ResourceManager()
 		{
-			super(target);
 		}
 		
-		public function createResource( name:String, url:String = null, callback :Function = null ) :IResource
+		public function set local(value:String):void
+		{
+			_local = value;
+		}
+		
+		public function add(name:String, url:String=null, policy:Boolean = false, type:Class=null ):IResource
 		{
 			if ( name == null || name == ""  ){
-				throw new Error( "ResourceManager createResource : name is empty." );
+				Logger.error("ResourceManager add Resource fn : name is empty." );
+				return null;
+			}
+		
+			if ( this.has( name ) ){
+				return this.get( name ) as IResource;
 			}
 			
 			url = url || name;
 			//自动替换{local}属性,不支持切换
 			url = url.replace( "{local}", _local );
 			
+			var ret:IResource = null;		
+			if ( type != null ){
+				typeof type;
+				var b :Boolean = type is IResource;
+				try{
+					ret = (new type( name, url, policy ) ) as IResource;	
+				}catch( e:Error ){
+					Logger.error("ResourceManager add Resource fn : wrong type." );
+					ret = null;
+				}
+			}
+			
+			if ( ret == null ){
+				type = guessType( url );
+				ret = (new type( name, url, policy ) ) as IResource;	
+			}
+			
+			this.reg( name, ret );
+			
+			return ret;
+		}
+		
+		/**
+		 * 根据后缀名判断资源类型 
+		 * @param url
+		 * @return 
+		 * 
+		 */		
+		public function guessType( url:String ) :Class
+		{
 			var extension:String = url.replace( /.*[.](\w{1,5})$/i, "$1" );
 			
-			var ret:IResource;
-			
 			if ( /jpg|jpeg|gif|png|bmp|ico/i.test( extension )  )
-				ret = new ImageResource( name, url );
-			
+				return ImageResource;
+				
 			else if ( /swf/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else if ( /xml|mxml|xls/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else if ( /mp3|f4a|f4b/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else if ( /json/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else if ( /flv|f4v|f4p|mp4/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else if ( /txt|js|css|html|php|py|jsp|asp/i.test( extension ) )
-				ret = new ImageResource( name, url );
+				return ImageResource;
 				
 			else
-				ret = new BaseResource( name, url );
+				return BaseResource;
+		}
+		
+		public function load(name:Object, onProcess:Function=null, onComplete:Function=null):void
+		{
+			//如果正在运行，则暂存
+			if ( this._running ){
+				_waitingfor.push( [name, onProcess, onComplete] );
+				return;
+			}
 			
-			//挂载事件
-			if ( callback != null ){
-				ret.addEventListener( ResourceEvent.COMPLETE, callback );
+			this._running = true;
+			
+			var resources:Array = this.getResources( this.parseName( name ) );
+			var count:int = 0, current:int = 0 ;
+			
+			// 当多个资源时用下面的事件对象
+			var eventArray:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null ),
+				   single:Boolean = resources.length <= 1,
+				   beginTime :uint = getTimer() ;
+			
+			var tempProcess:Function = function( event:ResourceEvent ) : void{
+				if ( onProcess != null ){
+					onProcess.call( null, single ? event : this.compositeEvent( eventArray, beginTime - getTimer(),  event ) );
+				}
+			};
+			
+			var tempComplete:Function = function( event:ResourceEvent ) : void{
+				count++;
+				trace( "count = " + count );
+				
+				event.resource.removeEventListener( ResourceEvent.COMPLETE, tempComplete );
+				event.resource.removeEventListener( ResourceEvent.PROCESS, tempProcess );
+				
+				if ( count == resources.length ){
+					Logger.debug( "ResourceManager load " + count + " resources." );
+					
+					//all done callback
+					if ( onComplete != null )
+						onProcess.call( null, single ? event : this.compositeEvent( eventArray, beginTime - getTimer(),  event ) );
+					
+					//go on loading _waitingfor
+					if ( _waitingfor.length > 0 ){
+						var w:Array = _waitingfor.shift() as Array;
+						this.load.apply( null, w );
+					}else{
+						this._running = false;
+					}
+					
+					return;
+				}
+				
+				//go next
+				if ( current < resources.length ){
+					(resources[ current++ ] as IResource).load();
+				}
+
+			};
+			
+			for each ( var r :IResource in resources ){
+				r.addEventListener( ResourceEvent.COMPLETE, tempComplete );
+				r.addEventListener( ResourceEvent.PROCESS, tempProcess );
+			}
+			
+			//start load
+			current = Math.min( this.threads, resources.length );
+			for( var i:int =0 ; i< current ; i++ ){
+				(resources[ i ] as IResource).load();			
+			}
+		}
+		
+		/**
+		 *  将后面的事件信息叠加到sum中 
+		 * @param sum
+		 * @param insition
+		 * @return 
+		 * 
+		 */		
+		private function compositeEvent( sum: ResourceEvent , last:uint, insition :ResourceEvent ) : ResourceEvent
+		{
+			sum.bytesTotal  	   += insition.bytesTotal;
+			sum.lastTime			=  last;
+			sum.bytesLoaded += insition.bytesLoaded;			
+			
+			if ( insition.ok )
+				sum.success.push( insition );
+			else
+				sum.failed.push( insition );
+			
+			return sum;
+		}
+		
+		protected function parseName( name:Object ) : Array
+		{
+			if ( name == null ){
+				return [];
+			}
+			
+			if ( name is String ){
+				return [ name as String ];
+			}
+			
+			if ( name is Array )
+				return name as Array;
+			else
+				return [];
+		}
+		
+		public function reload(name:Object, onProcess:Function=null, onComplete:Function=null):void
+		{
+			var resources:Array = this.getResources( this.parseName( name ) );
+			
+			for each ( var r :IResource in resources ){
+				r.reset();
+			}
+			
+			this.load.apply( null, arguments );
+		}
+		
+		public function remove(name:Object):void
+		{
+			var names:Array = this.parseName( name );
+			
+			for each ( var key:String in names ){
+				this.unreg( key );
+			}
+		}
+		
+		public function stop(name:Object):void
+		{
+			var resources:Array = this.getResources( this.parseName( name ) );
+			
+			for each ( var r :IResource in resources ){
+				r.close();
+			}			
+		}
+		
+		public function destroyResource(name:Object):void
+		{
+			var resources:Array = this.getResources( this.parseName( name ) );
+			
+			for each ( var r :IResource in resources ){
+				r.destroy();
+			}
+		}
+		
+		public function getResource(name:String):IResource
+		{
+			if ( name == null || name == "" )
+				return null;
+			
+			return this.get( name ) as IResource;
+		}
+
+		public function getResources( names:Array ) : Array
+		{
+			//排重
+			if ( names.length > 1 ){
+				var tmp:Object = {};
+				for each ( var keyName :String in names ){
+					tmp[ keyName ] = keyName;
+				}
+				names = [];
+				for each ( keyName  in tmp ){
+					names.push( keyName );
+				}
+			}
+			
+			var ret:Array = [];
+			
+			for each ( var key :String in names ){
+				var r:IResource = this.getResource( key );
+				if ( r != null ){
+					ret.push( r );
+				}
 			}
 			
 			return ret;
 		}
 		
-		public function set local(value:String):void
+		public function destroyAll():void
 		{
+			var obj:Object = this.getAll();
+			
+			for each ( var r :IResource in obj ){
+				if ( r != null ) 
+					r.destroy();
+			}
+			Logger.warning( " ResourceManager all resources is destroyed ." );
 		}
 		
-		public function addResource(resource:IResource):void
+		public function isRunning() :Boolean
 		{
-		}
-		
-		public function removeResource(resource:IResource):void
-		{
-		}
-		
-		public function reloadResource(resource:IResource):void
-		{
-		}
-		
-		public function pauseResource(resource:IResource):void
-		{
-		}
-		
-		public function resumeResource(resource:IResource):void
-		{
-		}
-		
-		public function freeResource(resource:IResource):void
-		{
-		}
-		
-		public function getResource(name:String):IResource
-		{
-			return null;
-		}
-		
-		public function addBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function removeBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function reloadBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function pauseBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function resumeBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function freeBundle(bundle:IResourceBundle):void
-		{
-		}
-		
-		public function getBundle(name:String):IResourceBundle
-		{
-			return null;
-		}
-		
-		public function load():void
-		{
-		}
-		
-		public function freeAll():void
-		{
-		}
-		
-		public function get failed():Array
-		{
-			return null;
+			return _running;
 		}
 	}
-	
 }
-
-/*
-package resource.impl
-{
-public final class ResourceType 
-{
-	//public static const BASE:uint = 1;
-	public static const Image:uint = 2; 
-	public static const SWF:uint = 3;
-	public static const XML:uint = 4;
-	public static const SOUND:uint = 5;
-	public static const JSON:uint = 6;
-	public static const VIDEO:uint = 7;
-	public static const TXT:uint = 8;
-	public static const BINARY:uint = 9;
-	
-	public static function guessType( url: String ) : IResource
-	{
-		//var pattern:RegExp =/[.](\w{1,5})$/i;
-		var extension:String = url.replace( /[.](\w{1,5})$/i, "$1" );
-		trace(  "extension = " + extension );
-		
-		var guess:uint;
-		
-		if ( /jpg|jpeg|gif|png|bmp|ico/i.test( extension )  )
-			guess = ResourceType.Image;
-			
-		else if ( /swf/i.test( extension ) )
-			guess = ResourceType.SWF;
-			
-		else if ( /xml|mxml|xls/i.test( extension ) )
-			guess = ResourceType.XML;
-			
-		else if ( /mp3|f4a|f4b/i.test( extension ) )
-			guess = ResourceType.SOUND;
-			
-		else if ( /json/i.test( extension ) )
-			guess = ResourceType.JSON;
-			
-		else if ( /flv|f4v|f4p|mp4/i.test( extension ) )
-			guess = ResourceType.VIDEO;
-			
-		else if ( /txt|js|css|html|php|py|jsp|asp/i.test( extension ) )
-			guess = ResourceType.TXT;
-			
-		else
-			guess = ResourceType.BINARY;
-		
-		return guess;
-	}
-	
-} 
-}
-*/
