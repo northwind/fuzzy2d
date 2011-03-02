@@ -7,12 +7,12 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:flexui="flexunit.flexui.*" creationComplete="onCreationComplete()">
 	<fx:Script>
 		<![CDATA[
-			import controlers.core.input.impl.InputManagerTest;
+			import controlers.core.resource.impl.ResourceManagerTest;
 			
 			public function currentRunTestSuite():Array
 			{
 				var testsToRun:Array = new Array();
-				testsToRun.push(controlers.core.input.impl.InputManagerTest);
+				testsToRun.push(controlers.core.resource.impl.ResourceManagerTest);
 				return testsToRun;
 			}
 			

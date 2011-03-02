@@ -1,51 +1,33 @@
-package resource
+package controlers.core.resource
 {
-	import flash.events.IEventDispatcher;
-	
-	public interface IResourceManager extends IEventDispatcher
+	/**
+	 * 负责资源的加载、读取和存放 
+	 * name:* 支持单个资源名 或者 字符数组
+	 * add resource时会自动用local的值替换 url 中{local}字样
+	 * @author norris
+	 * 
+	 */	
+	public interface IResourceManager
 	{
 		function set local( value:String ) : void;
 		
 		//------------------------------
-		function addResource ( resource:IResource ) : void;
+		function add( name:String, url:String = null, policy:Boolean = false, type:Class = null ) :IResource;
 		
-		function removeResource( resource:IResource ) : void;
-
-		function reloadResource( resource:IResource ) : void;
+		function load( name:Object, onProcess:Function = null, onComplete:Function = null ) : void;
 		
-		function pauseResource ( resource:IResource ) : void;
+		function reload( name:Object, onProcess:Function = null, onComplete:Function = null ) : void;
 		
-		function resumeResource ( resource:IResource ) : void;
+		function remove( name:Object ) :void;
 		
-		function freeResource ( resource:IResource ) : void;
+		function stop ( name:Object ) :void;
 		
-		function getResource( name:String ) : IResource;
+		function destroyResource ( name:Object ) :void;
 		
-		//--------------------------------
-		function addBundle( bundle:IResourceBundle ) : void;
+		function getResource ( name:String ) :IResource;
 		
-		function removeBundle( bundle:IResourceBundle ) : void;
-		
-		function reloadBundle( bundle:IResourceBundle ) : void;
-		
-		function pauseBundle ( bundle:IResourceBundle ) : void;
-		
-		function resumeBundle ( bundle:IResourceBundle ) : void;
-		
-		function freeBundle ( bundle:IResourceBundle ) : void;
-		
-		function getBundle( name:String ) : IResourceBundle;
 		//----------------------------------
-		function load() : void;
 		
-		function freeAll() : void;
-		
-		//function get speed() : uint;
-		
-		//-------------------------------------
-		function get failed() : Array;
-		
-		//function reloadFailed() : void;
-		
+		function destroyAll() : void;
 	}
 }
