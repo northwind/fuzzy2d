@@ -4,6 +4,7 @@ package
 	import flash.events.*;
 	
 	import resource.*;
+	import resource.event.ResourceEvent;
 	import resource.impl.*;
 	
 	public class TestResourceManager extends Sprite
@@ -45,23 +46,33 @@ package
 			var names:Array = [];
 			
 			for each( var item:Array in arr ){
-				
-				resourceMgr.add( item[0] as String, item[1], ResourceBundle );
+				resourceMgr.add( item[0] as String, item[1], true, BaseResource );
 				
 				names.push( item[0] );
-				
-				//resourceMgr.addResource( resourceMgr.createResource( item[0], item[1], onComplete ) );
 			}
 			
-			resourceMgr.load( names, function():void {}, onComplete );
+			//resourceMgr.load( names, function():void {}, onComplete );
 			
-			resourceMgr.remove( names );
+			//resourceMgr.remove( names );
+			
+			resourceMgr.load( "bigmap", function( event :ResourceEvent ):void {
+				trace(  "process : bytesLoaded = " + event.bytesLoaded  );
+				trace(  "process : bytesTotal = " + event.bytesTotal  );
+				trace(  "process : speed = " + event.speed  );
+				trace(  "process : percent = " + event.percent  );
+				trace(  "process : ok = " + event.ok  );
+//				trace(  "process : success = " + event.success.join(",")  );
+//				trace(  "process : failed = " + event.failed.join(",")  );
+				trace(  "----------------------------------------------------"  );
+			}, function ( event :ResourceEvent ):void {
+				
+			} );
 			
 		}
 		
-		private function onComplete() : void
+		private function onComplete( eventComplete :ResourceEvent ) : void
 		{
-			
+			trace( "done" );
 		}
 		
 		private function addImage ( data:BitmapData ) : void

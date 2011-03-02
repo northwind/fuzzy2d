@@ -1,6 +1,14 @@
 package resource
 {
 	import flash.events.IEventDispatcher;
+
+	[Event(name="resource_complete", type="resource.event.ResourceEvent")]
+	
+	[Event(name="resource_process", type="resource.event.ResourceEvent")]
+	
+	[Event(name="resource_error", type="resource.event.ResourceEvent")]
+	
+	[Event(name="resource_stop", type="resource.event.ResourceEvent")]
 	
 	public interface IResource extends IEventDispatcher
 	{
@@ -14,17 +22,13 @@ package resource
 		
 		function get url() : String; 
 
-		function get speed() : uint;
+		function get lastTime() : uint;
 		
 		function get bytesLoaded() : uint;
 		
 		function get bytesTotal() : uint;
 		//--------------------------
 		function destroy() : void;
-		
-		function pause() : void;
-		
-		function resume() :void;
 		
 		function load() : void;
 		
