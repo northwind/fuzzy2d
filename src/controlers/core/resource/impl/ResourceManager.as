@@ -10,6 +10,8 @@ package controlers.core.resource.impl
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
 	
+	import mx.charts.chartClasses.NumericAxis;
+	
 	public class ResourceManager extends BaseManager implements IResourceManager
 	{
 		private var _local:String = "zh";
@@ -73,6 +75,7 @@ package controlers.core.resource.impl
 		 */		
 		public function guessType( url:String ) :Class
 		{
+			return BaseResource;
 			var extension:String = url.replace( /.*[.](\w{1,5})$/i, "$1" );
 			
 			if ( /jpg|jpeg|gif|png|bmp|ico/i.test( extension )  )
@@ -102,31 +105,51 @@ package controlers.core.resource.impl
 		
 		public function load(name:Object, onProcess:Function=null, onComplete:Function=null):void
 		{
+			this.loadProcess.apply( null, arguments );
+		}
+		
+		private function loadProcess(name:Object, onProcess:Function=null, onComplete:Function=null, reload:Boolean = false ):void
+		{
 			//如果正在运行，则暂存
 			if ( this._running ){
-				_waitingfor.push( [name, onProcess, onComplete] );
+				_waitingfor.push( arguments );
 				return;
 			}
 			
-			this._running = true;
+			var resources:Array = this.getResources( this.parseName( name ) ),
+				count:int = 0;
 			
-			var resources:Array = this.getResources( this.parseName( name ) );
-			var count:int = 0, current:int = 0 ;
+			//没资源可供加载时，直接回调退出
+			if ( resources.length == 0 ){
+				if ( onComplete != null )
+					onComplete.call( null, new ResourceEvent( ResourceEvent.COMPLETE, null ) );
+				
+				if ( _waitingfor.length > 0 )
+					loadProcess.apply( null, _waitingfor.shift() );
+				
+				return;
+			}			
+				
+			_running = true;
 			
 			// 当多个资源时用下面的事件对象
-			var eventArray:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null ),
-				   single:Boolean = resources.length <= 1,
-				   beginTime :uint = getTimer() ;
+			var single:Boolean = resources.length <= 1;
+			if ( !single ){
+				var eventArray:ResourceEvent = new ResourceEvent( ResourceEvent.COMPLETE, null ),
+					   beginTime :uint = getTimer()
+					   ;
 			
+				eventArray.resources = resources;
+			}
 			var tempProcess:Function = function( event:ResourceEvent ) : void{
 				if ( onProcess != null ){
-					onProcess.call( null, single ? event : this.compositeEvent( eventArray, beginTime - getTimer(),  event ) );
+					onProcess.call( null, single ? event : compositeEvent( eventArray, getTimer() - beginTime,  event ) );
 				}
 			};
 			
 			var tempComplete:Function = function( event:ResourceEvent ) : void{
 				count++;
-				trace( "count = " + count );
+				trace( "complete " + event.resource.name + " count = " + count );
 				
 				event.resource.removeEventListener( ResourceEvent.COMPLETE, tempComplete );
 				event.resource.removeEventListener( ResourceEvent.PROCESS, tempProcess );
@@ -136,14 +159,12 @@ package controlers.core.resource.impl
 					
 					//all done callback
 					if ( onComplete != null )
-						onProcess.call( null, single ? event : this.compositeEvent( eventArray, beginTime - getTimer(),  event ) );
+						onComplete.call( null, single ? event : compositeEvent( eventArray, getTimer() - beginTime ,  event ) );
 					
 					//go on loading _waitingfor
+					_running = false;
 					if ( _waitingfor.length > 0 ){
-						var w:Array = _waitingfor.shift() as Array;
-						this.load.apply( null, w );
-					}else{
-						this._running = false;
+						loadProcess.apply( null, _waitingfor.shift() );
 					}
 					
 					return;
@@ -151,20 +172,34 @@ package controlers.core.resource.impl
 				
 				//go next
 				if ( current < resources.length ){
-					(resources[ current++ ] as IResource).load();
+					var rnext:IResource = resources[ current++ ] as IResource;
+					
+					rnext.addEventListener( ResourceEvent.COMPLETE, tempComplete );
+					rnext.addEventListener( ResourceEvent.PROCESS, tempProcess );
+					
+					rnext.load();
 				}
 
 			};
 			
-			for each ( var r :IResource in resources ){
-				r.addEventListener( ResourceEvent.COMPLETE, tempComplete );
-				r.addEventListener( ResourceEvent.PROCESS, tempProcess );
+			var r :IResource;
+			// set all resources
+			if ( reload ){
+				for each ( r in resources ){
+					r.reset();
+				}				
 			}
 			
 			//start load
-			current = Math.min( this.threads, resources.length );
-			for( var i:int =0 ; i< current ; i++ ){
-				(resources[ i ] as IResource).load();			
+			var maxThreads:uint = Math.min( this.threads, resources.length );
+			var current:uint = maxThreads;
+			for( var i:int =0 ; i< maxThreads ; i++ ){
+				r = resources[ i ] as IResource;
+				
+				r.addEventListener( ResourceEvent.COMPLETE, tempComplete );
+				r.addEventListener( ResourceEvent.PROCESS, tempProcess );
+				
+				r.load();			
 			}
 		}
 		
@@ -177,14 +212,45 @@ package controlers.core.resource.impl
 		 */		
 		private function compositeEvent( sum: ResourceEvent , last:uint, insition :ResourceEvent ) : ResourceEvent
 		{
-			sum.bytesTotal  	   += insition.bytesTotal;
-			sum.lastTime			=  last;
-			sum.bytesLoaded += insition.bytesLoaded;			
+			var tmpTotal:uint = 0;
+			var tmpLoaded:uint = 0;
+			var s:Array = [];
+			var f:Array = [];
+			var weight:Number = 1 / sum.resources.length;
+			var percent:Number = 0;
+			var alldone:Boolean = true;
 			
-			if ( insition.ok )
-				sum.success.push( insition );
-			else
-				sum.failed.push( insition );
+			for each ( var r :IResource in sum.resources ){
+				tmpTotal += r.bytesTotal;
+				tmpLoaded += r.bytesLoaded;
+				if ( r.isFinish() ){
+					if ( r.isFailed() ) 
+						f.push( r );
+					else
+						s.push( r );
+				}else{
+					//记录是否全部完成
+					alldone = false;
+				}	
+				if ( r.bytesTotal > 0 )
+					percent += weight * (r.bytesLoaded / r.bytesTotal);
+			}
+			sum.lastTime	=  last;
+			sum.bytesTotal  = tmpTotal;
+			sum.bytesLoaded = tmpLoaded;			
+			sum.success = s;
+			sum.failed  = f;
+			sum.percent = percent;
+			
+			if ( sum.success.length == sum.resources.length ){
+				sum.ok = true;
+			}	
+			// set correct percent
+//			if ( alldone )
+//				sum.percent = 1;	
+			
+			//can't large thah 1
+			sum.percent = Math.min( 1, sum.percent );
 			
 			return sum;
 		}
@@ -207,13 +273,7 @@ package controlers.core.resource.impl
 		
 		public function reload(name:Object, onProcess:Function=null, onComplete:Function=null):void
 		{
-			var resources:Array = this.getResources( this.parseName( name ) );
-			
-			for each ( var r :IResource in resources ){
-				r.reset();
-			}
-			
-			this.load.apply( null, arguments );
+			this.loadProcess.call( null, name, onProcess, onComplete, true );
 		}
 		
 		public function remove(name:Object):void
