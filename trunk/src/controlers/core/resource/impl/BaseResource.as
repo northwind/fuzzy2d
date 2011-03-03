@@ -28,9 +28,9 @@ package controlers.core.resource.impl
 		protected var _msg:String;
 		protected var _data:*;
 		
-		private var _beginTime:uint = 0;
-		private var _loader:URLLoader;
-		private var _request:URLRequest;
+		protected var _beginTime:uint = 0;
+		protected var _loader:URLLoader;
+		protected var _request:URLRequest;
 		
 		public function BaseResource( name:String, url:String, policy: * = null )
 		{
@@ -58,7 +58,7 @@ package controlers.core.resource.impl
 			
 			this.createRequest();
 			
-			this.addListeners();
+			this.createLoader();
 			
 			_isFailed  = false;
 			_isFinish  = false;
@@ -80,7 +80,7 @@ package controlers.core.resource.impl
 			_request = new URLRequest( this.url );
 		}
 		
-		protected function addListeners() : void
+		protected function createLoader() : void
 		{
 			if ( _loader != null )
 				return;
@@ -117,13 +117,17 @@ package controlers.core.resource.impl
 			_isLoading = false;
 			_isFinish  = finish;
 			
+			getContent( evt );
+			
+			dispatchEvent( new ResourceEvent( ResourceEvent.COMPLETE, this ) );
+		}
+		
+		protected function getContent( evt:Event = null ) : void
+		{
 			if ( !_isFailed )
 				this._data = this._loader.data;
 			else
 				this._data = null;
-//			trace( this.name + " complete : " + this.bytesLoaded );
-			
-			dispatchEvent( new ResourceEvent( ResourceEvent.COMPLETE, this ) );
 		}
 		
 		protected function onIOErrorHandler(evt : IOErrorEvent) : void{

@@ -1,5 +1,11 @@
 package controlers.core.resource.impl
 {
+	import controlers.core.resource.*;
+	import controlers.core.resource.event.*;
+	import controlers.core.resource.impl.*;
+	
+	import flash.utils.ByteArray;
+	
 	import flexunit.framework.Assert;
 	
 	public class BaseResourceTest
@@ -21,7 +27,20 @@ package controlers.core.resource.impl
 		public static function setUpBeforeClass():void
 		{
 			// run one time
-			BaseResourceTest.r.load();
+//			BaseResourceTest.r.load();
+			
+			var r2:BinaryResource  = new BinaryResource( "test base", "http://eggs.sinaapp.com/main.php", true );
+			
+			r2.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+				
+				var b:ByteArray = r2.content as ByteArray;
+				trace( "length = " + b.length );
+				trace( "readUTF = " + b.readUTF() );
+				
+			} );
+			
+			r2.load();
+			
 		}
 		
 		[AfterClass]
