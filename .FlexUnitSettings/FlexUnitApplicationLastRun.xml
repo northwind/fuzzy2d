@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testrun name="" >
 <testsuite  name="Default Test Suite" project="fuzzy">
-<testsuite name="controlers.core.resource.impl:ResourceManagerTest1" type="testsuiteclass"/>
+<testsuite name="controlers.core.resource.impl:BaseResourceTest" type="testsuiteclass"/>
 </testsuite>
 </testrun>
