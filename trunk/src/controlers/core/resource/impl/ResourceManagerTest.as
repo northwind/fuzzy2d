@@ -1,6 +1,8 @@
 package controlers.core.resource.impl
 {
 	import flexunit.framework.Assert;
+	import controlers.core.resource.*;
+	import controlers.core.resource.event.ResourceEvent;
 	
 	public class ResourceManagerTest
 	{		

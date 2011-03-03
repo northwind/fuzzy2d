@@ -1,5 +1,9 @@
 package controlers.core.resource.impl
 {
+	import controlers.core.log.Logger;
+	import controlers.core.resource.IResource;
+	import controlers.core.resource.event.ResourceEvent;
+	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.HTTPStatusEvent;
@@ -8,10 +12,6 @@ package controlers.core.resource.impl
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
-	
-	import controlers.core.resource.IResource;
-	import controlers.core.resource.event.ResourceEvent;
-	import controlers.core.log.Logger;
 	
 	public class BaseResource extends EventDispatcher implements IResource
 	{
@@ -96,7 +96,15 @@ package controlers.core.resource.impl
 		protected function onHttpStatusHandler(evt : HTTPStatusEvent) : void{
 		}
 		
+		/**
+		 * 只有当 bytesLoaded变动时才会触发process事件
+		 * @param evt
+		 * 
+		 */		
 		protected function onProgressHandler(evt : ProgressEvent ) : void {
+			if ( _bytesLoaded == evt.bytesLoaded )
+				return;
+			
 			_bytesLoaded = evt.bytesLoaded;
 			_bytesTotal = evt.bytesTotal;
 			_lastTime = getTimer() - this._beginTime;
@@ -104,15 +112,16 @@ package controlers.core.resource.impl
 			dispatchEvent( new ResourceEvent( ResourceEvent.PROCESS, this ) );
 		}
 		
-		protected function onCompleteHandler(evt : Event = null ) : void {
+		protected function onCompleteHandler(evt : Event = null, finish:Boolean = true ) : void {
 			
 			_isLoading = false;
-			_isFinish  = true;
+			_isFinish  = finish;
 			
 			if ( !_isFailed )
 				this._data = this._loader.data;
-
-			trace( this.name + " complete : " + this.bytesLoaded );
+			else
+				this._data = null;
+//			trace( this.name + " complete : " + this.bytesLoaded );
 			
 			dispatchEvent( new ResourceEvent( ResourceEvent.COMPLETE, this ) );
 		}
@@ -167,9 +176,12 @@ package controlers.core.resource.impl
 			if ( this._isLoading && this._loader != null ){
 				this._loader.close();
 				
+				_isFailed = _bytesLoaded != _bytesTotal && _bytesTotal != 0;
+				
 				dispatchEvent( new ResourceEvent( ResourceEvent.STOP, this ) );
 				
-				onCompleteHandler();
+				//并未真正完成需要重新加载
+				onCompleteHandler( null, false );
 			}
 		}
 
