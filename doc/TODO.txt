@@ -1,14 +1,15 @@
 # 安装parsley 2.4，并成功运行hello world ( 2.4 有warning)  
-场景框架设计 layer scene
 创建MAP类
 绘制2.5等距视图
 放置物件、选择物件
 排序
 移植寻路算法
 #logger类
-#debug工具
+#debug工具             有bug
 #增加cop模块
-#sourceManager
-#inputManager
+#sourceManager  待完善videoResource
+#inputManager  增加input any key
 soundManager
+screenManager
+layerManager
 增加core文件夹,core中放置的类不涉及具体的游戏类型

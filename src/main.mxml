@@ -50,15 +50,9 @@
 				sm.goto( "first screen" );
 			}
 
-			protected function btn_clickHandler(event:MouseEvent):void
-			{
-				world.hideStats();
-			}
-
 		]]>
 	</fx:Script>
 	
-	<s:Button label="关闭状态栏" id="btn" click="btn_clickHandler(event)" />
 	<s:TextArea enabled="true" editable="false" width="600" height="400" id="logarea" bottom="0" right="0" />
 	
 </s:Application>
