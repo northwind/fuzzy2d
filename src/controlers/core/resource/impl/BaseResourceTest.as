@@ -5,9 +5,9 @@ package controlers.core.resource.impl
 	import controlers.core.resource.impl.*;
 	
 	import flash.display.*;
-	import flash.utils.ByteArray;
 	import flash.media.Sound;
 	import flash.media.Video;
+	import flash.utils.ByteArray;
 	
 	import flexunit.framework.Assert;
 	
@@ -195,43 +195,54 @@ package controlers.core.resource.impl
 //			
 //			r4.load();			
 			
-			var r2:SoundResource  = new SoundResource( "test base", "http://www.sinaimg.cn/cj/stockwin/images/battle.mp3", true );
+//			var r2:SoundResource  = new SoundResource( "test base", "http://www.sinaimg.cn/cj/stockwin/images/battle.mp3", true );
+//			
+//			r2.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+//				
+//				var data:Sound = r2.getSound();
+//				if ( data != null ){
+//					trace( "2 Sound length = " + data.length );
+//					data.play( );
+//				}
+//			} );
+//			
+//			r2.load();
+//			
+//			var r3:SoundResource  = new SoundResource( "test error binary", "http://eggs.sinaapp.com/maidddn.xml", true );
+//			
+//			r3.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+//				
+//				var data:Sound = r3.getSound();
+//				if ( data != null )
+//					trace( "3 Sound length = " + data.length );
+//				
+//			} );
+//			
+//			r3.load();
+//			
+//			var r4:SoundResource  = new SoundResource( "test error binary", "http://slgengine.sinaapp.com/test/xml_wrong.xml", true );
+//			
+//			r4.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+//				
+//				var data:Sound = r4.getSound();
+//				if ( data != null )
+//					trace( "3 Sound length = " + data.length );
+//				
+//			} );
+//			
+//			r4.load();	
+			
+			var r2:VideoResource  = new VideoResource( "test flv", "http://www.sinaimg.cn/cj/stockwin/images/balls.flv", true );
 			
 			r2.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
 				
-				var data:Sound = r2.getSound();
-				if ( data != null ){
-					trace( "2 Sound length = " + data.length );
-					data.play( );
+				var video:Video = r2.getVideo();
+				if ( video != null ){
+					
 				}
 			} );
 			
 			r2.load();
-			
-			var r3:SoundResource  = new SoundResource( "test error binary", "http://eggs.sinaapp.com/maidddn.xml", true );
-			
-			r3.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
-				
-				var data:Sound = r3.getSound();
-				if ( data != null )
-					trace( "3 Sound length = " + data.length );
-				
-			} );
-			
-			r3.load();
-			
-			var r4:SoundResource  = new SoundResource( "test error binary", "http://slgengine.sinaapp.com/test/xml_wrong.xml", true );
-			
-			r4.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
-				
-				var data:Sound = r4.getSound();
-				if ( data != null )
-					trace( "3 Sound length = " + data.length );
-				
-			} );
-			
-			r4.load();	
-			
 		}
 		
 		[AfterClass]

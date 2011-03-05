@@ -18,7 +18,13 @@
 			import controlers.core.screen.IScreenManager;
 			import controlers.core.screen.impl.BaseScreenManager;
 			import controlers.core.log.Logger;
-			
+			import controlers.core.resource.*;
+			import controlers.core.resource.event.ResourceEvent;
+			import controlers.core.resource.impl.*;
+			import flash.media.Video;
+			import flash.net.NetConnection;
+			import flash.net.NetStream;
+
 			import flash.display.Sprite;
 			
 			import mx.core.UIComponent;
@@ -42,7 +48,6 @@
 				
 				var sm :IScreenManager = world.screenMgr;
 				sm.goto( "first screen" );
-				
 			}
 
 			protected function btn_clickHandler(event:MouseEvent):void

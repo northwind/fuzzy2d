@@ -10,6 +10,7 @@ package controlers.core.resource.event
 		public static var PROCESS:String = "resource_process";
 		public static var ERROR:String = "resource_error";
 		public static var STOP:String = "resource_stop";
+		public static var OPEN:String = "resource_open";
 		
 		public var resource:IResource;		//单个resource时有效
 		public var resources:Array = [];		//单个resource时有效

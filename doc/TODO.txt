@@ -8,7 +8,7 @@
 #logger类
 #debug工具
 #增加cop模块
-sourceManager
+#sourceManager
 #inputManager
 soundManager
 增加core文件夹,core中放置的类不涉及具体的游戏类型
