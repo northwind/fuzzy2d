@@ -78,13 +78,13 @@ package controlers.core.resource.impl
 			return BaseResource;
 			var extension:String = url.replace( /.*[.](\w{1,5})$/i, "$1" );
 			
-			if ( /jpg|jpeg|gif|png|bmp|ico/i.test( extension )  )
+			if ( /jpg|gif|png/i.test( extension )  )
 				return ImageResource;
 				
 			else if ( /swf/i.test( extension ) )
 				return ImageResource;
 				
-			else if ( /xml|mxml|xls/i.test( extension ) )
+			else if ( /xml|mxml/i.test( extension ) )
 				return ImageResource;
 				
 			else if ( /mp3|f4a|f4b/i.test( extension ) )

@@ -9,30 +9,27 @@ package controlers.core.resource.impl
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
-	import flash.media.Sound;
-	import flash.media.SoundLoaderContext;
+	import flash.media.Video;
+	import flash.net.NetStream;
 	
-	public class SoundResource extends BaseResource implements IResource
+	public class VideoResource extends BaseResource implements IResource
 	{
-		private var _soundLoader:Sound;
-		
-		public function SoundResource(name:String, url:String, policy:*=null)
+		public function VideoResource(name:String, url:String, policy:*=null)
 		{
 			super(name, url, policy);
-			this.policy = policy;
 		}
 		
 		override public function get content():*
 		{
-			return getSound();
+			return getStream();
 		}
 		
-		public function getSound() :Sound
+		public function getStream() :NetStream
 		{
 			if ( _data == null )
 				return null;
 			
-			return _data as Sound;
+			return _data as NetStream;
 		}
 		
 		override public function load():void
@@ -127,20 +124,14 @@ package controlers.core.resource.impl
 		}
 		
 		/**
-		 * true时，创建一默认的 LoaderContext
-		 * @param value
-		 * 
+		 *  true / false 两种
 		 */		
 		override public function set policy(value:*):void
 		{
 			if ( value == true ){
-				_policy = new SoundLoaderContext( 1000, true );	
-			}if ( value is uint ){
-				_policy = new SoundLoaderContext( value, false );	
-			}else if ( value is SoundLoaderContext ){
-				_policy = value;
+				_policy = true;	
 			}else			
-				_policy = null;
-		}		
+				_policy = false;
+		}				
 	}
 }
