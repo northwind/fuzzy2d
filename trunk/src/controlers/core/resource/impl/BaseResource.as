@@ -56,9 +56,11 @@ package controlers.core.resource.impl
 				return;
 			}
 			
-			this.createRequest();
+			if ( _request == null )
+				this.createRequest();
 			
-			this.createLoader();
+			if ( _loader == null )
+				this.createLoader();
 			
 			_isFailed  = false;
 			_isFinish  = false;
@@ -73,18 +75,12 @@ package controlers.core.resource.impl
 		}
 		
 		protected function createRequest() : void
-		{
-			if ( _request != null )
-				return;
-			
+		{			
 			_request = new URLRequest( this.url );
 		}
 		
 		protected function createLoader() : void
 		{
-			if ( _loader != null )
-				return;
-			
 			_loader = new URLLoader();
 			_loader.addEventListener(ProgressEvent.PROGRESS, onProgressHandler);
 			_loader.addEventListener(Event.COMPLETE, onCompleteHandler);
@@ -141,7 +137,7 @@ package controlers.core.resource.impl
 			onCompleteHandler();
 		}
 		
-		protected function onSecurityErrorHandler(e : SecurityError) : void{
+		protected function onSecurityErrorHandler(e : SecurityError , complete:Boolean = true ) : void{
 			_msg = e.toString();
 			_isFailed = true;
 			
@@ -149,7 +145,8 @@ package controlers.core.resource.impl
 			
 			Logger.error( "load " + this.name + " security error url = " + this._url );
 			
-			onCompleteHandler();
+			if ( complete )
+				onCompleteHandler();
 		}
 		
 		/**
