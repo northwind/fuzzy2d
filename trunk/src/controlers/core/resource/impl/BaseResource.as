@@ -156,6 +156,8 @@ package controlers.core.resource.impl
 		 */		
 		protected function onOpenHandler(evt : Event) : void{
 			_beginTime = getTimer();
+			
+			this.dispatchEvent( new ResourceEvent( ResourceEvent.OPEN, this ) );
 		}
 		
 		public function reset():void
