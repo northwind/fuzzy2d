@@ -18,7 +18,7 @@ package controlers.core.manager
 		 * @return 
 		 * 
 		 */		
-		function get( key :String ) : IItem ;
+		function getItem( key :String ) : IItem ;
 
 		function getAll ()	: Object;
 		

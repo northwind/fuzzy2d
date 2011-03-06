@@ -43,7 +43,7 @@ package controlers.core.manager.impl
 				//log
 				return;
 			}
-			var item : IItem = get( key );
+			var item : IItem = getItem( key );
 			if ( item == null ){
 				//log
 				return;
@@ -57,14 +57,14 @@ package controlers.core.manager.impl
 			this.dispatchEvent( new ManagerEvent( ManagerEvent.UNREG, key, item ) );
 		}
 		
-		public function get(key:String): IItem
+		public function getItem(key:String): IItem
 		{
 			return items[ key ]  ;
 		}
 		
 		public function has(key:String):Boolean
 		{
-			return get( key ) != null;
+			return getItem( key ) != null;
 		}
 		
 		public function get count():int

@@ -14,17 +14,17 @@
 	<fx:Script>
 		<![CDATA[
 			import controlers.core.World;
-			import controlers.core.log.impl.TextAreaWriter;
-			import controlers.core.screen.IScreenManager;
-			import controlers.core.screen.impl.BaseScreenManager;
+			import controlers.core.display.IScreenManager;
+			import controlers.core.display.impl.BaseLayer;
+			import controlers.core.display.impl.BaseScreen;
+			import controlers.core.display.impl.BaseScreenManager;
+			import controlers.core.display.impl.ImageLayer;
 			import controlers.core.log.Logger;
+			import controlers.core.log.impl.TextAreaWriter;
 			import controlers.core.resource.*;
 			import controlers.core.resource.event.ResourceEvent;
 			import controlers.core.resource.impl.*;
-			import flash.media.Video;
-			import flash.net.NetConnection;
-			import flash.net.NetStream;
-
+			
 			import flash.display.Sprite;
 			
 			import mx.core.UIComponent;
@@ -47,7 +47,17 @@
 				world.init( area );
 				
 				var sm :IScreenManager = world.screenMgr;
-				sm.goto( "first screen" );
+				
+				var screen:BaseScreen = new BaseScreen();
+				var layer1:BaseLayer = new BaseLayer( 0 );
+				var layer2:ImageLayer = new ImageLayer( 1 );
+				layer2.dataSource = new ImageResource( "aa", "http://i1.sinaimg.cn/cj/newjs/slg/images/bigmap/1-1.jpg", true );
+				
+				screen.insert( layer1 );
+				screen.insert(layer2 );
+				
+				sm.add( "first", screen ); 
+				sm.goto("first");
 			}
 
 		]]>

@@ -65,7 +65,7 @@ package controlers.core.manager.impl
 			var item :BaseItem = createItem("123");
 			bm.reg( "1", item );
 			
-			Assert.assertEquals( bm.get("1"), item );			
+			Assert.assertEquals( bm.getItem("1"), item );			
 		}
 		
 		[Test]

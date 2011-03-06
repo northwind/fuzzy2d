@@ -37,7 +37,7 @@ package controlers.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			var arr : Array = this.get( key.toString() );
+			var arr : Array = this.getItem( key.toString() );
 			if ( arr != null ){
 				for each( var callback:Function in arr ){
 					callback.call();
@@ -51,7 +51,7 @@ package controlers.core.input.impl
 				Logger.error( "InputManager on : callback is null." );
 				return;
 			}
-			var arr : Array = this.get( key.toString() );
+			var arr : Array = this.getItem( key.toString() );
 			//new an array
 			if ( arr == null )
 				arr = [];
@@ -75,7 +75,7 @@ package controlers.core.input.impl
 			if ( callback == null ){
 				this.unreg( key.toString());
 			}else{
-				var arr : Array = this.get( key.toString() );
+				var arr : Array = this.getItem( key.toString() );
 				if ( arr != null ){
 					var i:int = arr.indexOf( callback );
 					if ( i > -1 ){

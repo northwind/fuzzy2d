@@ -6,7 +6,7 @@ package controlers.core.manager
 			
 			function unreg( key :String ) : void;
 			
-			function get( key :String ) : * ;
+			function getItem( key :String ) : * ;
 			
 			function getAll ()	: Object;
 			
