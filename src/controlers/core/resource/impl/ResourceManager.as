@@ -38,7 +38,7 @@ package controlers.core.resource.impl
 			}
 		
 			if ( this.has( name ) ){
-				return this.get( name ) as IResource;
+				return this.getItem( name ) as IResource;
 			}
 			
 			url = url || name;
@@ -308,7 +308,7 @@ package controlers.core.resource.impl
 			if ( name == null || name == "" )
 				return null;
 			
-			return this.get( name ) as IResource;
+			return this.getItem( name ) as IResource;
 		}
 
 		public function getResources( names:Array ) : Array

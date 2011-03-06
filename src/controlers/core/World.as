@@ -8,8 +8,8 @@ package controlers.core
 	import controlers.core.input.impl.InputKey;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
-	import controlers.core.screen.IScreenManager;
-	import controlers.core.screen.impl.BaseScreenManager;
+	import controlers.core.display.IScreenManager;
+	import controlers.core.display.impl.BaseScreenManager;
 	
 	
 	import flash.display.Sprite;
@@ -58,6 +58,8 @@ package controlers.core
 			
 			this.inputMgr.init( this.stage );
 			this.inputMgr.on( InputKey.F12, this.commandMgr.toggle );
+			
+			this.screenMgr.init( this._area );
 		}
 		
 		/**

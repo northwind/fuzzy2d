@@ -112,7 +112,7 @@ package controlers.core.debug.impl
 				return;
 			}
 			
-			var c:Command = this.get( method ) as Command;
+			var c:Command = this.getItem( method ) as Command;
 			
 			if ( c == null ){
 				console.writeLine( prefix + method + " is not a command.", 0xff0000 );

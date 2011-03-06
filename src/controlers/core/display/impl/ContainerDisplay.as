@@ -1,18 +1,19 @@
-package controlers.core.manager.impl
+package controlers.core.display.impl
 {
-	import controlers.core.manager.IManager;
+	import controlers.core.display.IDisplay;
 	import flash.utils.Dictionary;
 	
-	public class BaseManager implements IManager
+	public class ContainerDisplay extends BaseDisplay
 	{
 		private var items:Dictionary = new Dictionary();
 		private var _count:int = 0;
 		
-		public function BaseManager()
+		public function ContainerDisplay(  )
 		{
+			super();
 		}
 		
-		public function reg(key:String, item: * ):void
+		protected function reg(key:String, item: IDisplay ):void
 		{
 			if ( key == "" ){
 				//log
@@ -31,7 +32,7 @@ package controlers.core.manager.impl
 			}  
 		}
 		
-		public function unreg(key:String):void
+		protected function unreg(key:String):void
 		{
 			if ( key == "" ){
 				//log
@@ -47,22 +48,22 @@ package controlers.core.manager.impl
 			_count--;
 		}
 		
-		public function getItem(key:String): *
+		protected function getItem(key:String): IDisplay
 		{
 			return items[ key ]  ;
 		}
 		
-		public function has(key:String):Boolean
+		protected function has(key:String):Boolean
 		{
 			return getItem( key ) != null;
 		}
 		
-		public function get count():int
+		protected function get count():int
 		{
 			return _count;
 		}
 		
-		public function getAll ()	: Object
+		protected function getAll ()	: Object
 		{
 			var ret :Object = {};
 			
@@ -70,10 +71,6 @@ package controlers.core.manager.impl
 				ret[ key ] = items[ key ];			
 			}
 			return ret;
-		}
-		
-		public function dismiss():void
-		{
-		}
+		}		
 	}
 }
