@@ -1,32 +1,51 @@
 package controlers.core.input.impl
 {
 	import controlers.core.input.IInputManager;
+	import controlers.core.input.impl.InputKey;
 	import controlers.core.log.Logger;
 	import controlers.core.manager.impl.BaseManager;
 	
+	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.events.ContextMenuEvent;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	
 	public class InputManager extends BaseManager implements IInputManager
 	{
-		private var _enable : Boolean = true;
+		private var _enableKeyboard : Boolean = true;
+		private var _enableMouse :Boolean = true;
+		
 		private var _dirtykeys :Array = [];
 		
 		public function InputManager()
 		{
 		}
 		
-		public function init( stage:Stage ) : void
+		public function init( area:Sprite ) : void
 		{
-			if ( stage ){
+			if ( area ){
+				var stage:Stage = area.stage;
+				
 				//TODO consider keyup
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false );
+				stage.addEventListener(MouseEvent.MOUSE_WHEEL  , onMouseWheel );
+				stage.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
+				
+				area.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove );
+				area.addEventListener(MouseEvent.ROLL_OVER , onMouseOver );
+				area.addEventListener(MouseEvent.ROLL_OUT , onMouseOut );
+				
+				if ( area.contextMenu != null )
+					//area.contextMenu.addEventListener(Event.ACTIVATE, onContext );
+					area.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, onContext );
 			}
 		}
 		
 		private function onKeyDown( event:KeyboardEvent ) : void
 		{
-			if ( !_enable ){
+			if ( !_enableKeyboard ){
 				return;
 			}
 			
@@ -37,21 +56,120 @@ package controlers.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			var arr : Array = this.getItem( key.toString() );
-			if ( arr != null ){
-				for each( var callback:Function in arr ){
-					callback.call();
-				}
+			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this.find( InputKey.ANYKEY.toString() ), event );
+		}
+		
+		private function excuteCallbacks( arr:Array, event:Event ) : void
+		{
+			if ( arr == null )
+				return;
+			
+			for each( var callback:Function in arr ){
+				callback.call( null, event );
 			}
+		}
+		
+		private function onMouseDown( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_LEFT;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( InputKey.MOUSE_LEFT.toString() ), event );
+			excuteCallbacks( this.find( InputKey.ANYKEY.toString() ), event );
+		}
+		
+		private function onMouseMove( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_MOVE;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( key.toString() ), event );
+		}
+		
+		private function onMouseWheel( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_WHEEL;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( key.toString() ), event );
+		}
+		
+		private function onMouseOver( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_OVER;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( key.toString() ), event );
+		}
+		
+		private function onMouseOut( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_OUT;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( key.toString() ), event );
+		}
+		
+		private function onContext ( event:Event ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_RIGHT;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( key.toString() ), event );
+			//任意键不包括右键
+			//excuteCallbacks( this.getItem( InputKey.ANYKEY.toString() ), event );
 		}
 		
 		public function on(key:uint, callback:Function):void
 		{
 			if ( callback == null ){
-				Logger.error( "InputManager on : callback is null." );
+				Logger.warning( "InputManager on : callback is null." );
 				return;
 			}
-			var arr : Array = this.getItem( key.toString() );
+			var arr : Array = this.find( key.toString() );
 			//new an array
 			if ( arr == null )
 				arr = [];
@@ -75,7 +193,7 @@ package controlers.core.input.impl
 			if ( callback == null ){
 				this.unreg( key.toString());
 			}else{
-				var arr : Array = this.getItem( key.toString() );
+				var arr : Array = this.find( key.toString() );
 				if ( arr != null ){
 					var i:int = arr.indexOf( callback );
 					if ( i > -1 ){
@@ -86,14 +204,24 @@ package controlers.core.input.impl
 			}
 		}
 		
-		public function set enable(value:Boolean):void
+		public function set enableKeyboard(value:Boolean):void
 		{
-			_enable = value;
+			_enableKeyboard = value;
 		}
 		
-		public function get enable():Boolean
+		public function get enableKeyboard():Boolean
 		{
-			return _enable;
+			return _enableKeyboard;
+		}
+		
+		public function set enableMouse( value:Boolean  ) : void
+		{
+			_enableMouse = value;
+		}
+		
+		public function get enableMouse() : Boolean
+		{
+			return _enableMouse;
 		}
 		
 		public function suspendKeys( keys:Array ) : void

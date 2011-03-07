@@ -19,6 +19,7 @@
 			import controlers.core.display.impl.BaseScreen;
 			import controlers.core.display.impl.BaseScreenManager;
 			import controlers.core.display.impl.ImageLayer;
+			import controlers.core.input.impl.InputKey;
 			import controlers.core.log.Logger;
 			import controlers.core.log.impl.TextAreaWriter;
 			import controlers.core.resource.*;
@@ -49,15 +50,25 @@
 				var sm :IScreenManager = world.screenMgr;
 				
 				var screen:BaseScreen = new BaseScreen();
-				var layer1:BaseLayer = new BaseLayer( 0 );
-				var layer2:ImageLayer = new ImageLayer( 1 );
-				layer2.dataSource = new ImageResource( "aa", "http://i1.sinaimg.cn/cj/newjs/slg/images/bigmap/1-1.jpg", true );
+				var second:BaseScreen = new BaseScreen();
+				var layer1:ImageLayer = new ImageLayer();
+				var layer2:ImageLayer = new ImageLayer();
+				layer1.dataSource = new ImageResource( "aa", "http://ww3.sinaimg.cn/bmiddle/61e89b74jw6dewr2ch6kqj.jpg", true );
 				
-				screen.insert( layer1 );
-				screen.insert(layer2 );
+				screen.push( layer1 );
+				screen.push(layer2 );
 				
 				sm.add( "first", screen ); 
+				sm.add( "second", second );
 				sm.goto("first");
+				
+				layer2.dataSource = new ImageResource( "bb", "http://ww3.sinaimg.cn/bmiddle/4d34c1fcjw6dezst13sw5j.jpg", true );
+				
+				world.inputMgr.on( InputKey.ANYKEY, function( event:Event ) :void {
+					//sm.goto( "second" );
+					layer2.hide();
+				} );
+				
 			}
 
 		]]>

@@ -5,32 +5,24 @@ package controlers.core.display.impl
 	import controlers.core.resource.IResource;
 	import controlers.core.resource.event.ResourceEvent;
 	import controlers.core.resource.impl.ImageResource;
+	
+	import flash.display.Bitmap;
 	import flash.events.Event;
 	
-	public class ImageLayer extends BaseLayer implements ILayer
+	public class ImageLayer extends BaseLayer implements ILayer, IDataSource
 	{
-		private var _source:ImageResource;
+		private var _source:IResource;
 		
-		public function ImageLayer(pri:uint)
+		public function ImageLayer()
 		{
-			super(pri);
-			
-			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-		}
-		
-		private function onAddedToStage(e:Event):void
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			
-			
+			super();
 		}
 		
 		/**
-		 * TODO 未被添加，提前设置dataSource 
 		 * @param value
 		 * 
 		 */		
-		public function set dataSource( value:ImageResource ) : void
+		public function set dataSource( value:IResource ) : void
 		{
 			if ( _source != null ){
 				_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
@@ -43,7 +35,7 @@ package controlers.core.display.impl
 			}
 			
 			if ( _source.isFinish() ){
-				this.addChild( _source.getBitmap() );
+				this.addChild( _source.content as Bitmap );
 			}else{
 				_source.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 				_source.load();
@@ -53,9 +45,10 @@ package controlers.core.display.impl
 		private function onResourceComplete( event:ResourceEvent ) : void
 		{
 			_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			this.addChild( _source.content as Bitmap );
 		}
 		
-		public function get dataSource() : ImageResource
+		public function get dataSource() : IResource
 		{
 			return _source;
 		}

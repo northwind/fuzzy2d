@@ -4,17 +4,19 @@ package controlers.core
 	import controlers.core.debug.IDebugManamger;
 	import controlers.core.debug.Stats;
 	import controlers.core.debug.impl.BaseDebugManager;
+	import controlers.core.display.IScreenManager;
+	import controlers.core.display.impl.BaseScreenManager;
 	import controlers.core.input.IInputManager;
 	import controlers.core.input.impl.InputKey;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
-	import controlers.core.display.IScreenManager;
-	import controlers.core.display.impl.BaseScreenManager;
-	
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.ui.ContextMenu;
+	import flash.ui.ContextMenuBuiltInItems;
+	import flash.ui.ContextMenuItem;
 	
 	/**
 	 * 单例，整个游戏的通用设置，包括物理特性等。 
@@ -45,6 +47,12 @@ package controlers.core
 			
 			this._area = area;
 			
+			var myContextMenu:ContextMenu = new ContextMenu();
+			myContextMenu.hideBuiltInItems();
+			var item:ContextMenuItem = new ContextMenuItem( "意见反馈" );
+			myContextMenu.customItems.push(item);
+			this._area.contextMenu = myContextMenu;
+				
 			this.initManagers();
 			
 			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );
@@ -52,14 +60,15 @@ package controlers.core
 		
 		protected function initManagers() :void
 		{
-//			this.screenMgr
+			this.screenMgr.init( this._area );
+			
 			this.commandMgr.init( this._area );
 			this.commandMgr.registerCommand( "fps", this.showStats, "show/hide fps indicator at [x,y]." );
 			
-			this.inputMgr.init( this.stage );
-			this.inputMgr.on( InputKey.F12, this.commandMgr.toggle );
-			
-			this.screenMgr.init( this._area );
+			this.inputMgr.init( this._area );
+			this.inputMgr.on( InputKey.F12, function ( event:Event ): void{
+				commandMgr.toggle();
+			});
 		}
 		
 		/**

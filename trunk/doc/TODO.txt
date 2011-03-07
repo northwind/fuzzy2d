@@ -10,6 +10,6 @@
 #sourceManager  待完善videoResource
 #inputManager  增加input any key
 soundManager
-screenManager
-layerManager
+#screenManager
+#layerManager
 增加core文件夹,core中放置的类不涉及具体的游戏类型

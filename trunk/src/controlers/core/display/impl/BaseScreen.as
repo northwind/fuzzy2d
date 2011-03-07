@@ -5,21 +5,25 @@ package controlers.core.display.impl
 	
 	import flash.display.DisplayObject;
 	
+	/**
+	 * 按序添加layer 最后加优先级最高,倒序显示
+	 * @author norris
+	 * 
+	 */	
 	public class BaseScreen extends ContainerDisplay implements IScreen
 	{
+		private var _layers:Array = [];
+		
 		public function BaseScreen()
 		{
 			super();
 		}
 		
-		public function insert( layer:ILayer ):void
+		public function push( layer:ILayer ):void
 		{
-			//一个级别只能存在一个层
-			if ( this.get( layer.pri ) != null )
-				this.remove( layer.pri );
+			_layers.push( layer );
 			
-			this.addChildAt( layer as DisplayObject , layer.pri );
-//			this.reg( pri, layer );
+			this.addChild( layer as DisplayObject );
 		}
 		
 		public function remove(pri:uint):void

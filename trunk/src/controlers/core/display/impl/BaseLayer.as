@@ -6,11 +6,9 @@ package controlers.core.display.impl
 	{
 		private var _pri:uint;
 		
-		public function BaseLayer( pri:uint )
+		public function BaseLayer()
 		{
 			super();
-			
-			this._pri = pri;
 		}
 		
 		public function set pri(value:uint):void

@@ -14,7 +14,7 @@ package controlers.core.display
 		
 		function get name() : String;
 		
-		function insert( layer:ILayer ) : void ;
+		function push( layer:ILayer ) : void ;
 		
 		function remove( pri:uint ) : void ;
 		

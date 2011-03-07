@@ -9,5 +9,9 @@ package controlers.core.display
 		function init( container:Sprite ) : void;
 		
 		function add( name:String, screen: IScreen ) : void;
+		
+		function get( name:String ) :IScreen;
+		
+		function remove( name:String ) :void;
 	}
 }
