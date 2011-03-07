@@ -28,18 +28,18 @@ package controlers.core.input.impl
 		public function testSet_enable():void
 		{
 			var im:InputManager = new InputManager();
-			im.enable = true;
+			im.enableKeyboard = true;
 			
-			Assert.assertTrue( im.enable == true );
+			Assert.assertTrue( im.enableKeyboard == true );
 		}
 		
 		[Test]
 		public function testGet_enable():void
 		{
 			var im:InputManager = new InputManager();
-			im.enable = true;
+			im.enableKeyboard = true;
 			
-			Assert.assertTrue( im.enable == true );
+			Assert.assertTrue( im.enableKeyboard == true );
 		}
 		
 		[Test]

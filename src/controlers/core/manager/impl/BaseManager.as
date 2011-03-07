@@ -37,7 +37,7 @@ package controlers.core.manager.impl
 				//log
 				return;
 			}
-			var item : * = getItem( key );
+			var item : * = find( key );
 			if ( item == null ){
 				//log
 				return;
@@ -47,14 +47,14 @@ package controlers.core.manager.impl
 			_count--;
 		}
 		
-		public function getItem(key:String): *
+		public function find(key:String): *
 		{
 			return items[ key ]  ;
 		}
 		
 		public function has(key:String):Boolean
 		{
-			return getItem( key ) != null;
+			return find( key ) != null;
 		}
 		
 		public function get count():int
@@ -64,12 +64,13 @@ package controlers.core.manager.impl
 		
 		public function getAll ()	: Object
 		{
-			var ret :Object = {};
-			
-			for( var key:String in items ){
-				ret[ key ] = items[ key ];			
-			}
-			return ret;
+//			var ret :Object = {};
+//			
+//			for( var key:String in items ){
+//				ret[ key ] = items[ key ];			
+//			}
+//			return ret;
+			return items;
 		}
 		
 		public function dismiss():void

@@ -90,7 +90,7 @@ package controlers.core.input.impl
 		public static const F2:uint = 113;
 		public static const F3:uint = 114;
 		public static const F4:uint = 115;
-		public static const F5:uint = 116;
+		//public static const F5:uint = 116;
 		public static const F6:uint = 117;
 		public static const F7:uint = 118;
 		public static const F8:uint = 119;
@@ -116,11 +116,15 @@ package controlers.core.input.impl
 		public static const RIGHT_BRACKET:uint = 221;
 		public static const QUOTE:uint = 222;
 		
-		public static const MOUSE_BUTTON:uint = 253;
-		public static const MOUSE_X:uint = 254;
-		public static const MOUSE_Y:uint = 255;
+		//public static const MOUSE_BUTTON:uint = 253;
+		public static const MOUSE_LEFT:uint = 254;
+		public static const MOUSE_RIGHT:uint = 255;
 		public static const MOUSE_WHEEL:uint = 256;
-		public static const MOUSE_HOVER:uint = 257;
+		public static const MOUSE_MOVE:uint = 257;
+		public static const MOUSE_OVER:uint = 258;
+		public static const MOUSE_OUT:uint = 259;
+		
+		public static const ANYKEY:uint = 500;
 		
 		public function InputKey()
 		{
