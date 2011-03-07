@@ -31,6 +31,10 @@ package controlers.core.sound
 		 */		
 		function play( transform:SoundTransform = null ) : void;
 		
+		/**
+		 *  如果声音文件仍在加载过程中，则只是暂时性的暂停，会在下一帧继续播放 
+		 *  完全停止需要使用Sound.close()
+		 */		
 		function stop() : void;
 		
 		function set mute( value:Boolean ) : void;
@@ -49,7 +53,7 @@ package controlers.core.sound
 		
 		function get position() :uint;
 		
-		function replay() : void;
+		function replay( transform:SoundTransform = null ) : void;
 		
 		function isPlaying() : Boolean;
 		

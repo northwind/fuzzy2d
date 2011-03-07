@@ -49,7 +49,7 @@ package controlers.core.sound
 		
 		function loops( name:String, times : uint ) : void;
 		
-		function replay( name:String ) : void;
+		function replay( name:String, transform:SoundTransform = null ) : void;
 		
 		function mute( name:String, off:Boolean ) : void;
 		
