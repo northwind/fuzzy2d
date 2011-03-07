@@ -174,7 +174,7 @@ package controlers.core.sound.impl
 				sounder.loops = times;					
 		}
 		
-		public function replay(name:String):void
+		public function replay(name:String, transform:SoundTransform = null):void
 		{
 			if ( !_aviable )
 				return;
