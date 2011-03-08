@@ -3,6 +3,7 @@ package controlers.core.manager.impl
 	import controlers.core.manager.IItem;
 	import controlers.core.manager.IStrictManager;
 	import controlers.core.manager.events.ManagerEvent;
+	import controlers.core.log.Logger;
 	
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
@@ -18,12 +19,11 @@ package controlers.core.manager.impl
 		
 		public function reg(key:String, item:IItem ):void
 		{
-			if ( key == "" ){
-				//log
+			if ( key == null || key == "" ){
 				return;
 			}
 			if ( item == null ){
-				//log
+				Logger.warning( "BaseStrictManager reg " + key + " : item is null." );
 				return;
 			}
 			
@@ -39,13 +39,11 @@ package controlers.core.manager.impl
 		
 		public function unreg(key:String):void
 		{
-			if ( key == "" ){
-				//log
+			if ( key == null || key == ""  ){
 				return;
 			}
 			var item : IItem = getItem( key );
 			if ( item == null ){
-				//log
 				return;
 			}
 
@@ -88,7 +86,9 @@ package controlers.core.manager.impl
 				(items[ key ] as IItem).onDismiss( key, this );
 			}
 			
-			this.dispatchEvent( new ManagerEvent( ManagerEvent.DISMISS ) );			
+			this.dispatchEvent( new ManagerEvent( ManagerEvent.DISMISS ) );		
+			
+			items = new Dictionary();
 		}
 	}
 }

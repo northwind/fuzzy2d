@@ -10,6 +10,10 @@ package controlers.core
 	import controlers.core.input.impl.InputKey;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
+	import controlers.core.resource.IResourceManager;
+	import controlers.core.resource.impl.ResourceManager;
+	import controlers.core.sound.ISounderManager;
+	import controlers.core.sound.impl.SounderManager;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -37,6 +41,10 @@ package controlers.core
 		[Inject]
 		public var inputMgr:IInputManager;
 		
+		public var resourceMgr:IResourceManager;
+		
+		public var soundMgr:ISounderManager;
+		
 		public function World()
 		{
 		}
@@ -60,6 +68,10 @@ package controlers.core
 		
 		protected function initManagers() :void
 		{
+			
+			resourceMgr = new ResourceManager();
+			soundMgr	= new SounderManager();
+			
 			this.screenMgr.init( this._area );
 			
 			this.commandMgr.init( this._area );

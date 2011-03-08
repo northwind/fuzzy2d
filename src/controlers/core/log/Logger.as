@@ -18,7 +18,12 @@ package controlers.core.log
 		
 		public static function init( writer :ILogWriter ):void
 		{
+			if ( writer == null )
+				return;
+			
 			Logger.writer = writer;
+			
+			debug( "Logger inited." );
 		}
 		
 		public static function debug( message:String):void

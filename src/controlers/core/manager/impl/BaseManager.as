@@ -1,6 +1,8 @@
 package controlers.core.manager.impl
 {
+	import controlers.core.log.Logger;
 	import controlers.core.manager.IManager;
+	
 	import flash.utils.Dictionary;
 	
 	public class BaseManager implements IManager
@@ -14,12 +16,11 @@ package controlers.core.manager.impl
 		
 		public function reg(key:String, item: * ):void
 		{
-			if ( key == "" ){
-				//log
+			if ( key == null || key == "" ){
 				return;
 			}
 			if ( item == null ){
-				//log
+				Logger.warning( "BaseManager reg " + key + " : item is null." );
 				return;
 			}
 			
@@ -33,13 +34,11 @@ package controlers.core.manager.impl
 		
 		public function unreg(key:String):void
 		{
-			if ( key == "" ){
-				//log
+			if ( key == null || key == "" ){
 				return;
 			}
 			var item : * = find( key );
 			if ( item == null ){
-				//log
 				return;
 			}
 			
@@ -75,6 +74,7 @@ package controlers.core.manager.impl
 		
 		public function dismiss():void
 		{
+			items = new Dictionary();
 		}
 	}
 }

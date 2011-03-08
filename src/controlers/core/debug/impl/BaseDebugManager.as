@@ -3,14 +3,14 @@ package controlers.core.debug.impl
 	import controlers.core.debug.IConsole;
 	import controlers.core.debug.IDebugManamger;
 	import controlers.core.log.Logger;
-	import controlers.core.manager.impl.BaseStrictManager;
+	import controlers.core.manager.impl.BaseManager;
 	
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	
 	import org.spicefactory.parsley.core.messaging.command.Command;
 	
-	public class BaseDebugManager extends BaseStrictManager implements IDebugManamger
+	public class BaseDebugManager extends BaseManager implements IDebugManamger
 	{
 		private var _enable :Boolean = true;
 		private var prefix:String = "";
@@ -94,8 +94,14 @@ package controlers.core.debug.impl
 			
 			line = line.replace( /^\s*/, "" ).replace( /\s*$/, "" );
 			
+			if ( line == "" ){
+				console.writeLine( prefix );
+				return;
+			}
+			
 			var n:int = line.indexOf( " " );
 			if ( n > -1 ){
+				//带参数
 				method = line.substr(0, n );
 				args = line.substr(n+1, line.length ).split( "," );
 				//消除空格
@@ -103,16 +109,12 @@ package controlers.core.debug.impl
 					args[ i ] = (args[ i ] as String).replace( /^\s*/, "" ).replace( /\s*$/, "" );
 				}				
 			}else{
-				method = "";
+				//只有命令 无参数
+				method = line;
 				args = [];
 			}
 			
-			if ( method == "" ){
-				console.writeLine( prefix );
-				return;
-			}
-			
-			var c:Command = this.getItem( method ) as Command;
+			var c:Command = this.find( method ) as Command;
 			
 			if ( c == null ){
 				console.writeLine( prefix + method + " is not a command.", 0xff0000 );
@@ -137,7 +139,7 @@ package controlers.core.debug.impl
 
 import controlers.core.manager.impl.BaseItem;
 
-final class Command extends BaseItem
+final class Command
 {
 	public var name:String;
 	public var callback:Function;

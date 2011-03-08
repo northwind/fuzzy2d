@@ -50,7 +50,7 @@ package controlers.core.input.impl
 			}
 			
 			var key:uint = event.keyCode;
-			Logger.debug( "InputManager on : key = " + key.toString() );
+//			Logger.debug( "InputManager on : key = " + key.toString() );
 			
 			//屏蔽特定按键
 			if ( _dirtykeys.indexOf( key ) > -1  )
@@ -166,7 +166,7 @@ package controlers.core.input.impl
 		public function on(key:uint, callback:Function):void
 		{
 			if ( callback == null ){
-				Logger.warning( "InputManager on : callback is null." );
+				Logger.warning( "InputManager on " + key + " : callback is null." );
 				return;
 			}
 			var arr : Array = this.find( key.toString() );
@@ -175,7 +175,7 @@ package controlers.core.input.impl
 				arr = [];
 			
 			if ( arr.indexOf( callback ) > -1 ){
-				Logger.warning( "InputManager on : callback is already exist." );
+				Logger.warning( "InputManager on " + key + " : callback is already exist." );
 			}else{
 				arr.push( callback );
 				this.reg( key.toString(), arr );
