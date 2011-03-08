@@ -54,7 +54,9 @@ package controlers.core.display.impl
 			
 			// only show one screen
 			if ( _current != null ){
-				this._container.removeChild( _current as DisplayObject );
+				try{
+					this._container.removeChild( _current as DisplayObject );
+				}catch(e :Error ){}
 			}
 			
 			_current = tmp;

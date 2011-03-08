@@ -5,12 +5,12 @@ package controlers.core.cop.impl
 	import controlers.core.cop.IEntity;
 	import controlers.core.cop.IComponent;
 	
-	public class BaseEntity implements IEntity
+	public class Entity implements IEntity
 	{
 		private var components:Array = [];
 		protected var setuped:Boolean = false;
 		
-		public function BaseEntity()
+		public function Entity()
 		{
 		}
 		

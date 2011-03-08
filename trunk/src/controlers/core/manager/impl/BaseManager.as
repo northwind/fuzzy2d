@@ -5,7 +5,12 @@ package controlers.core.manager.impl
 	
 	import flash.utils.Dictionary;
 	
-	public class BaseManager implements IManager
+	/**
+	 *  不再实现IManager, 所有方法改为protected，只被继承使用 
+	 * @author norris
+	 * 
+	 */	
+	public class BaseManager
 	{
 		private var items:Dictionary = new Dictionary();
 		private var _count:int = 0;
@@ -14,7 +19,7 @@ package controlers.core.manager.impl
 		{
 		}
 		
-		public function reg(key:String, item: * ):void
+		protected function reg(key:String, item: * ):void
 		{
 			if ( key == null || key == "" ){
 				return;
@@ -32,7 +37,7 @@ package controlers.core.manager.impl
 			}  
 		}
 		
-		public function unreg(key:String):void
+		protected function unreg(key:String):void
 		{
 			if ( key == null || key == "" ){
 				return;
@@ -46,22 +51,27 @@ package controlers.core.manager.impl
 			_count--;
 		}
 		
-		public function find(key:String): *
+		protected function find(key:String): *
 		{
 			return items[ key ]  ;
 		}
 		
-		public function has(key:String):Boolean
+		protected function has(key:String):Boolean
 		{
 			return find( key ) != null;
 		}
 		
+		/**
+		 * 暴露 count 方法 
+		 * @return 
+		 * 
+		 */		
 		public function get count():int
 		{
 			return _count;
 		}
 		
-		public function getAll ()	: Object
+		protected function getAll ()	: Object
 		{
 //			var ret :Object = {};
 //			
@@ -72,7 +82,7 @@ package controlers.core.manager.impl
 			return items;
 		}
 		
-		public function dismiss():void
+		protected function dismiss():void
 		{
 			items = new Dictionary();
 		}
