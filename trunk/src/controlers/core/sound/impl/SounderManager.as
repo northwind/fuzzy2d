@@ -3,31 +3,37 @@ package controlers.core.sound.impl
 	import controlers.core.manager.impl.BaseManager;
 	import controlers.core.sound.ISounder;
 	import controlers.core.sound.ISounderManager;
+	import controlers.core.resource.IResource;
+	import controlers.core.log.Logger;
 	
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
 	import flash.utils.ByteArray;
 	
+	
 	public class SounderManager extends BaseManager implements ISounderManager
 	{
 		private var _muted :Boolean = false;
-		private var _aviable:Boolean = true;
 		
 		public function SounderManager()
 		{
 			super();
-			
-			_aviable = SoundMixer.areSoundsInaccessible();
 		}
 		
-		public function get aviable() :Boolean
+		public static function get aviable() :Boolean
 		{
-			return _aviable;
+//			return SoundMixer.areSoundsInaccessible();
+			return true;
 		}
 		
-		public function get snapshot() :ByteArray
+		/**
+		 * 当前声音波形的快照 
+		 * @return 
+		 * 
+		 */		
+		public static function get snapshot() :ByteArray
 		{
-			if ( !_aviable )
+			if ( !SounderManager.aviable )
 				return null; 
 			
 			var ret:ByteArray = new ByteArray();
@@ -36,21 +42,32 @@ package controlers.core.sound.impl
 			return ret;	
 		}
 		
-		public function createSounder( name:String, resource:IResource ) :Sounder
+		public function create( name:String, resource:IResource = null ) :ISounder
 		{
 			var sounder:Sounder = new Sounder( name );
-			sounder.dataSource = sounder;	
+			if ( resource != null )
+				sounder.dataSource = resource;	
 			
 			//新生成的, 也必须是无声的
 			if ( _muted )
 				sounder.mute = _muted;
-				
+			
+			//默认添加到管理器
+			this.add( sounder );
+			
 			return sounder;
 		}
 		
-		public function add(name:String, sounder:ISounder):void
+		public function add( sounder:ISounder):void
 		{
-			this.reg( name, sounder );
+			if ( sounder == null )
+				return;
+			if ( sounder.name == "" ){
+				Logger.warning( "SoundManager add: sounder.name si null." );
+				return;
+			}
+			
+			this.reg( sounder.name, sounder );
 		}
 		
 		public function remove(name:String):void
@@ -63,33 +80,29 @@ package controlers.core.sound.impl
 			return this.find( name );
 		}
 		
-		public function play(name:String , transform:SoundTransform = null ):void
+		public function play(name:String ):void
 		{
-			if ( !_aviable )
+			if ( !SounderManager.aviable )
 				return;
 			
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )
-				sounder.play( transform );
+				sounder.play();
 		}
 		
-		public function stop(name:String=null):void
+		public function stop(name:String ):void
 		{
-			//对所有元素操作
-			if ( name == null ){
-				
-				for each( var item:ISounder in this.getAll() ){
-					if ( item.isPlaying() )
-						item.stop();
-				}
-				
-				return;
-			}
-			
-			//单个元素
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.stop();
+		}
+		
+		public function stopAll() : void
+		{
+			for each( var item:ISounder in this.getAll() ){
+				if ( item.isPlaying() )
+					item.stop();
+			}
 		}
 		
 		public function mute(name:String , off:Boolean):void
@@ -111,60 +124,66 @@ package controlers.core.sound.impl
 			}
 		}
 		
-		public function up(name:String=null, value:Number):void
+		public function up(name:String, value:Number):void
 		{
-			//对所有元素操作
-			if ( name == null ){
-				
-				for each( var item:ISounder in this.getAll() ){
-					if ( item.isPlaying() )
-						item.volume += value;
-				}
-				
+			if ( value > 1 || value < 0 )
 				return;
-			}
 			
-			//单个元素
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )
-				item.volume += value;
+				sounder.volume += value;
 		}
 		
-		public function down(name:String=null, value:Number):void
+		public function upAll( value:Number ) : void
 		{
-			//对所有元素操作
-			if ( name == null ){
-				
-				for each( var item:ISounder in this.getAll() ){
-					if ( item.isPlaying() )
-						item.volume -= value;
-				}
-				
+			if ( value > 1 || value < 0 )
 				return;
-			}
 			
-			//单个元素
+			for each( var item:ISounder in this.getAll() ){
+				if ( item.isPlaying() )
+					item.volume += value;
+			}
+		}
+		
+		public function down(name:String , value:Number):void
+		{
+			if ( value > 1 || value < 0 )
+				return;
+			
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )
-				item.volume -= value;
+				sounder.volume -= value;
 		}
 		
-		public function volume(name:String=null, value:Number):void
+		public function downAll( value:Number ) : void
 		{
-			//对所有元素操作
-			if ( name == null ){
-				
-				for each( var item:ISounder in this.getAll() ){
-					item.volume = value;
-				}
-				
+			if ( value > 1 || value < 0 )
 				return;
-			}
 			
-			//单个元素
+			for each( var item:ISounder in this.getAll() ){
+				if ( item.isPlaying() )
+					item.volume -= value;
+			}
+		}
+		
+		public function volume(name:String , value:Number):void
+		{
+			if ( value > 1 || value < 0 )
+				return;
+			
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.volume = value;			
+		}
+		
+		public function volumeAll( value:Number):void
+		{
+			if ( value > 1 || value < 0 )
+				return;
+			
+			for each( var item:ISounder in this.getAll() ){
+				item.volume = value;
+			}
 		}
 		
 		public function loops(name:String, times:uint):void
@@ -174,9 +193,9 @@ package controlers.core.sound.impl
 				sounder.loops = times;					
 		}
 		
-		public function replay(name:String, transform:SoundTransform = null):void
+		public function replay(name:String ):void
 		{
-			if ( !_aviable )
+			if ( !SounderManager.aviable )
 				return;
 				
 			var sounder:ISounder = this.find( name ) as ISounder;

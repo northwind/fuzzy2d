@@ -47,7 +47,6 @@ package controlers.core.resource.impl
 			
 			var ret:IResource = null;		
 			if ( type != null ){
-				typeof type;
 				var b :Boolean = type is IResource;
 				try{
 					ret = (new type( name, url, policy ) ) as IResource;	
@@ -75,29 +74,28 @@ package controlers.core.resource.impl
 		 */		
 		public function guessType( url:String ) :Class
 		{
-			return BaseResource;
 			var extension:String = url.replace( /.*[.](\w{1,5})$/i, "$1" );
 			
 			if ( /jpg|gif|png/i.test( extension )  )
 				return ImageResource;
 				
 			else if ( /swf/i.test( extension ) )
-				return ImageResource;
+				return VideoResource;
 				
 			else if ( /xml|mxml/i.test( extension ) )
-				return ImageResource;
+				return XMLResource;
 				
 			else if ( /mp3|f4a|f4b/i.test( extension ) )
-				return ImageResource;
+				return SoundResource;
 				
 			else if ( /json/i.test( extension ) )
-				return ImageResource;
+				return JSONResource;
 				
 			else if ( /flv|f4v|f4p|mp4/i.test( extension ) )
-				return ImageResource;
+				return VideoResource;
 				
 			else if ( /txt|js|css|html|php|py|jsp|asp/i.test( extension ) )
-				return ImageResource;
+				return TextResource;
 				
 			else
 				return BaseResource;
@@ -149,7 +147,6 @@ package controlers.core.resource.impl
 			
 			var tempComplete:Function = function( event:ResourceEvent ) : void{
 				count++;
-				trace( "complete " + event.resource.name + " count = " + count );
 				
 				event.resource.removeEventListener( ResourceEvent.COMPLETE, tempComplete );
 				event.resource.removeEventListener( ResourceEvent.PROCESS, tempProcess );

@@ -25,6 +25,7 @@
 			import controlers.core.resource.*;
 			import controlers.core.resource.event.ResourceEvent;
 			import controlers.core.resource.impl.*;
+			import controlers.core.sound.ISounder;
 			
 			import flash.display.Sprite;
 			
@@ -69,6 +70,43 @@
 					layer2.hide();
 				} );
 				
+				world.resourceMgr.add( "lin", "http://slgengine.sinaapp.com/test/lin.mp3", true );
+				world.resourceMgr.load( "lin", null, function( event:ResourceEvent ) : void {
+					Logger.debug( "lin sound loaded." );
+					var sounder:ISounder = world.soundMgr.create( "lin", event.resource );
+										world.soundMgr.loops( "lin", 6 );
+					world.soundMgr.play( "lin" );
+					
+				} );
+				
+				var off:Boolean = true;
+				world.inputMgr.on( InputKey.RIGHT , function( event:Event ) :void {
+					world.soundMgr.mute( "lin", off );
+					off = !off;
+				} );
+				
+				var stoped:Boolean = false;
+				world.inputMgr.on( InputKey.SPACE , function( event:Event ) :void {
+					if ( stoped ){
+						stoped = false;
+						world.soundMgr.play( "lin" );
+					}else{
+						stoped = true;
+						world.soundMgr.stop( "lin" );
+					}
+				} );
+				
+				world.inputMgr.on( InputKey.DOWN , function( event:Event ) :void {
+					world.soundMgr.down( "lin", 0.1 );
+				} );
+				
+				world.inputMgr.on( InputKey.UP , function( event:Event ) :void {
+					world.soundMgr.up( "lin", 0.1 );
+				} );
+				
+				world.inputMgr.on( InputKey.LEFT , function( event:Event ) :void {
+					world.soundMgr.replay( "lin" );
+				} );
 			}
 
 		]]>

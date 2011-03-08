@@ -3,7 +3,8 @@ package controlers.core.sound
 	import controlers.core.resource.IResource;
 	
 	import flash.utils.ByteArray;
-
+	import flash.media.SoundTransform;
+	
 	/**
 	 * 声音管理器, 对声音的操作尽量在Manager中完成,便于管理
 	 * 
@@ -13,15 +14,6 @@ package controlers.core.sound
 	 */	
 	public interface ISounderManager 
 	{
-		function get aviable() :Boolean;
-		
-		/**
-		 * 当前声音波形的快照 
-		 * @return 
-		 * 
-		 */		
-		function get snapshot() :ByteArray;	
-		
 		/**
 		 * 默认添加到Manager中 
 		 * @param name
@@ -29,27 +21,35 @@ package controlers.core.sound
 		 * @return 
 		 * 
 		 */		
-		function createSounder( name:String, resource:IResource ) :ISounder;
+		function create( name:String, resource:IResource = null ) :ISounder;
 		
-		function add( name:String, sounder:ISounder ) : void;
+		function add( sounder:ISounder ) : void;
 		
 		function remove( name:String ) : void;
 		
 		function get( name:String ) : ISounder;
 		
-		function play( name:String , transform:SoundTransform = null ) : void;
+		function play( name:String ) : void;
 		
-		function stop( name:String = null ) : void;
+		function stop( name:String ) : void;
 		
-		function up( name:String = null, value:Number ) : void;
+		function stopAll() : void;
 		
-		function down( name:String = null, value:Number ) : void;
+		function up( name:String, value:Number ) : void;
 		
-		function volume( name:String = null, value:Number ) : void;
+		function upAll( value:Number ) : void;
+		
+		function down( name:String, value:Number ) : void;
+		
+		function downAll( value:Number ) : void;
+		
+		function volume( name:String, value:Number ) : void;
+		
+		function volumeAll( value:Number ) : void;
 		
 		function loops( name:String, times : uint ) : void;
 		
-		function replay( name:String, transform:SoundTransform = null ) : void;
+		function replay( name:String ) : void;
 		
 		function mute( name:String, off:Boolean ) : void;
 		

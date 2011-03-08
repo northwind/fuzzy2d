@@ -29,7 +29,7 @@ package controlers.core.sound
 		 * @param transform
 		 * 
 		 */		
-		function play( transform:SoundTransform = null ) : void;
+		function play() : void;
 		
 		/**
 		 *  如果声音文件仍在加载过程中，则只是暂时性的暂停，会在下一帧继续播放 
@@ -41,11 +41,11 @@ package controlers.core.sound
 		
 		function get mute() : Boolean;
 		
-		function set volume( value:Number ) void;
+		function set volume( value:Number ) : void;
 		
 		function get volume() : Number;
 		
-		function set loops( value:uint ) void;
+		function set loops( value:uint ) : void;
 		
 		function get loops() : uint;
 		
@@ -53,7 +53,7 @@ package controlers.core.sound
 		
 		function get position() :uint;
 		
-		function replay( transform:SoundTransform = null ) : void;
+		function replay() : void;
 		
 		function isPlaying() : Boolean;
 		

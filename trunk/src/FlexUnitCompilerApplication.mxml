@@ -12,9 +12,10 @@ Please click on the "Refresh" icon in "FlexUnit Results" view to regenerate this
 			import controlers.core.resource.impl.BaseResourceTest;
 			import controlers.core.cop.impl.BaseEntityTest;
 			import controlers.core.input.impl.InputManagerTest;
+			import controlers.core.sound.impl.SounderManagerTest;
 			import controlers.core.resource.impl.ResourceManagerTest1;
-			import controlers.core.manager.impl.BaseManagerTest;
 			import controlers.core.resource.impl.ResourceManagerTest;
+			import controlers.core.manager.impl.BaseManagerTest;
 			
 			private var controlers_core_manager_impl_BaseStrictManagerTest_obj:controlers.core.manager.impl.BaseStrictManagerTest;
 			
@@ -28,13 +29,16 @@ Please click on the "Refresh" icon in "FlexUnit Results" view to regenerate this
 			private var controlers_core_input_impl_InputManagerTest_obj:controlers.core.input.impl.InputManagerTest;
 			
 			
+			private var controlers_core_sound_impl_SounderManagerTest_obj:controlers.core.sound.impl.SounderManagerTest;
+			
+			
 			private var controlers_core_resource_impl_ResourceManagerTest1_obj:controlers.core.resource.impl.ResourceManagerTest1;
 			
 			
-			private var controlers_core_manager_impl_BaseManagerTest_obj:controlers.core.manager.impl.BaseManagerTest;
-			
-			
 			private var controlers_core_resource_impl_ResourceManagerTest_obj:controlers.core.resource.impl.ResourceManagerTest;
+			
+			
+			private var controlers_core_manager_impl_BaseManagerTest_obj:controlers.core.manager.impl.BaseManagerTest;
 			
 		]]>
 	</fx:Script>
