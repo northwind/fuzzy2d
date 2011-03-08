@@ -30,7 +30,7 @@ package controlers.core.cop.impl
 		public function testAddComponent():void
 		{
 			var c:BaseComponent = new BaseComponent();
-			var entity:BaseEntity = new BaseEntity();
+			var entity:Entity = new Entity();
 			entity.addComponent( c );
 			Assert.assertTrue( true );
 		}
@@ -39,7 +39,7 @@ package controlers.core.cop.impl
 		public function testDestroy():void
 		{
 			var c:BaseComponent = new BaseComponent();
-			var entity:BaseEntity = new BaseEntity();
+			var entity:Entity = new Entity();
 			entity.addComponent( c );
 			entity.destroy();
 			Assert.assertTrue( true );
@@ -50,7 +50,7 @@ package controlers.core.cop.impl
 		public function testSetup():void
 		{
 			var c:BaseComponent = new BaseComponent();
-			var entity:BaseEntity = new BaseEntity();
+			var entity:Entity = new Entity();
 			entity.addComponent( c );
 			entity.setup();
 			

@@ -50,32 +50,52 @@
 				
 				var sm :IScreenManager = world.screenMgr;
 				
-				var screen:BaseScreen = new BaseScreen();
+				var first:BaseScreen = new BaseScreen();
 				var second:BaseScreen = new BaseScreen();
-				var layer1:ImageLayer = new ImageLayer();
-				var layer2:ImageLayer = new ImageLayer();
-				layer1.dataSource = new ImageResource( "aa", "http://ww3.sinaimg.cn/bmiddle/61e89b74jw6dewr2ch6kqj.jpg", true );
+				var third:BaseScreen = new BaseScreen();
+				var fourth:BaseScreen = new BaseScreen();
 				
-				screen.push( layer1 );
-				screen.push(layer2 );
+				var bg1:ImageLayer = new ImageLayer();
+				bg1.dataSource = new ImageResource( "a", "http://slgengine.sinaapp.com/test/friends.png", true );
+				first.push( bg1 ); 
 				
-				sm.add( "first", screen ); 
-				sm.add( "second", second );
-				sm.goto("first");
+				var bg2:ImageLayer = new ImageLayer();
+				bg2.dataSource = new ImageResource( "b", "http://slgengine.sinaapp.com/test/mission.png", true );
+				second.push( bg2 ); 
 				
-				layer2.dataSource = new ImageResource( "bb", "http://ww3.sinaimg.cn/bmiddle/4d34c1fcjw6dezst13sw5j.jpg", true );
+				var bg3:ImageLayer = new ImageLayer();
+				bg3.dataSource = new ImageResource( "c", "http://slgengine.sinaapp.com/test/ready.png", true );
+				third.push( bg3 ); 
+				
+				var bg4:ImageLayer = new ImageLayer();
+				bg4.dataSource = new ImageResource( "d", "http://slgengine.sinaapp.com/test/battle.png", true );
+				fourth.push( bg4 ); 
+				
+				sm.add( "friends", first ); 
+				sm.add( "mission", second );
+				sm.add( "ready", third );
+				sm.add( "battle", fourth );
+				
+				sm.goto("friends");
+				
+				var i:uint = 1;
+				var screens:Array = [ "friends",  "mission", "ready", "battle" ];
 				
 				world.inputMgr.on( InputKey.ANYKEY, function( event:Event ) :void {
-					//sm.goto( "second" );
-					layer2.hide();
+					if ( i == screens.length )
+						i = 0;
+					
+					sm.goto( screens[ i++ ] );
+					
 				} );
 				
 				world.resourceMgr.add( "lin", "http://slgengine.sinaapp.com/test/lin.mp3", true );
 				world.resourceMgr.load( "lin", null, function( event:ResourceEvent ) : void {
 					Logger.debug( "lin sound loaded." );
 					var sounder:ISounder = world.soundMgr.create( "lin", event.resource );
-										world.soundMgr.loops( "lin", 6 );
-					world.soundMgr.play( "lin" );
+					
+					world.soundMgr.loops( "lin", 2 );
+					//world.soundMgr.play( "lin" );
 					
 				} );
 				

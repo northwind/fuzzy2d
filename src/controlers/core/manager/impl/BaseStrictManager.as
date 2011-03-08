@@ -8,7 +8,12 @@ package controlers.core.manager.impl
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	
-	public class BaseStrictManager extends EventDispatcher implements IStrictManager
+	/**
+	 *  不再实现IStrictManager, 所有方法改为protected，只被继承使用 
+	 * @author norris
+	 * 
+	 */	
+	public class BaseStrictManager extends EventDispatcher 
 	{
 		private var items:Dictionary = new Dictionary();
 		private var _count:int = 0;
@@ -17,7 +22,7 @@ package controlers.core.manager.impl
 		{
 		}
 		
-		public function reg(key:String, item:IItem ):void
+		protected function reg(key:String, item:IItem ):void
 		{
 			if ( key == null || key == "" ){
 				return;
@@ -37,7 +42,7 @@ package controlers.core.manager.impl
 			}  
 		}
 		
-		public function unreg(key:String):void
+		protected function unreg(key:String):void
 		{
 			if ( key == null || key == ""  ){
 				return;
@@ -55,12 +60,12 @@ package controlers.core.manager.impl
 			this.dispatchEvent( new ManagerEvent( ManagerEvent.UNREG, key, item ) );
 		}
 		
-		public function getItem(key:String): IItem
+		protected function getItem(key:String): IItem
 		{
 			return items[ key ]  ;
 		}
 		
-		public function has(key:String):Boolean
+		protected function has(key:String):Boolean
 		{
 			return getItem( key ) != null;
 		}
@@ -70,7 +75,7 @@ package controlers.core.manager.impl
 			return _count;
 		}
 		
-		public function getAll ()	: Object
+		protected function getAll ()	: Object
 		{
 			var ret :Object = {};
 			
@@ -80,7 +85,7 @@ package controlers.core.manager.impl
 			return ret;
 		}
 		
-		public function dismiss():void
+		protected function dismiss():void
 		{
 			for( var key:String in items ){
 				(items[ key ] as IItem).onDismiss( key, this );

@@ -45,7 +45,8 @@ package controlers.core.display.impl
 		private function onResourceComplete( event:ResourceEvent ) : void
 		{
 			_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
-			this.addChild( _source.content as Bitmap );
+			if ( event.ok )
+				this.addChild( _source.content as Bitmap );
 		}
 		
 		public function get dataSource() : IResource

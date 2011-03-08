@@ -5,8 +5,8 @@
 排序
 移植寻路算法
 #logger类
-#debug工具             有bug
-#增加cop模块
+#debug工具             focus 阻止键盘事件
+#增加cop模块           增加一静态类 检测接口继承 factory 
 #sourceManager  待完善videoResource
 #inputManager  增加input any key
 soundManager
