@@ -2,9 +2,13 @@ package controlers.core.debug.impl
 {
 	import controlers.core.debug.IConsole;
 	import controlers.core.debug.IDebugManamger;
+	import controlers.core.debug.Stats;
+	import controlers.core.input.IInputManager;
 	import controlers.core.log.Logger;
 	import controlers.core.manager.impl.BaseManager;
+	import controlers.core.input.impl.InputKey;
 	
+	import flash.events.Event;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	
@@ -14,23 +18,18 @@ package controlers.core.debug.impl
 	{
 		private var _enable :Boolean = true;
 		private var prefix:String = "";
-		public var console :IConsole;
-		
+		private var console :IConsole;
 		private var container:Sprite;
+		private var _stats:Stats;
 		
-		public function BaseDebugManager()
+		public var inputMgr:IInputManager;
+		
+		public function BaseDebugManager( ct:Sprite )
 		{
 			super();
-		}
-		
-		public function init( container:Sprite ) : void
-		{
-			if ( container == null ){
-				Logger.error( "BaseCommandManager init : container is null " );
-				return;
-			}
 			
-			this.container = container;
+			this.container = ct;
+			
 			this.console = new BaseConsole();
 			this.console.hide();
 			this.console.onEnter( this.excute );
@@ -38,19 +37,59 @@ package controlers.core.debug.impl
 			this.container.addChild( console as Sprite );
 			
 			addInternalCommands();
-			
+		}
+		
+		public function onSetup() : void
+		{
+			if ( inputMgr ){
+				inputMgr.on( InputKey.F12, function ( event:Event ): void{
+					toggle();
+				} );
+			}
+		}
+		
+		public function destroy():void
+		{
 		}
 		
 		public function toggle() : void
 		{
 			this.console.toggle();
+			
+			//显示输入框时屏蔽键盘输入
+			if ( this.console.visible ){
+				inputMgr.enableKeyboard = false;	
+			}else{
+				inputMgr.enableKeyboard = true;
+			}
 		}
 		
 		protected function addInternalCommands() : void
 		{
 			this.registerCommand( "help", this.onHelp, "list command." );
 			this.registerCommand( "clear", this.console.clear, "clear console." );
-			this.registerCommand( "exit", this.console.hide, "exit console." );
+			this.registerCommand( "exit", toggle, "exit console." );
+			this.registerCommand( "fps", this.toggleStats, "show/hide fps indicator at [x,y]." );
+		}
+		
+		/**
+		 * 显示监控栏
+		 * 参数为 x,y 
+		 * @param rest
+		 * 
+		 */		
+		private function toggleStats() : void
+		{
+			if ( _stats ){
+				try{
+					this.container.removeChild( _stats );
+				}catch( e:Error){}
+				_stats.destroy();
+				_stats = null;
+			}else{
+				_stats = new Stats( arguments[0] || (this.container.width - 80), arguments[1] );
+				this.container.addChild( _stats );
+			}
 		}
 		
 		private function onHelp() : String

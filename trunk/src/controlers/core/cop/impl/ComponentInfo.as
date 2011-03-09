@@ -2,6 +2,7 @@ package controlers.core.cop.impl
 {
 	import controlers.core.cop.IEntity;
 	import controlers.core.cop.IComponent;
+	import controlers.core.cop.impl.Parameter;
 	
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
@@ -47,14 +48,19 @@ package controlers.core.cop.impl
 			
 			//属性
 			for each (var variable:XML in variables) {
-				_variables.push( [ (variable.@name).toString(), (variable.@type).toString() ] );					
+				//只存继承了IComponent接口的元素
+				type = (variable.@type).toString();				
+				if ( Parameter.isExtendIComponent( type ) )
+					_variables.push( [ (variable.@name).toString(), type ] );					
 			}
 			
 			//读写器
 			for each (var accessor:XML in accessors) {
+				//只存继承了IComponent接口的元素
+				type = (accessor.@type).toString();		
 				//只增加可写的访问器
-				if ( /write/i.test( (accessor.@access).toString() ) ){
-					_accessors.push( [ (accessor.@name).toString(), (accessor.@type).toString() ] );	
+				if ( /write/i.test( (accessor.@access).toString() ) && Parameter.isExtendIComponent( type ) ){
+					_accessors.push( [ (accessor.@name).toString(), type ] );	
 				}
 			}
 			

@@ -19,28 +19,32 @@ package controlers.core.input.impl
 		
 		private var _dirtykeys :Array = [];
 		
-		public function InputManager()
+		public function InputManager( ct:Sprite )
 		{
-		}
-		
-		public function init( area:Sprite ) : void
-		{
-			if ( area ){
-				var stage:Stage = area.stage;
+			if ( ct ){
+				var stage:Stage = ct.stage;
 				
 				//TODO consider keyup
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false );
 				stage.addEventListener(MouseEvent.MOUSE_WHEEL  , onMouseWheel );
 				stage.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
 				
-				area.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove );
-				area.addEventListener(MouseEvent.ROLL_OVER , onMouseOver );
-				area.addEventListener(MouseEvent.ROLL_OUT , onMouseOut );
+				ct.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove );
+				ct.addEventListener(MouseEvent.ROLL_OVER , onMouseOver );
+				ct.addEventListener(MouseEvent.ROLL_OUT , onMouseOut );
 				
-				if ( area.contextMenu != null )
+				if ( ct.contextMenu != null )
 					//area.contextMenu.addEventListener(Event.ACTIVATE, onContext );
-					area.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, onContext );
-			}
+					ct.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, onContext );
+			}			
+		}
+		
+		public function onSetup() : void
+		{
+		}
+		
+		public function destroy():void
+		{
 		}
 		
 		private function onKeyDown( event:KeyboardEvent ) : void

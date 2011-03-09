@@ -1,6 +1,7 @@
 package controlers.core.sound
 {
 	import controlers.core.resource.IResource;
+	import controlers.core.cop.IComponent;
 	
 	import flash.utils.ByteArray;
 	import flash.media.SoundTransform;
@@ -12,7 +13,7 @@ package controlers.core.sound
 	 * @author norris
 	 * 
 	 */	
-	public interface ISounderManager 
+	public interface ISounderManager extends IComponent
 	{
 		/**
 		 * 默认添加到Manager中 
@@ -55,7 +56,7 @@ package controlers.core.sound
 		
 		function muteAll( off:Boolean ) : void;
 		
-		function destroy( name:String ) : void;
+		function destroyResource( name:String ) : void;
 		
 		function destroyAll() : void;
 	}

@@ -6,9 +6,6 @@
 	<fx:Declarations>
 	
 		<core:World />
-		<impl:BaseDebugManager />
-		<impl3:BaseScreenManager />
-		<impl2:InputManager />
 		
 	</fx:Declarations>
 	

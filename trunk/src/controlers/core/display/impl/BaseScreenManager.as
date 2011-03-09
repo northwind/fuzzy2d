@@ -14,19 +14,19 @@ package controlers.core.display.impl
 		private var _container:Sprite = new Sprite();
 		private var _current:IScreen;
 		
-		public function BaseScreenManager()
+		public function BaseScreenManager( ct:Sprite )
 		{
 			super();
-		}
-		
-		public function init( ct:Sprite ) : void
-		{
-			if ( ct == null ){
-				Logger.error( "BaseCommandManager init : ct is null " );
-				return;
-			}
 			
 			ct.addChild( this._container );
+		}
+		
+		public function onSetup() : void
+		{
+		}
+		
+		public function destroy():void
+		{
 		}
 		
 		public function add( name:String, screen: IScreen ) : void

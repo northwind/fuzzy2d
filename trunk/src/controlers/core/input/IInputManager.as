@@ -1,19 +1,17 @@
 package controlers.core.input
 {
+	import controlers.core.cop.IComponent;
 	import controlers.core.manager.IManager;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	
 	/**
-	 * TODO 包括鼠标左右键 
+	 * 全局监管 键盘和鼠标
 	 * @author sina
-	 * 
 	 */	
-	public interface IInputManager
+	public interface IInputManager extends IComponent
 	{
-		function init( area:Sprite ) : void;
-		
 		function on( key :uint , callback : Function ) : void;
 		
 		function un( key :uint, callback : Function = null ) : void;

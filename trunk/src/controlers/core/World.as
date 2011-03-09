@@ -1,13 +1,14 @@
 package controlers.core
 {
 	
+	import controlers.core.cop.impl.Entity;
 	import controlers.core.debug.IDebugManamger;
-	import controlers.core.debug.Stats;
 	import controlers.core.debug.impl.BaseDebugManager;
 	import controlers.core.display.IScreenManager;
 	import controlers.core.display.impl.BaseScreenManager;
 	import controlers.core.input.IInputManager;
 	import controlers.core.input.impl.InputKey;
+	import controlers.core.input.impl.InputManager;
 	import controlers.core.log.Logger;
 	import controlers.core.log.impl.TextAreaWriter;
 	import controlers.core.resource.IResourceManager;
@@ -27,23 +28,19 @@ package controlers.core
 	 * @author norris
 	 * 
 	 */	
-	public class World
+	public class World extends Entity
 	{
 		public var name :String = "2.5d world"; 
 		
 		private var _area:Sprite;
 		private var stats:Sprite;
 		
-		[Inject]
 		public var screenMgr:IScreenManager;
-		[Inject]
-		public var commandMgr:IDebugManamger;
-		[Inject]
 		public var inputMgr:IInputManager;
-		
 		public var resourceMgr:IResourceManager;
-		
 		public var soundMgr:ISounderManager;
+
+		protected var debugMgr:IDebugManamger;
 		
 		public function World()
 		{
@@ -57,8 +54,6 @@ package controlers.core
 			
 			var myContextMenu:ContextMenu = new ContextMenu();
 			myContextMenu.hideBuiltInItems();
-			var item:ContextMenuItem = new ContextMenuItem( "意见反馈" );
-			myContextMenu.customItems.push(item);
 			this._area.contextMenu = myContextMenu;
 				
 			this.initManagers();
@@ -68,41 +63,19 @@ package controlers.core
 		
 		protected function initManagers() :void
 		{
+			this.inputMgr  = new InputManager( this._area );
+			this.screenMgr = new BaseScreenManager( this._area );
+			this.debugMgr = new BaseDebugManager( this._area );
+			this.resourceMgr = new ResourceManager();
+			this.soundMgr = new SounderManager();
 			
-			resourceMgr = new ResourceManager();
-			soundMgr	= new SounderManager();
+			this.addComponent( this.inputMgr );
+			this.addComponent( this.debugMgr );
+			this.addComponent( this.resourceMgr );
+			this.addComponent( this.soundMgr );
+			this.addComponent( this.screenMgr );
 			
-			this.screenMgr.init( this._area );
-			
-			this.commandMgr.init( this._area );
-			this.commandMgr.registerCommand( "fps", this.showStats, "show/hide fps indicator at [x,y]." );
-			
-			this.inputMgr.init( this._area );
-			this.inputMgr.on( InputKey.F12, function ( event:Event ): void{
-				commandMgr.toggle();
-			});
-		}
-		
-		/**
-		 *   显示当前状态  
-		 */		
-		public function showStats( sx : String = "0", sy : String = "0" ) : void
-		{
-			var x:int = parseInt( sx );
-			var y:int = parseInt( sy );
-			
-			if ( !stats ){
-				stats =  new Stats( x, y );
-				this._area.addChild( stats );
-			}
-		}
-		
-		public function hideStats() : void
-		{
-			if ( stats ){
-				this._area.removeChild( stats );
-				stats = null;
-			}
+			this.setup();
 		}
 		
 		private function onFrame( event:Event )  : void

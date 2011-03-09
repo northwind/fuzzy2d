@@ -31,7 +31,7 @@
 			
 			import mx.core.UIComponent;
 			
-			[Inject]
+//			[Inject]
 			public  var world :World;
 			
 			protected function application1_addedToStageHandler(event:Event):void
@@ -42,10 +42,11 @@
 				var area : Sprite = new Sprite();
 				var ui:UIComponent=new UIComponent(); 
 				ui.addChild(area);
-				this.addElement( ui );
+				this.addElementAt( ui, 0 );
 				
 				Logger.init( new TextAreaWriter( this.logarea ) );
 				
+				world = new World();
 				world.init( area );
 				
 				var sm :IScreenManager = world.screenMgr;

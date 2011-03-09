@@ -25,6 +25,14 @@ package controlers.core.resource.impl
 		{
 		}
 		
+		public function onSetup() : void
+		{
+		}
+		
+		public function destroy():void
+		{
+		}
+		
 		public function set local(value:String):void
 		{
 			_local = value;

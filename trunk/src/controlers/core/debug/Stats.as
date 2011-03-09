@@ -134,5 +134,10 @@ package controlers.core.debug
             msText.text = "MS: " + (timer - ms);
             ms = timer;
         }
+		
+		public function destroy() : void
+		{
+			this.removeEventListener( Event.ENTER_FRAME, update );
+		}
     }
 }

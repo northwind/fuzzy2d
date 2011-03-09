@@ -18,6 +18,8 @@ package controlers.core.display
 	 */	
 	public interface IDisplay extends IEventDispatcher
 	{
+		function get visible() :Boolean;
+		
 		function show() : void;
 		
 		function hide() : void;
