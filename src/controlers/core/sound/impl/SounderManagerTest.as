@@ -68,7 +68,7 @@ package controlers.core.sound.impl
 			
 			soundMgr.add( a );
 			
-			soundMgr.destroy( "aaa" );
+			soundMgr.destroyResource( "aaa" );
 		}
 		
 		[Test]

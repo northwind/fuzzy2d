@@ -58,6 +58,14 @@ package controlers.core.sound.impl
 			return sounder;
 		}
 		
+		public function onSetup() : void
+		{
+		}
+		
+		public function destroy():void
+		{
+		}
+		
 		public function add( sounder:ISounder):void
 		{
 			if ( sounder == null )
@@ -203,7 +211,7 @@ package controlers.core.sound.impl
 				sounder.replay();	
 		}
 		
-		public function destroy(name:String):void
+		public function destroyResource(name:String):void
 		{
 			var sounder:ISounder = this.find( name ) as ISounder;
 			if ( sounder != null )

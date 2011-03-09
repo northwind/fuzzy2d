@@ -1,12 +1,12 @@
 package controlers.core.display
 {
+	import controlers.core.cop.IComponent;
+	
 	import flash.display.Sprite;
 	
-	public interface IScreenManager
+	public interface IScreenManager extends IComponent
 	{
 		function goto( name :String ) : void;
-		
-		function init( container:Sprite ) : void;
 		
 		function add( name:String, screen: IScreen ) : void;
 		

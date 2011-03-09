@@ -1,5 +1,7 @@
 package controlers.core.input.impl
 {
+	import flash.display.Sprite;
+	
 	import flexunit.framework.Assert;
 	
 	public class InputManagerTest
@@ -27,7 +29,7 @@ package controlers.core.input.impl
 		[Test]
 		public function testSet_enable():void
 		{
-			var im:InputManager = new InputManager();
+			var im:InputManager = new InputManager( new Sprite() );
 			im.enableKeyboard = true;
 			
 			Assert.assertTrue( im.enableKeyboard == true );
@@ -36,7 +38,7 @@ package controlers.core.input.impl
 		[Test]
 		public function testGet_enable():void
 		{
-			var im:InputManager = new InputManager();
+			var im:InputManager = new InputManager( new Sprite() );
 			im.enableKeyboard = true;
 			
 			Assert.assertTrue( im.enableKeyboard == true );
@@ -45,7 +47,7 @@ package controlers.core.input.impl
 		[Test]
 		public function testReg():void
 		{
-			var im:InputManager = new InputManager();
+			var im:InputManager = new InputManager( new Sprite() );
 			im.on( InputKey.A , callback );
 			im.on( InputKey.A , callback );
 			
@@ -55,7 +57,7 @@ package controlers.core.input.impl
 		[Test]
 		public function testUnreg():void
 		{
-			var im:InputManager = new InputManager();
+			var im:InputManager = new InputManager( new Sprite() );
 			im.on( InputKey.A, callback );
 			im.on( InputKey.B, callback );
 			im.on( InputKey.A, testReg );

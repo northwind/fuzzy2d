@@ -1,11 +1,11 @@
 package controlers.core.debug
 {
+	import controlers.core.cop.IComponent;
+	
 	import flash.display.Sprite;
 	
-	public interface IDebugManamger 
+	public interface IDebugManamger extends IComponent
 	{
-		function init( container:Sprite ) : void;
-		
 		function registerCommand( name:String, callback:Function, desc :String = "" ) : void;
 		
 		function excute( line:String ) : void;

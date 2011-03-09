@@ -60,6 +60,12 @@ package controlers.core.debug.impl
 			createInputField();
 		}
 		
+		override protected function onShow() : void
+		{
+			if ( textField != null )
+				this.stage.focus = textField;
+		}
+		
 		protected function createResultSprite(): void
 		{
 			resultSprite = new Sprite();

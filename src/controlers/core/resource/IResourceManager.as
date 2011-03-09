@@ -1,5 +1,6 @@
 package controlers.core.resource
 {
+	import controlers.core.cop.IComponent;
 	/**
 	 * 负责资源的加载、读取和存放 
 	 * name:* 支持单个资源名 或者 字符数组
@@ -7,7 +8,7 @@ package controlers.core.resource
 	 * @author norris
 	 * 
 	 */	
-	public interface IResourceManager
+	public interface IResourceManager extends IComponent
 	{
 		function set local( value:String ) : void;
 		

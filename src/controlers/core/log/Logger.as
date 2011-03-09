@@ -23,7 +23,7 @@ package controlers.core.log
 			
 			Logger.writer = writer;
 			
-			debug( "Logger inited." );
+			info( "Logger inited." );
 		}
 		
 		public static function debug( message:String):void
