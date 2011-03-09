@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Objects 
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns="http://www.spicefactory.org/parsley" xmlns:controlers="controlers.*" xmlns:debug="controlers.core.debug.*" xmlns:core="controlers.core.*" xmlns:log="controlers.core.log.*" xmlns:impl="controlers.core.debug.impl.*" xmlns:impl1="controlers.core.screen.impl.*" xmlns:impl2="controlers.core.input.impl.*" xmlns:impl3="controlers.core.display.impl.*" >
+	xmlns="http://www.spicefactory.org/parsley" xmlns:controlers="controlers.*" xmlns:debug="com.norris.fuzzy.core.debug.*" xmlns:core="controlers.core.*" xmlns:log="com.norris.fuzzy.core.log.*" xmlns:impl="com.norris.fuzzy.core.debug.impl.*" xmlns:impl1="controlers.core.screen.impl.*" xmlns:impl4="com.norris.fuzzy.core.input.impl.*" xmlns:impl3="com.norris.fuzzy.core.display.impl.*" xmlns:core1="com.norris.fuzzy.core.*" >
 	
 	<fx:Declarations>
 	
-		<core:World />
+		<core1:World />
 		
 	</fx:Declarations>
 	

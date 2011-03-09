@@ -1,14 +1,16 @@
-package impl
+package com.norris.fuzzy.core.cop.impl
 {
 	import com.norris.fuzzy.core.cop.impl.ComponentInfo;
 	import com.norris.fuzzy.core.cop.impl.ComponentInfoFactory;
-
-	public class BaseEntity implements IEntity
+	import com.norris.fuzzy.core.cop.IEntity;
+	import com.norris.fuzzy.core.cop.IComponent;
+	
+	public class Entity implements IEntity
 	{
 		private var components:Array = [];
 		protected var setuped:Boolean = false;
 		
-		public function BaseEntity()
+		public function Entity()
 		{
 		}
 		

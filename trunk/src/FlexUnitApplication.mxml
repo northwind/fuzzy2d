@@ -7,12 +7,12 @@
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:flexui="flexunit.flexui.*" creationComplete="onCreationComplete()">
 	<fx:Script>
 		<![CDATA[
-			import controlers.core.sound.impl.SounderManagerTest;
+			import com.norris.fuzzy.core.sound.impl.SounderManagerTest;
 			
 			public function currentRunTestSuite():Array
 			{
 				var testsToRun:Array = new Array();
-				testsToRun.push(controlers.core.sound.impl.SounderManagerTest);
+				testsToRun.push(com.norris.fuzzy.core.sound.impl.SounderManagerTest);
 				return testsToRun;
 			}
 			

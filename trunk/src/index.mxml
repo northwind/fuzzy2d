@@ -13,19 +13,19 @@
 	 
 	<fx:Script>
 		<![CDATA[
-			import controlers.core.World;
-			import controlers.core.display.IScreenManager;
-			import controlers.core.display.impl.BaseLayer;
-			import controlers.core.display.impl.BaseScreen;
-			import controlers.core.display.impl.BaseScreenManager;
-			import controlers.core.display.impl.ImageLayer;
-			import controlers.core.input.impl.InputKey;
-			import controlers.core.log.Logger;
-			import controlers.core.log.impl.TextAreaWriter;
-			import controlers.core.resource.*;
-			import controlers.core.resource.event.ResourceEvent;
-			import controlers.core.resource.impl.*;
-			import controlers.core.sound.ISounder;
+			import com.norris.fuzzy.core.World;
+			import com.norris.fuzzy.core.display.IScreenManager;
+			import com.norris.fuzzy.core.display.impl.BaseLayer;
+			import com.norris.fuzzy.core.display.impl.BaseScreen;
+			import com.norris.fuzzy.core.display.impl.BaseScreenManager;
+			import com.norris.fuzzy.core.display.impl.ImageLayer;
+			import com.norris.fuzzy.core.input.impl.InputKey;
+			import com.norris.fuzzy.core.log.Logger;
+			import com.norris.fuzzy.core.log.impl.TextAreaWriter;
+			import com.norris.fuzzy.core.resource.*;
+			import com.norris.fuzzy.core.resource.event.ResourceEvent;
+			import com.norris.fuzzy.core.resource.impl.*;
+			import com.norris.fuzzy.core.sound.ISounder;
 			
 			import flash.display.Sprite;
 			
@@ -96,7 +96,7 @@
 					var sounder:ISounder = world.soundMgr.create( "lin", event.resource );
 					
 					world.soundMgr.loops( "lin", 2 );
-					//world.soundMgr.play( "lin" );
+					world.soundMgr.play( "lin" );
 					
 				} );
 				
