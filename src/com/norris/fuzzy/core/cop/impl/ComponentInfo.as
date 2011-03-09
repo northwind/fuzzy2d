@@ -1,10 +1,13 @@
-package
+package com.norris.fuzzy.core.cop.impl
 {
+	import com.norris.fuzzy.core.cop.IEntity;
+	import com.norris.fuzzy.core.cop.IComponent;
+	import com.norris.fuzzy.core.cop.impl.Parameter;
+	
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.xml.XMLNode;
-	import com.norris.fuzzy.core.cop.impl.ComponentInfo;
 	
 	/**
 	 *  
@@ -45,14 +48,19 @@ package
 			
 			//属性
 			for each (var variable:XML in variables) {
-				_variables.push( [ (variable.@name).toString(), (variable.@type).toString() ] );					
+				//只存继承了IComponent接口的元素
+				type = (variable.@type).toString();				
+				if ( Parameter.isExtendIComponent( type ) )
+					_variables.push( [ (variable.@name).toString(), type ] );					
 			}
 			
 			//读写器
 			for each (var accessor:XML in accessors) {
+				//只存继承了IComponent接口的元素
+				type = (accessor.@type).toString();		
 				//只增加可写的访问器
-				if ( /write/i.test( (accessor.@access).toString() ) ){
-					_accessors.push( [ (accessor.@name).toString(), (accessor.@type).toString() ] );	
+				if ( /write/i.test( (accessor.@access).toString() ) && Parameter.isExtendIComponent( type ) ){
+					_accessors.push( [ (accessor.@name).toString(), type ] );	
 				}
 			}
 			

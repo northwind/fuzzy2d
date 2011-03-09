@@ -9,7 +9,11 @@
 #增加cop模块           增加一静态类 检测接口继承 factory 
 #sourceManager  待完善videoResource
 #inputManager  增加input any key
-soundManager
+#soundManager
 #screenManager
 #layerManager
-增加core文件夹,core中放置的类不涉及具体的游戏类型
+#增加core文件夹,core中放置的类不涉及具体的游戏类型
+嵌入flash cs5中的内容
+DataServer
+ProxyServer
+IDataModel

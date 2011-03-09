@@ -1,8 +1,10 @@
-package
+package com.norris.fuzzy.core.cop.impl
 {
+	import com.norris.fuzzy.core.cop.IEntity;
+	import com.norris.fuzzy.core.cop.IComponent;
+	
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.Dictionary;
-	import com.norris.fuzzy.core.cop.impl.ComponentInfo;
 	
 	/**
 	 * 简化接口，不去实现IManager 
