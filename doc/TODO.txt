@@ -13,7 +13,16 @@
 #screenManager
 #layerManager
 #增加core文件夹,core中放置的类不涉及具体的游戏类型
-嵌入flash cs5中的内容
+#嵌入flash cs5中的内容  导入fl包
 DataServer
 ProxyServer
 IDataModel
+
+
+
+
+
+
+
+
+
