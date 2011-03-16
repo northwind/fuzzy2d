@@ -4,14 +4,19 @@ package models.impl
 	
 	public class MapModel extends BaseModel
 	{
-		public function MapModel(target:IEventDispatcher=null)
+		public function MapModel()
 		{
-			super(target);
+			super();
 		}
 		
 		public function getRenders() : Array
 		{
 			return [ [1,1],[2,1] ];
+		}
+		
+		public function get bgPath() :String
+		{
+			return "http://slgengine.sinaapp.com/test/battle.png";
 		}
 		
 	}

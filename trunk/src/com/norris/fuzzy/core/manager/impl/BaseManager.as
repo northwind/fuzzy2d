@@ -10,7 +10,7 @@ package com.norris.fuzzy.core.manager.impl
 	 * @author norris
 	 * 
 	 */	
-	public class BaseManager
+	public class BaseManager implements IManager
 	{
 		private var items:Dictionary = new Dictionary();
 		private var _count:int = 0;
@@ -19,7 +19,7 @@ package com.norris.fuzzy.core.manager.impl
 		{
 		}
 		
-		protected function reg(key:String, item: * ):void
+		public function reg(key:String, item: * ):void
 		{
 			if ( key == null || key == "" ){
 				return;
@@ -37,7 +37,7 @@ package com.norris.fuzzy.core.manager.impl
 			}  
 		}
 		
-		protected function unreg(key:String):void
+		public function unreg(key:String):void
 		{
 			if ( key == null || key == "" ){
 				return;
@@ -51,27 +51,22 @@ package com.norris.fuzzy.core.manager.impl
 			_count--;
 		}
 		
-		protected function find(key:String): *
+		public function find(key:String): *
 		{
 			return items[ key ]  ;
 		}
 		
-		protected function has(key:String):Boolean
+		public function has(key:String):Boolean
 		{
 			return find( key ) != null;
 		}
 		
-		/**
-		 * 暴露 count 方法 
-		 * @return 
-		 * 
-		 */		
 		public function get count():int
 		{
 			return _count;
 		}
 		
-		protected function getAll ()	: Object
+		public function getAll ()	: Object
 		{
 //			var ret :Object = {};
 //			
@@ -82,7 +77,7 @@ package com.norris.fuzzy.core.manager.impl
 			return items;
 		}
 		
-		protected function dismiss():void
+		public function dismiss():void
 		{
 			items = new Dictionary();
 		}

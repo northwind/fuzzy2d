@@ -2,15 +2,21 @@ package models.event
 {
 	import flash.events.Event;
 	
-	public class DataEvent extends Event
+	import models.IDataModel;
+	
+	public class ModelEvent extends Event
 	{
 		public static var START:String = "load_start";
 		public static var COMPLETED:String = "load_completed";
 		public static var ERROR:String = "load_error";
 		
-		public function DataEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public var model:IDataModel;
+		
+		public function ModelEvent(type:String,  model:IDataModel )
 		{
-			super(type, bubbles, cancelable);
+			super(type, false, false);
+			
+			this.model = model;
 		}
 	}
 }
