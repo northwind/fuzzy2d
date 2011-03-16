@@ -1,4 +1,4 @@
-package models
+package server
 {
 	/**
 	 * 与server端通信的请求类
