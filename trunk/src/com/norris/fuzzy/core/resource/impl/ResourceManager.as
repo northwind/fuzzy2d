@@ -10,8 +10,6 @@ package com.norris.fuzzy.core.resource.impl
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
 	
-	import mx.charts.chartClasses.NumericAxis;
-	
 	public class ResourceManager extends BaseManager implements IResourceManager
 	{
 		private var _local:String = "zh";

@@ -12,8 +12,6 @@ package com.norris.fuzzy.core.debug.impl
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	
-	import org.spicefactory.parsley.core.messaging.command.Command;
-	
 	public class BaseDebugManager extends BaseManager implements IDebugManamger
 	{
 		private var _enable :Boolean = true;
