@@ -19,9 +19,12 @@ package
 	import flash.events.Event;
 	
 	import screens.BattleScreen;
+	import screens.LoadingScreen;
 	
 	public class MyWolrd extends World
 	{
+		private var loadingScreen:LoadingScreen;
+		
 		public function MyWolrd()
 		{
 			super();
@@ -33,13 +36,34 @@ package
 		{
 			super.init( area );
 			
-			var battle:BattleScreen = new BattleScreen();
-			battle.setup();
-			battle.loadData();
-			
-			this.screenMgr.add( "battle", battle );
-			
-			this.screenMgr.goto("battle");
+//			var battle:BattleScreen = new BattleScreen();
+//			battle.setup();
+//			battle.loadData();
+//			
+//			this.screenMgr.add( "battle", battle );
+//			
+//			this.screenMgr.goto("battle");
 		}
+		
+		public function showLoading() :void
+		{
+			if ( loadingScreen == null ){
+				loadingScreen = new LoadingScreen();
+				loadingScreen.setup();
+				
+				this.screenMgr.add( "loading", loadingScreen );
+			}
+			
+			this.screenMgr.goto( "loading" );
+		}
+		
+		public function addLoadingText( text:String ) :void
+		{
+			if ( loadingScreen == null )
+				return;
+			
+			loadingScreen.addText( text );
+		}
+		
 	}
 }
