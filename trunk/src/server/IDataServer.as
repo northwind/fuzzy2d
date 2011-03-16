@@ -1,5 +1,6 @@
-package models
+package server
 {
+
 	/**
 	 * 组装成server端可理解的格式，完成与server的通信 
 	 * @author norris

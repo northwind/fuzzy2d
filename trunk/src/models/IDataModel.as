@@ -2,7 +2,20 @@ package models
 {
 	import flash.events.IEventDispatcher;
 	
-	[Event(name="destroy", type="com.norris.fuzzy.core.display.event.DisplayEvent")]
+	/**
+	 * 开始加载 
+	 */	
+	[Event(name="load_start", type="models.event.DataEvent")]
+	
+	/**
+	 * 成功加载
+	 */	
+	[Event(name="load_completed", type="models.event.DataEvent")]
+	
+	/**
+	 * 加载失败 
+	 */	
+	[Event(name="load_error", type="models.event.DataEvent")]
 	
 	/**
 	 *  数据接口
@@ -12,6 +25,11 @@ package models
 	 */	
 	public interface IDataModel extends IEventDispatcher
 	{
-		function loadData ( id:String ) : void;
+		function loadData () : void;
+		
+		function get data() : *;
+		
+		function reloadData() : void;
+		
 	}
 }
