@@ -4,16 +4,20 @@ package models.impl
 	import flash.events.IEventDispatcher;
 	
 	import models.IDataModel;
+	import models.event.ModelEvent;
 	
 	public class BaseModel extends EventDispatcher implements IDataModel
 	{
-		public function BaseModel(target:IEventDispatcher=null)
+		public function BaseModel()
 		{
-			super(target);
+			super();
 		}
 		
 		public function loadData():void
 		{
+			this.dispatchEvent( new ModelEvent( ModelEvent.START, this ) );
+			
+			this.dispatchEvent( new ModelEvent( ModelEvent.COMPLETED, this ) );
 		}
 		
 		public function get data():*

@@ -5,14 +5,16 @@ package com.norris.fuzzy.core.display.impl
 	import com.norris.fuzzy.core.display.IScreenManager;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
+	import com.norris.fuzzy.core.display.IScreen;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	
-	public class BaseScreenManager extends BaseManager implements IScreenManager
+	public class BaseScreenManager implements IScreenManager
 	{
 		private var _container:Sprite = new Sprite();
 		private var _current:IScreen;
+		private var _items:BaseManager = new BaseManager();
 		
 		public function BaseScreenManager( ct:Sprite )
 		{
@@ -31,22 +33,22 @@ package com.norris.fuzzy.core.display.impl
 		
 		public function add( name:String, screen: IScreen ) : void
 		{
-			this.reg( name, screen );
+			this._items.reg( name, screen );
 		}
 		
 		public function get( name:String ) :IScreen
 		{
-			return this.find( name ) as IScreen;
+			return this._items.find( name ) as IScreen;
 		}
 		
 		public function remove( name:String ) :void
 		{
-			this.unreg( name );
+			this._items.unreg( name );
 		}
 		
 		public function goto(name:String):void
 		{
-			var tmp:IScreen = this.find( name ) as IScreen;
+			var tmp:IScreen = this._items.find( name ) as IScreen;
 			if ( tmp == null ){
 				Logger.warning( "There is no screen named : " + name );
 				return;
@@ -55,13 +57,13 @@ package com.norris.fuzzy.core.display.impl
 			// only show one screen
 			if ( _current != null ){
 				try{
-					this._container.removeChild( _current as DisplayObject );
+					this._container.removeChild( _current.view );
 				}catch(e :Error ){}
 			}
 			
 			_current = tmp;
 			
-			this._container.addChild( tmp as DisplayObject );
+			this._container.addChild( tmp.view );
 		}
 	}
 }

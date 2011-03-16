@@ -5,17 +5,17 @@ package models
 	/**
 	 * 开始加载 
 	 */	
-	[Event(name="load_start", type="models.event.DataEvent")]
+	[Event(name="load_start", type="models.event.ModelEvent")]
 	
 	/**
 	 * 成功加载
 	 */	
-	[Event(name="load_completed", type="models.event.DataEvent")]
+	[Event(name="load_completed", type="models.event.ModelEvent")]
 	
 	/**
 	 * 加载失败 
 	 */	
-	[Event(name="load_error", type="models.event.DataEvent")]
+	[Event(name="load_error", type="models.event.ModelEvent")]
 	
 	/**
 	 *  数据接口
