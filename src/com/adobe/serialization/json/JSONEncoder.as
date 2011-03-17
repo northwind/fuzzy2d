@@ -95,7 +95,7 @@ package com.adobe.serialization.json
 				// call the helper method to convert an array
 				return arrayToString( value as Array );
 			
-			} else if ( value is Object && value != null ) {
+			} else if ( value is Object && value != null && !(value is Function) ) {		//norris 不处理函数
 			
 				// call the helper method to convert an object
 				return objectToString( value );
@@ -239,8 +239,8 @@ package com.adobe.serialization.json
 			var s:String = "";
 			
 			// determine if o is a class instance or a plain object
-			var classInfo:XML = describeType( o );
-			if ( classInfo.@name.toString() == "Object" )
+//			var classInfo:XML = describeType( o );
+//			if ( classInfo.@name.toString() == "Object" )
 			{
 				// the value of o[key] in the loop below - store this 
 				// as a variable so we don't have to keep looking up o[key]
@@ -255,7 +255,7 @@ package com.adobe.serialization.json
 					value = o[key];
 					
 					// don't add function's to the JSON string
-					if ( value is Function )
+					if ( value is Function || value == null )			//null值也跳过
 					{
 						// skip this key and try another
 						continue;
@@ -271,37 +271,38 @@ package com.adobe.serialization.json
 					s += escapeString( key ) + ":" + convertToString( value );
 				}
 			}
-			else // o is a class instance
-			{
-				// Loop over all of the variables and accessors in the class and 
-				// serialize them along with their values.
-				for each ( var v:XML in classInfo..*.( 
-					name() == "variable"
-					||
-					( 
-						name() == "accessor"
-						// Issue #116 - Make sure accessors are readable
-						&& attribute( "access" ).charAt( 0 ) == "r" ) 
-					) )
-				{
-					// Issue #110 - If [Transient] metadata exists, then we should skip
-					if ( v.metadata && v.metadata.( @name == "Transient" ).length() > 0 )
-					{
-						continue;
-					}
-					
-					// When the length is 0 we're adding the first item so
-					// no comma is necessary
-					if ( s.length > 0 ) {
-						// We've already added an item, so add the comma separator
-						s += ","
-					}
-					
-					s += escapeString( v.@name.toString() ) + ":" 
-							+ convertToString( o[ v.@name ] );
-				}
-				
-			}
+//			忽略class instance
+//			else // o is a class instance
+//			{
+//				// Loop over all of the variables and accessors in the class and 
+//				// serialize them along with their values.
+//				for each ( var v:XML in classInfo..*.( 
+//					name() == "variable"
+//					||
+//					( 
+//						name() == "accessor"
+//						// Issue #116 - Make sure accessors are readable
+//						&& attribute( "access" ).charAt( 0 ) == "r" ) 
+//					) )
+//				{
+//					// Issue #110 - If [Transient] metadata exists, then we should skip
+//					if ( v.metadata && v.metadata.( @name == "Transient" ).length() > 0 )
+//					{
+//						continue;
+//					}
+//					
+//					// When the length is 0 we're adding the first item so
+//					// no comma is necessary
+//					if ( s.length > 0 ) {
+//						// We've already added an item, so add the comma separator
+//						s += ","
+//					}
+//					
+//					s += escapeString( v.@name.toString() ) + ":" 
+//							+ convertToString( o[ v.@name ] );
+//				}
+//				
+//			}
 			
 			return "{" + s + "}";
 		}

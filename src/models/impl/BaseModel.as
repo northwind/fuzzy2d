@@ -8,6 +8,8 @@ package models.impl
 	
 	public class BaseModel extends EventDispatcher implements IDataModel
 	{
+		protected var _data:*;
+		
 		public function BaseModel()
 		{
 			super();
@@ -16,17 +18,24 @@ package models.impl
 		public function loadData():void
 		{
 			this.dispatchEvent( new ModelEvent( ModelEvent.START, this ) );
+		}
+		
+		protected function onCompleted( value:* ) : void
+		{
+			_data = value;
 			
-			this.dispatchEvent( new ModelEvent( ModelEvent.COMPLETED, this ) );
+			this.dispatchEvent( new ModelEvent( ModelEvent.COMPLETED, this ) );	
+		}
+		
+		protected function onError(  ) : void
+		{
+			this.dispatchEvent( new ModelEvent( ModelEvent.ERROR, this ) );	
 		}
 		
 		public function get data():*
 		{
-			return null;
+			return _data;
 		}
 		
-		public function reloadData():void
-		{
-		}
 	}
 }

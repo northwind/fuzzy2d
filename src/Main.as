@@ -7,7 +7,12 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	
+	import models.*;
+	import models.event.ModelEvent;
+	import models.impl.PlayerModel;
+	
 	import server.IDataServer;
+	import server.ProxyServer;
 	import server.event.ServerEvent;
 	import server.impl.SocketServer;
 	
@@ -61,6 +66,20 @@ package
 			} );
 			serverObj.addEventListener( ServerEvent.Connect, function( event:ServerEvent ):void{
 				world.addLoadingText( "成功链接服务器" );
+				ProxyServer.server = serverObj;
+				ProxyServer.master = "test";
+				
+				//------------------------------------------2-------------------------------
+				world.addLoadingText( "下载人物信息..." );
+				var player:PlayerModel = new PlayerModel( "test" );
+				player.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
+					world.addLoadingText( "成功下载人物信息" );
+				});
+				player.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
+					world.addLoadingText( "下载人物信息失败" );
+				});
+				player.loadData();
+				
 			} );
 			serverObj.connect();		
 			

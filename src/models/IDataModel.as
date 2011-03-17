@@ -28,8 +28,5 @@ package models
 		function loadData () : void;
 		
 		function get data() : *;
-		
-		function reloadData() : void;
-		
 	}
 }
