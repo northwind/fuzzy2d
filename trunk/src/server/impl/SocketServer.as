@@ -27,9 +27,12 @@ package server.impl
 		private var _timer:Timer;
 		
 		private var _cn:uint = 1;					//client number
+		private var _sn:uint = 0;					//server number
 		
-		private var _sent:Array = [];				//已发送但未接收消息队列
+		private var _sent:Object = {};				//已发送但未接收消息队列
 		private var _waitfor:Array = [];			//待发送消息队列
+		
+		public var timeout:uint = 10000;		//超时 10s
 		
 		public function SocketServer( )
 		{
@@ -43,10 +46,12 @@ package server.impl
 			_socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
 		}
 		
-		public function config(host:String, port:uint, wait:uint=300):void
+		public function config(host:String, port:uint, wait:uint=300, timeout :uint = 10000 ):void
 		{
 			this._host = host;
 			this._port = port;
+			
+			this.timeout = timeout;
 			
 			//如果已经在运行则销毁再重建
 			if ( _timer != null && _timer.running ){
@@ -119,16 +124,15 @@ package server.impl
 			
 			//TODO 考虑返回中的序列号
 			//写入客户端序列号
-			var l:uint = tmp.length;
-			for( var i:uint =0; i< l ; i++ ){
-				(tmp[ i ] as DataRequest).cn = this._cn++;
+			for each( var req:Object in tmp ){
+				req.cn = this._cn++;
+				req.sn = this._sn;
+				
+				_sent[ req.cn ] = req; 	//做为已发送保存
 			}
 			
 			_socket.writeUTFBytes( encode( tmp )  );
 			_socket.flush();
-			
-			//放入已发送队列
-			_sent = _sent.concat( tmp );
 		}
 		
 		/**
@@ -141,7 +145,7 @@ package server.impl
 		{
 			var ret:String = "";
 			
-			JSON.encode( arr );
+			ret = JSON.encode( arr );
 			
 			return ret;
 		}
@@ -154,7 +158,12 @@ package server.impl
 		 */		
 		public function decode( ret:String ) :Array
 		{
-			return JSON.encode( ret ) as Array;
+			try{
+				return JSON.decode( ret ) as Array;
+			}catch( e:Error ){
+				Logger.error( "SocketServer decode error." );
+			}
+			return null;
 		}
 		
 		/**
@@ -162,7 +171,7 @@ package server.impl
 		 * @param request
 		 * 
 		 */		
-		public function add(request:DataRequest):void
+		public function add(request:Object ):void
 		{
 			if ( request == null )
 				return;
@@ -216,6 +225,35 @@ package server.impl
 			var str:String = this._socket.readUTFBytes( this._socket.bytesAvailable );
 			
 			this.dispatchEvent( new ServerEvent( ServerEvent.Receive, this ) );
+			
+			this.handleResponse( str );
+			
+		}
+		
+		private function handleResponse( str:String ) :void
+		{
+			var ret:Array = this.decode( str );
+			if ( ret == null )
+				return;
+			
+			for each( var item:Object in ret ){
+				var req:Object =  _sent[ item["cn"] ];
+				if (  req == null )
+					continue;
+				
+				//从已发送中删除
+				delete _sent[ item["cn"] ];
+				
+				//执行回调
+				//参数为返回内容
+				if ( req[ "callback" ] is Function )
+					(req.callback as Function).call(null, req["rvalue"] );
+				
+				//清除
+				req = null;
+			}
+			
+			ret = null;
 		}
 		
 	}
