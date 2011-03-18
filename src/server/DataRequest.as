@@ -20,7 +20,7 @@ package server
 		public static const TYPE_Player:uint = 21;			//玩家信息
 		public static const TYPE_Transaction:uint = 22;			//买卖信息
 		public static const TYPE_Stuff:uint = 23;			//物品信息
-		public static const TYPE_Character:uint = 24;			//角色信息
+		public static const TYPE_Unit:uint = 24;			//角色信息
 		
 		
 		
