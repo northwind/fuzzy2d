@@ -46,7 +46,7 @@ package server.impl
 			_socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
 		}
 		
-		public function config(host:String, port:uint, wait:uint=300, timeout :uint = 10000 ):void
+		public function config(host:String, port:uint, wait:uint=50, timeout :uint = 10000 ):void
 		{
 			this._host = host;
 			this._port = port;

@@ -10,18 +10,20 @@ package
 	import models.*;
 	import models.event.ModelEvent;
 	import models.impl.PlayerModel;
+	import models.impl.RecordModel;
 	
 	import server.IDataServer;
 	import server.ProxyServer;
 	import server.event.ServerEvent;
+	import server.impl.FakeServer;
 	import server.impl.SocketServer;
 	
 	[SWF(frameRate="24", bgcolor="0x000000" )]
-	public class Main extends Sprite
+	public class index extends Sprite
 	{
 		public var  world:MyWolrd;
 		
-		public function Main()
+		public function index()
 		{
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);		
@@ -59,7 +61,8 @@ package
 			world.showLoading();
 			world.addLoadingText( "正在连接服务器..." );
 			
-			var serverObj:IDataServer = new SocketServer();
+			//var serverObj:IDataServer = new SocketServer();
+			var serverObj:IDataServer = new FakeServer();
 			serverObj.config( "localhost", 8080 );
 			serverObj.addEventListener( ServerEvent.Error, function( event:ServerEvent ):void{
 				world.addLoadingText( "链接服务器失败" );
@@ -74,6 +77,27 @@ package
 				var player:PlayerModel = new PlayerModel( "test" );
 				player.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
 					world.addLoadingText( "成功下载人物信息" );
+					
+					//---------------------------------------3-----------------------------
+					if ( player.screen == "battle" ){
+						world.addLoadingText( "读取战场记录..." );
+						
+						var record:RecordModel = new RecordModel( player.data[ "record" ] );
+						record.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
+							world.addLoadingText( "成功读取战场记录" );
+							
+							
+						});
+						record.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
+							world.addLoadingText( "读取战场记录失败" );
+						});
+						
+						record.loadData();
+						
+					}else{
+						//其他场景
+					}
+					
 				});
 				player.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
 					world.addLoadingText( "下载人物信息失败" );

@@ -24,7 +24,7 @@ package server
 		 * @param wait  等待多长时间ms发送一次
 		 * 
 		 */		
-		function config( host:String, port:uint, wait:uint = 300, timeout :uint = 10000 ) :void;
+		function config( host:String, port:uint, wait:uint = 50, timeout :uint = 10000 ) :void;
 		
 		function connect() : void;
 		

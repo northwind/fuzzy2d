@@ -27,7 +27,7 @@ package models.impl
 			this.dispatchEvent( new ModelEvent( ModelEvent.COMPLETED, this ) );	
 		}
 		
-		protected function onError(  ) : void
+		protected function onError() : void
 		{
 			this.dispatchEvent( new ModelEvent( ModelEvent.ERROR, this ) );	
 		}

@@ -6,20 +6,20 @@ package models.impl
 	
 	public class PlayerModel extends BaseModel implements IDataModel
 	{
-		public var uid:String;
+		public var id:String = "";
 		
-		public function PlayerModel( uid:String )
+		public function PlayerModel( id:String )
 		{
 			super();
 			
-			this.uid = uid;
+			this.id = id;
 		}
 		
 		override public function loadData():void
 		{
 			super.loadData();
 			
-			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Player, { id:this.uid }, null, onResponse ) );
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Player, { id:this.id }, null, onResponse ) );
 		}
 		
 		private function onResponse( value:* ) :void
@@ -28,6 +28,22 @@ package models.impl
 				this.onError();
 			else
 				this.onCompleted( value );
+		}
+		
+		public function get screen() : String
+		{
+			if ( this.data == null )
+				return "";
+			
+			return this.data[ "screen" ];
+		}
+		
+		public function get money() :uint
+		{
+			if ( this.data == null )
+				return 0;
+			
+			return this.data[ "money" ];
 		}
 		
 	}
