@@ -1,5 +1,7 @@
 package
 {
+	import com.norris.fuzzy.core.display.impl.ImageLayer;
+	import com.norris.fuzzy.core.resource.IResourceManager;
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	
 	import flash.display.Sprite;
@@ -9,8 +11,12 @@ package
 	
 	import models.*;
 	import models.event.ModelEvent;
+	import models.impl.MapModel;
 	import models.impl.PlayerModel;
 	import models.impl.RecordModel;
+	
+	import screens.BattleScreen;
+	import screens.MapItem;
 	
 	import server.IDataServer;
 	import server.ProxyServer;
@@ -86,6 +92,41 @@ package
 						record.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
 							world.addLoadingText( "成功读取战场记录" );
 							
+							//---------------------------------------4-----------------------------
+							var resourceMgr:IResourceManager = world.resourceMgr;
+							var map:MapModel = record.mapModel;
+							var battle:BattleScreen = new BattleScreen( map );
+							var resource:Array = [];
+							
+							//mapLayer接收返回
+							battle.mapLayer.dataSource = resourceMgr.add( map.bgSrc );
+							resource.push( map.bgSrc );
+							
+							var items:Object = map.items;
+							for each( var item:MapItem in items ){
+								//下载好后直接赋值给mapItem
+								item.dataSource = resourceMgr.add( item.define, item.src );
+								resource.push( item.define );
+							}
+							
+							world.addLoadingText( "0/" + resource.length +"下载场景资源" );
+							resourceMgr.load( resource, function( event:ResourceEvent ):void{
+								//显示下载进度
+								world.addLoadingText( event.success.length + "/" + event.resources.length +"下载场景资源" ); 
+							} ,  function( event:ResourceEvent ):void{
+								if ( event.ok ){
+									world.addLoadingText( "成功下载场景资源" );
+									
+									//---------------------------------------5-----------------------------
+									battle.setup();
+									
+									world.screenMgr.add("battle", battle );
+									world.screenMgr.goto( "battle" );
+									
+								}else{
+									world.addLoadingText( "下载场景资源失败" );
+								}
+							} );
 							
 						});
 						record.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{

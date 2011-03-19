@@ -15,14 +15,6 @@ package controlers
 			super();
 			
 			this.model = model;
-			
-			model.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
 		}
-		
-		private function onModelCompleted( event:ModelEvent ) : void
-		{
-			this.dataSource = new ImageResource( "bg", this.model.bgPath, true );
-		}
-		
 	}
 }
