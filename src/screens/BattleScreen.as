@@ -8,24 +8,24 @@ package screens
 	
 	public class BattleScreen extends BaseScreen
 	{
-		private var mapLayer:MapLayer;
-		private var model:MapModel;
+		public var mapLayer:MapLayer;
+		public var mapModel:MapModel;
 		
-		public function BattleScreen()
+		public function BattleScreen( map:MapModel )
 		{
 			super();
+			
+			this.mapModel = map;
 			
 			this.initLayers();
 		}
 		
 		protected function initLayers() :void
 		{
-			model = new MapModel();
-			
-			mapLayer  = new MapLayer( model );
+			mapLayer  = new MapLayer( mapModel );
 			
 			var cellLayer:CellLayer = new CellLayer();
-			var unitsLayer:UnitsLayer = new UnitsLayer( model );
+			var unitsLayer:UnitsLayer = new UnitsLayer( mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
 			
 			this.push( mapLayer );
@@ -36,7 +36,7 @@ package screens
 		
 		public function loadData() :void
 		{
-			model.loadData();
+			mapModel.loadData();
 		}
 	}
 }

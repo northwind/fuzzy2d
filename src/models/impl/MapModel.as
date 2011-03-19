@@ -1,18 +1,30 @@
 package models.impl
 {
+	import com.norris.fuzzy.core.manager.impl.BaseManager;
+	
 	import flash.events.IEventDispatcher;
+	
+	import screens.MapItem;
 	
 	import server.*;
 	
 	public class MapModel extends BaseModel
 	{
 		public var id:String;
+		public var cellXNum:uint = 0;
+		public var cellYNum:uint = 0;
+		public var cellWidth:uint = 0;
+		public var cellHeight:uint = 0;
 		
-		public function MapModel( id:String )
+		private var _items:BaseManager = new BaseManager();
+		private var _defines:BaseManager = new BaseManager();
+		
+		public function MapModel( id:String = null )
 		{
 			super();
 			
-			this.id = id;
+			if ( id != null )
+				this.id = id;
 		}
 		
 		override public function loadData():void
@@ -26,18 +38,87 @@ package models.impl
 		{
 			if ( value == null )
 				this.onError();
-			else
+			else{
+				cellXNum = value[ "cellXNum" ];
+				cellYNum = value[ "cellYNum" ];
+				cellWidth = value[ "cellWidth" ];
+				cellHeight = value[ "cellHeight" ];
+				
+				//存储item define
+				var defines:Array;
+				if ( value["defines"] is Array ){
+					defines = value["defines"] as Array;
+				}else{
+					defines = [];
+				}
+				
+				for each( var d:Object in defines ){
+					this._defines.reg( d.id, d );
+				}
+				
+				//生成items				
+				var items:Array = value["items"] as Array;
+				if ( items == null )
+					items = [];
+				
+				var  o:Object, item:MapItem;
+				for each( var a:Object in items){
+					item = new MapItem();
+					
+					item.raw = a.x;
+					item.col = a.y;
+					item.define   = a.d;
+
+					this._items.reg( a.x + "_" + a.y, item );
+					
+					//复制属性
+					o = this._defines.find( a.d );
+					if ( o == null )
+						continue;
+					
+					item.src = o.s;
+					item.offsetX = o.oX;
+					item.offsetY = o.oY;
+					item.cols 	 = o.cs;
+					item.raws     = o.rs;
+					item.walkable = o.w == 1 ? true : false;
+					item.overlap = o.o == 1 ? true : false;
+				}
+				
 				this.onCompleted( value );
+			}
 		}
 		
-		public function getRenders() : Array
+		public function get items() :Object
 		{
-			return [ [1,1],[2,1] ];
+			return this._items.getAll();
 		}
 		
-		public function get bgPath() :String
+		public function get bgSrc() :String
 		{
-			return "http://slgengine.sinaapp.com/test/battle.png";
+			if ( this._data == null )
+				return null;
+			
+			return this._data["bgSrc"];
+		}
+		
+		/**
+		 * 需要下载的资料列表  [ [id, src], ... ] 
+		 * @return 
+		 * 
+		 */		
+		public function get  defineSrcs() :Array
+		{
+			var ret:Array = [];
+			
+			if ( this._data == null || !this._data["defines"] is Array )
+				return ret;
+			
+			for each( var d:Object in this._data["defines"] ){
+				ret.push( [ d.id, d.src ] );
+			}
+			
+			return ret;
 		}
 		
 	}
