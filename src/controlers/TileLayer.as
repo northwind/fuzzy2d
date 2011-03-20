@@ -36,6 +36,9 @@ package controlers
 			this._model = model;
 			this._weight = model.cellXNum;
 			
+			this.view.x =  this._model.background.cs * MyWorld.CELL_WIDTH / 2 ;
+			this.view.y = - (this._model.background.rs * MyWorld.CELL_HEIGHT / 2 );
+			
 			//添加到显示列表 取消显示时只隐藏不移除
 			this.view.addChild( _gridct );
 			this.view.addChild( _paintCt );
@@ -55,7 +58,15 @@ package controlers
 		{
 		//	var coord:Coordinate = MyWorld.mapToIsoWorld( this.view.mouseX, this.view.mouseY );
 //			var coord:Coordinate = MyWorld.mapToIsoWorld( this.view.mouseX, this.view.mouseY );
-			var coord:Coordinate = MyWorld.mapToIsoWorld( event.localX , event.localY );
+//			if ( event.stageX >  )
+			
+			var test:Coordinate = MyWorld.mapToIsoWorld( 0, 0 );
+			var test2:Coordinate = MyWorld.mapToIsoWorld( 10, 20 );
+			var test3:Coordinate = MyWorld.mapToIsoWorld( -1152, 720 );
+			
+			var z:uint =  25 * MyWorld.TILE_HEIGHT  / MyWorld.TILE_HEIGHT;
+			
+			var coord:Coordinate = MyWorld.mapToIsoWorld( event.stageX - this.view.x  , event.stageY - this.view.y );
 			
 			var col:int = coord.x;
 			var row:int = coord.y;
@@ -67,6 +78,13 @@ package controlers
 			_lastCol   = col;
 			
 			trace( "col = " + col + " , row = " + row );
+			
+			row = 2;
+			col = 24;
+			
+//			row = 24;
+//			col = 5;
+			
 			
 			coord = MyWorld.mapToScreen( row, col );
 			

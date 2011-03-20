@@ -84,10 +84,10 @@ package
 		 * @return 
 		 * 
 		 */		
-		public static function mapToScreen( x:uint, y:uint ) :Coordinate
+		public static function mapToScreen( x:int, y:int ) :Coordinate
 		{
 			return MyWorld.isometric.mapToScreen( 
-				y * MyWorld.TILE_WIDTH , 0, -x * MyWorld.TILE_HEIGHT  );
+				x * MyWorld.TILE_WIDTH , 0, -y * MyWorld.TILE_HEIGHT  );
 		}
 		/**
 		 *   屏幕位置对应的3D单元格位置
