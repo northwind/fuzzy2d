@@ -109,19 +109,21 @@ package server.impl
 					req.rtype = 0;
 					req.rvalue = {
 						name : "颍川之战",
-						cellXNum : 50,
-						cellYNum : 50,
+						cellXNum : 48,
+						cellYNum : 60,
 //						cellWidth	 : 64,
 //						cellHeight : 32,
-						oX		:	   891,	
+//						oX		:	   891,	
+						oX		: 		0,
 						oY		:     0,
 						
 						bg		: {
-							src   : "assets/bg_1.jpg",
-							oX   : -891,
+							src   : "assets/bg.jpg",
+//							oX   : -891,
+							oX   : 0,
 							oY	: 0,
-							cs	: 50,
-							rs		: 50
+							cs	: 24,
+							rs		: 30
 						},
 						
 						sound	: {
