@@ -10,11 +10,12 @@ package com.norris.fuzzy.core.resource.impl
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
 	
-	public class ResourceManager extends BaseManager implements IResourceManager
+	public class ResourceManager implements IResourceManager
 	{
 		private var _local:String = "zh";
 		private var _running :Boolean = false;
 		private var _waitingfor:Array = [];
+		private var _items:BaseManager = new BaseManager();
 		
 		public var threads:uint = 5;
 		
@@ -43,8 +44,8 @@ package com.norris.fuzzy.core.resource.impl
 				return null;
 			}
 		
-			if ( this.has( name ) ){
-				return this.find( name ) as IResource;
+			if ( this._items.has( name ) ){
+				return this._items.find( name ) as IResource;
 			}
 			
 			url = url || name;
@@ -67,7 +68,7 @@ package com.norris.fuzzy.core.resource.impl
 				ret = (new type( name, url, policy ) ) as IResource;	
 			}
 			
-			this.reg( name, ret );
+			this._items.reg( name, ret );
 			
 			return ret;
 		}
@@ -284,7 +285,7 @@ package com.norris.fuzzy.core.resource.impl
 			var names:Array = this.parseName( name );
 			
 			for each ( var key:String in names ){
-				this.unreg( key );
+				this._items.unreg( key );
 			}
 		}
 		
@@ -311,7 +312,7 @@ package com.norris.fuzzy.core.resource.impl
 			if ( name == null || name == "" )
 				return null;
 			
-			return this.find( name ) as IResource;
+			return this._items.find( name ) as IResource;
 		}
 
 		public function getResources( names:Array ) : Array
@@ -342,7 +343,7 @@ package com.norris.fuzzy.core.resource.impl
 		
 		public function destroyAll():void
 		{
-			var obj:Object = this.getAll();
+			var obj:Object = this._items.getAll();
 			
 			for each ( var r :IResource in obj ){
 				if ( r != null ) 

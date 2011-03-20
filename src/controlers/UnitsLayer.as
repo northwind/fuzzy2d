@@ -6,7 +6,7 @@ package controlers
 	
 	public class UnitsLayer extends BaseLayer
 	{
-		public var cellLayer:CellLayer;
+		public var cellLayer:TileLayer;
 		public var tipsLayer:TipsLayer;
 		
 		public var model:MapModel;

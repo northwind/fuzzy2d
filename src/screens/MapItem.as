@@ -47,6 +47,9 @@ package screens
 			if ( this.view == null )
 				this.view = new Sprite();
 			
+			this.view.x =  raw * 64;
+			this.view.y =  col * 32;
+			
 			//先清空
 			while( this.view.numChildren > 0 )
 				this.view.removeChildAt( 0 );

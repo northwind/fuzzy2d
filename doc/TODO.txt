@@ -1,5 +1,6 @@
 # 安装parsley 2.4，并成功运行hello world ( 2.4 有warning)  
-创建MAP类
+#创建MAP类
+screen可拖拽
 绘制2.5等距视图
 放置物件、选择物件
 排序
@@ -14,12 +15,12 @@
 #layerManager
 #增加core文件夹,core中放置的类不涉及具体的游戏类型
 #嵌入flash cs5中的内容  导入fl包
-DataServer
+#DataServer
 #ProxyServer
 #IDataModel
 简化JSON.Decode
-FakeServer
-
+#FakeServer
+不再继承BaseManager, 改为内部属性
 
 
 
