@@ -109,12 +109,25 @@ package server.impl
 					req.rtype = 0;
 					req.rvalue = {
 						name : "颍川之战",
-						cellXNum : 20,
-						cellYNum : 20,
-						cellWidth	 : 64,
-						cellHeight : 32,
+						cellXNum : 50,
+						cellYNum : 50,
+//						cellWidth	 : 64,
+//						cellHeight : 32,
+						oX		:	   891,	
+						oY		:     0,
 						
-						bgSrc	: "assets/world.jpg",
+						bg		: {
+							src   : "assets/bg_1.jpg",
+							oX   : -891,
+							oY	: 0,
+							cs	: 50,
+							rs		: 50
+						},
+						
+						sound	: {
+							src   :  "assets/ddd.mp3"
+						},
+						
 						//不可行走
 						blocks : [{
 							x:1, y : 1
@@ -123,16 +136,18 @@ package server.impl
 						}],
 						//渲染场景
 						items	: [{
-							d : "grass1",	x : 12, y :23
+							d : "npc2",	x : 3, y :3
+						},{
+							d : "npc2",	x : 3, y :20
 						},{
 							d : "house2",	x : 5, y :6
 						}],
 						//1 = true 0 = false
 						//改用简写节省空间
 						defines	: [{
-							id	: "grass1", s : "assets/grass1.png", oX : -20, oY:-20, rs:1, cs:1, w: 1, o : 1   
+							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1
 						},{
-							id	: "house2", s : "assets/house2.png", oX :-277, oY:-189, rs:6, cs:7, w : 0, o : 1
+							id	: "npc2", s : "assets/npc2.png", oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1
 						}]
 					};
 					break;

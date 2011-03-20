@@ -14,6 +14,8 @@ package
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.core.resource.impl.*;
 	import com.norris.fuzzy.core.sound.ISounder;
+	import com.norris.fuzzy.map.Isometric;
+	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -21,15 +23,27 @@ package
 	import screens.BattleScreen;
 	import screens.LoadingScreen;
 	
-	public class MyWolrd extends World
+	public class MyWorld extends World
 	{
 		private var loadingScreen:LoadingScreen;
 		
-		public function MyWolrd()
+		public static const CELL_WIDTH :uint = 96;		//单元格宽度
+		public static const CELL_HEIGHT :uint = 48;     //单元格高度
+		
+		public static var isometric:Isometric = new Isometric( 30, 45 );		//换算工具
+		//2.5D世界中宽和高
+		public static var TILE_WIDTH:Number = isometric.mapToIsoWorld( MyWorld.CELL_WIDTH, 0 ).x;
+		public static var TILE_HEIGHT:Number = MyWorld.TILE_WIDTH;		//等距
+		
+		public static var instance:MyWorld ;
+		
+		public function MyWorld()
 		{
 			super();
 			
 			Logger.init( new TraceWriter() );
+			
+			MyWorld.instance = this;
 		}
 		
 		override public function init(  area:Sprite  ) : void
@@ -65,5 +79,28 @@ package
 			loadingScreen.addText( text );
 		}
 		
+		/**
+		 *   3d 换算为 屏幕对应的位置
+		 * @return 
+		 * 
+		 */		
+		public static function mapToScreen( x:uint, y:uint ) :Coordinate
+		{
+			return MyWorld.isometric.mapToScreen( 
+				y * MyWorld.TILE_WIDTH , 0, -x * MyWorld.TILE_HEIGHT  );
+		}
+		/**
+		 *   屏幕位置对应的3D单元格位置
+		 * @return 
+		 * 
+		 */		
+		public static function mapToIsoWorld( x:Number, y:Number ) :Coordinate
+		{
+			var coord:Coordinate = MyWorld.isometric.mapToIsoWorld( x, y );
+			coord.x = Math.floor(coord.x / MyWorld.TILE_WIDTH);
+			coord.y = Math.floor(Math.abs(coord.z / MyWorld.TILE_HEIGHT)) ;
+			
+			return coord;
+		}
 	}
 }

@@ -4,39 +4,49 @@ package screens
 	
 	import controlers.*;
 	
+	import models.event.ModelEvent;
 	import models.impl.MapModel;
+	import models.impl.RecordModel;
 	
 	public class BattleScreen extends BaseScreen
 	{
 		public var mapLayer:MapLayer;
-		public var mapModel:MapModel;
+		public var model:RecordModel;
 		
-		public function BattleScreen( map:MapModel )
+		public function BattleScreen(  model :RecordModel )
 		{
 			super();
 			
-			this.mapModel = map;
+			this.model = model;
 			
-			this.initLayers();
+			if ( model.data != null )
+				this.initLayers();
+			else
+				model.addEventListener( ModelEvent.COMPLETED, initLayers );
 		}
 		
-		protected function initLayers() :void
+		protected function initLayers( event:ModelEvent = null ) :void
 		{
-			mapLayer  = new MapLayer( mapModel );
+			this.view.x = model.mapModel.offsetX;
+			this.view.y = model.mapModel.offsetY;
 			
-			var cellLayer:CellLayer = new CellLayer();
-			var unitsLayer:UnitsLayer = new UnitsLayer( mapModel );
+			mapLayer  = new MapLayer( model.mapModel );
+
+			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
+			var tileLayer:TileLayer = new TileLayer( model.mapModel );
+			var unitsLayer:UnitsLayer = new UnitsLayer( model.mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
 			
 			this.push( mapLayer );
-			this.push( cellLayer );
+			this.push( tileLayer );
+			this.push( staticLayer );
 			this.push( unitsLayer );
 			this.push( tipsLayer );
 		}
 		
 		public function loadData() :void
 		{
-			mapModel.loadData();
+			model.loadData();
 		}
 	}
 }

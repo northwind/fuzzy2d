@@ -27,7 +27,9 @@ package
 	[SWF(frameRate="24", bgcolor="0x000000" )]
 	public class index extends Sprite
 	{
-		public var  world:MyWolrd;
+		public var  world:MyWorld;
+		
+		public static var aaa:uint = 0;
 		
 		public function index()
 		{
@@ -46,7 +48,7 @@ package
 				this.stage.align = StageAlign.TOP_LEFT;
 			}
 			
-			world = new MyWolrd();
+			world = new MyWorld();
 			world.init( this );
 			
 			start();
@@ -89,18 +91,18 @@ package
 						world.addLoadingText( "读取战场记录..." );
 						
 						var record:RecordModel = new RecordModel( player.data[ "record" ] );
+						var battle:BattleScreen = new BattleScreen( record );
 						record.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
 							world.addLoadingText( "成功读取战场记录" );
 							
 							//---------------------------------------4-----------------------------
 							var resourceMgr:IResourceManager = world.resourceMgr;
 							var map:MapModel = record.mapModel;
-							var battle:BattleScreen = new BattleScreen( map );
 							var resource:Array = [];
 							
 							//mapLayer接收返回
-							battle.mapLayer.dataSource = resourceMgr.add( map.bgSrc );
-							resource.push( map.bgSrc );
+							resourceMgr.add( map.background.src );
+							resource.push( map.background.src );
 							
 							var items:Object = map.items;
 							for each( var item:MapItem in items ){
@@ -118,6 +120,7 @@ package
 									world.addLoadingText( "成功下载场景资源" );
 									
 									//---------------------------------------5-----------------------------
+									battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
 									battle.setup();
 									
 									world.screenMgr.add("battle", battle );

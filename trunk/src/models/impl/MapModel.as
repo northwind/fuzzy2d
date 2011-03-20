@@ -13,6 +13,7 @@ package models.impl
 		public var id:String;
 		public var cellXNum:uint = 0;
 		public var cellYNum:uint = 0;
+		//弃用 改用MyWorld中静态变量
 		public var cellWidth:uint = 0;
 		public var cellHeight:uint = 0;
 		
@@ -94,12 +95,12 @@ package models.impl
 			return this._items.getAll();
 		}
 		
-		public function get bgSrc() :String
+		public function get background() :Object
 		{
 			if ( this._data == null )
-				return null;
+				return {};
 			
-			return this._data["bgSrc"];
+			return this._data["bg"];
 		}
 		
 		/**
@@ -121,5 +122,20 @@ package models.impl
 			return ret;
 		}
 		
+		public function get offsetX() :int
+		{
+			if ( this._data == null )
+				return 0;
+			
+			return this._data[ "oX" ];
+		}
+		
+		public function get offsetY() :int
+		{
+			if ( this._data == null )
+				return 0;
+			
+			return this._data[ "oY" ];
+		}
 	}
 }
