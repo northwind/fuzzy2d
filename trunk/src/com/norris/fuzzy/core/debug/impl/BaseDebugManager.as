@@ -55,11 +55,11 @@ package com.norris.fuzzy.core.debug.impl
 			this.console.toggle();
 			
 			//显示输入框时屏蔽键盘输入
-			if ( this.console.visible ){
-				inputMgr.enableKeyboard = false;	
-			}else{
-				inputMgr.enableKeyboard = true;
-			}
+//			if ( this.console.visible ){
+//				inputMgr.enableKeyboard = false;	
+//			}else{
+//				inputMgr.enableKeyboard = true;
+//			}
 		}
 		
 		protected function addInternalCommands() : void
@@ -85,7 +85,7 @@ package com.norris.fuzzy.core.debug.impl
 				_stats.destroy();
 				_stats = null;
 			}else{
-				_stats = new Stats( arguments[0] || (this.container.width - 80), arguments[1] );
+				_stats = new Stats( arguments[0] || 20, arguments[1] );
 				this.container.addChild( _stats );
 			}
 		}

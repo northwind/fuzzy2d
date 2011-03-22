@@ -45,7 +45,7 @@ package com.norris.fuzzy.core.debug.impl
 			minW = Math.max( this.stage.width - 10, minW );
 			minH = Math.max( this.stage.height / 3 , minH );
 			
-			this.x = 5;
+			this.x = 200;
 			this.y = 0;
 			
 			font_description = new FontDescription();

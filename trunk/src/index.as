@@ -69,7 +69,7 @@ package
 			world.showLoading();
 			world.addLoadingText( "正在连接服务器..." );
 			
-			//var serverObj:IDataServer = new SocketServer();
+//			var serverObj:IDataServer = new SocketServer();
 			var serverObj:IDataServer = new FakeServer();
 			serverObj.config( "localhost", 8080 );
 			serverObj.addEventListener( ServerEvent.Error, function( event:ServerEvent ):void{
