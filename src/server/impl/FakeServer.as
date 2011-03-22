@@ -109,8 +109,8 @@ package server.impl
 					req.rtype = 0;
 					req.rvalue = {
 						name : "颍川之战",
-						cellXNum : 48,
-						cellYNum : 60,
+						cellXNum : 60,
+						cellYNum : 48,
 //						cellWidth	 : 64,
 //						cellHeight : 32,
 //						oX		:	   891,	

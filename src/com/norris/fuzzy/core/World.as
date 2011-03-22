@@ -40,7 +40,7 @@ package com.norris.fuzzy.core
 		public var resourceMgr:IResourceManager;
 		public var soundMgr:ISounderManager;
 
-		protected var debugMgr:IDebugManamger;
+		public var debugMgr:IDebugManamger;
 		
 		public function World()
 		{
