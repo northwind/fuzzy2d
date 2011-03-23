@@ -39,18 +39,23 @@ package com.norris.fuzzy.core.display.impl
 				this.view.removeChildAt( 0 );
 			
 			if ( _source.isFinish() ){
-				this.view.addChild( _source.content as Bitmap );
+				onImageReady();
 			}else{
 				_source.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 				_source.load();
 			}
 		}
 		
+		protected function onImageReady() : void
+		{
+			this.view.addChild( _source.content as Bitmap );
+		}
+		
 		private function onResourceComplete( event:ResourceEvent ) : void
 		{
 			_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 			if ( event.ok )
-				this.view.addChild( _source.content as Bitmap );
+				onImageReady();
 		}
 		
 		public function get dataSource() : IResource

@@ -42,8 +42,14 @@ package com.norris.fuzzy.core
 
 		public var debugMgr:IDebugManamger;
 		
+		/**
+		 *  全局变量 
+		 */		
+		public static var instance:World ;
+		
 		public function World()
 		{
+			World.instance = this;
 		}
 		
 		public function init(  area:Sprite  ) : void
