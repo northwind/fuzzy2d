@@ -1,6 +1,7 @@
 package screens
 {
 	import com.norris.fuzzy.core.display.impl.BaseScreen;
+	import com.norris.fuzzy.core.display.impl.CentreScreen;
 	
 	import controlers.*;
 	
