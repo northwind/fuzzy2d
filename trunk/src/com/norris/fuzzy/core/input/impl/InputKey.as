@@ -123,6 +123,7 @@ package com.norris.fuzzy.core.input.impl
 		public static const MOUSE_MOVE:uint = 257;
 		public static const MOUSE_OVER:uint = 258;
 		public static const MOUSE_OUT:uint = 259;
+		public static const MOUSE_UP:uint = 260;
 		
 		public static const ANYKEY:uint = 500;
 		

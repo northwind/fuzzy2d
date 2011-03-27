@@ -109,21 +109,20 @@ package server.impl
 					req.rtype = 0;
 					req.rvalue = {
 						name : "颍川之战",
-						cellXNum : 60,
-						cellYNum : 48,
-//						cellWidth	 : 64,
-//						cellHeight : 32,
-//						oX		:	   891,	
-						oX		: 		0,
-						oY		:     0,
+						cellXNum : 10,
+						cellYNum : 10,
+//						oX		: 	-150,
+//						oY		:   -150,
 						
 						bg		: {
 							src   : "assets/bg.jpg",
-//							oX   : -891,
-							oX   : 0,
-							oY	: 0,
-							cs	: 24,
-							rs		: 30
+//							src	: "assets/bgtest2.png",
+//							oX   : -50,
+//							oY	: -50,
+//							oX   : 0,
+//							oY	: 0,
+							cs	: 5,
+							rs		: 5
 						},
 						
 						sound	: {
@@ -144,12 +143,13 @@ package server.impl
 						},{
 							d : "house2",	x : 5, y :6
 						}],
+//						items	: [],
 						//1 = true 0 = false
 						//改用简写节省空间
 						defines	: [{
 							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1
 						},{
-							id	: "npc2", s : "assets/npc2.png", oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1
+							id	: "npc2", s : "assets/walk.png", oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1
 						}]
 					};
 					break;

@@ -43,19 +43,19 @@ package controlers
 			this._weight = model.cellXNum;
 			
 			var coord:Coordinate = MyWorld.mapToScreen( 0, model.background.rs - 1 );
-			this.view.x = -1 * coord.x;
-			this.view.y = -1 * coord.y;
+//			this.view.x = -1 * coord.x;
+//			this.view.y = -1 * coord.y;
 			
 			//添加到显示列表 取消显示时只隐藏不移除
 			this.view.addChild( _gridct );
 			this.view.addChild( _paintCt );
 			this.view.addChild( _select );
 			
-			_select.x = -9999;
+//			_select.x = -9999;
 			
-			this.showGrid();
-			this.showMoves( [ [1,2], [1,3], [1,4], [1,2] ] );
-			this.showAttacks(  [ [5,2], [5,3], [5,4], [5,2] ]  );
+//			this.showGrid();
+//			this.showMoves( [ [1,2], [1,3], [1,4], [1,2] ] );
+//			this.showAttacks(  [ [5,2], [5,3], [5,4], [5,2] ]  );
 			
 			/* 坐标信息 */
 			_currentCoord = new TextField();
@@ -112,8 +112,8 @@ package controlers
 			//++i
 			for (var i:int = 0; i < this._model.cellXNum;i++) {
 				for (var j:int = 0; j < this._model.cellYNum ;j++) {
-					var tile:GridTile = new GridTile();
-//					var tile:DebugTile = new DebugTile( i, j );
+//					var tile:GridTile = new GridTile();
+					var tile:DebugTile = new DebugTile( i, j );
 					
 					//3d 换算为 屏幕对应的位置
 					var coord:Coordinate = MyWorld.mapToScreen( i, j );

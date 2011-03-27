@@ -50,13 +50,15 @@ package
 		{
 			super.init( area );
 			
-//			var battle:BattleScreen = new BattleScreen();
-//			battle.setup();
-//			battle.loadData();
-//			
-//			this.screenMgr.add( "battle", battle );
-//			
-//			this.screenMgr.goto("battle");
+			this.area.addEventListener(Event.ADDED_TO_STAGE, onAddStage );
+		}
+		
+		private  function onAddStage( event:Event )  : void
+		{
+			this.area.removeEventListener(Event.ADDED_TO_STAGE, onAddStage );
+			
+			this.area.x = ( this.area.stage.stageWidth - this.area.width ) / 2;
+			this.area.y = ( this.area.stage.stageHeight - this.area.height ) / 2;
 		}
 		
 		public function showLoading() :void

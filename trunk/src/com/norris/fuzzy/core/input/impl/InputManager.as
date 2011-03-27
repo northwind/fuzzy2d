@@ -26,10 +26,12 @@ package com.norris.fuzzy.core.input.impl
 				
 				//TODO consider keyup
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false );
+				//stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp, false );
 				stage.addEventListener(MouseEvent.MOUSE_WHEEL  , onMouseWheel );
 				stage.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
+				stage.addEventListener(MouseEvent.MOUSE_UP , onMouseUp );
 				
-				ct.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove );
+				ct.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove, true );
 				ct.addEventListener(MouseEvent.ROLL_OVER , onMouseOver );
 				ct.addEventListener(MouseEvent.ROLL_OUT , onMouseOut );
 				
@@ -89,6 +91,21 @@ package com.norris.fuzzy.core.input.impl
 			excuteCallbacks( this.find( InputKey.MOUSE_LEFT.toString() ), event );
 			excuteCallbacks( this.find( InputKey.ANYKEY.toString() ), event );
 		}
+		
+		private function onMouseUp( event:MouseEvent ) : void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.MOUSE_UP;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this.find( InputKey.MOUSE_UP.toString() ), event );
+		}		
 		
 		private function onMouseMove( event:MouseEvent ) : void
 		{
