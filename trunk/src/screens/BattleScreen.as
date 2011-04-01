@@ -1,7 +1,6 @@
 package screens
 {
-	import com.norris.fuzzy.core.display.impl.BaseScreen;
-	import com.norris.fuzzy.core.display.impl.CentreScreen;
+	import com.norris.fuzzy.core.display.impl.ScrollScreen;
 	
 	import controlers.*;
 	
@@ -9,7 +8,7 @@ package screens
 	import models.impl.MapModel;
 	import models.impl.RecordModel;
 	
-	public class BattleScreen extends BaseScreen
+	public class BattleScreen extends ScrollScreen
 	{
 		public var mapLayer:MapLayer;
 		public var model:RecordModel;
@@ -18,6 +17,7 @@ package screens
 		{
 			super();
 			
+			this._step = MyWorld.CELL_HEIGHT;
 			this.model = model;
 			
 			if ( model.data != null )
@@ -36,13 +36,21 @@ package screens
 			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
 			var tileLayer:TileLayer = new TileLayer( model.mapModel );
 			var unitsLayer:UnitsLayer = new UnitsLayer( model.mapModel );
-			var tipsLayer:TipsLayer = new TipsLayer();
 			
-			this.push( mapLayer );
-			this.push( tileLayer );
-			this.push( staticLayer );
-			this.push( unitsLayer );
+			var tipsLayer:TipsLayer = new TipsLayer();
+			var menuLayer:MenuLayer = new MenuLayer();
+			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
+			
+			//需要卷屏
+			this.pushToScroll( mapLayer );
+			this.pushToScroll( tileLayer );
+			this.pushToScroll( staticLayer );
+			this.pushToScroll( unitsLayer );
+			
+			//固定区域
 			this.push( tipsLayer );
+			this.push( menuLayer );
+			this.push( debugLayer );
 		}
 		
 		public function loadData() :void
