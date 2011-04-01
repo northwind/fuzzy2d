@@ -108,25 +108,24 @@ package server.impl
 				case DataRequest.TYPE_Map:			//地图信息
 					req.rtype = 0;
 					req.rvalue = {
-						name : "颍川之战",
-						cellXNum : 10,
-						cellYNum : 10,
+						name : "汜水关之战",
+						cellXNum : 20,
+						cellYNum : 20,
 //						oX		: 	-150,
 //						oY		:   -150,
 						
 						bg		: {
-							src   : "assets/bg.jpg",
-//							src	: "assets/bgtest2.png",
-//							oX   : -50,
-//							oY	: -50,
-//							oX   : 0,
-//							oY	: 0,
-							cs	: 5,
-							rs		: 5
+							src   : "assets/bgtest8.png",
+							oT   : 50,
+							oL	: 50,
+							oR   : 50,
+							oB   : 50,
+							color : "0x333333"
 						},
 						
 						sound	: {
-							src   :  "assets/ddd.mp3"
+							src   :  "assets/ddd.mp3",
+							loop : true
 						},
 						
 						//不可行走

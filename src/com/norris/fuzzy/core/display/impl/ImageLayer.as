@@ -7,6 +7,7 @@ package com.norris.fuzzy.core.display.impl
 	import com.norris.fuzzy.core.resource.impl.ImageResource;
 	
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -17,6 +18,9 @@ package com.norris.fuzzy.core.display.impl
 		public function ImageLayer()
 		{
 			super();
+			
+			this.view.mouseEnabled = false;
+			this.view.mouseChildren = false;
 		}
 		
 		/**
@@ -31,12 +35,11 @@ package com.norris.fuzzy.core.display.impl
 			
 			_source = value;
 			
-			if ( this.view == null )
+			if ( this.view == null ){
 				this.view = new Sprite();
-			
-			//先清空
-			while( this.view.numChildren > 0 )
-				this.view.removeChildAt( 0 );
+				this.view.mouseEnabled = false;
+				this.view.mouseChildren = false;
+			}
 			
 			if ( _source.isFinish() ){
 				onImageReady();
@@ -48,7 +51,11 @@ package com.norris.fuzzy.core.display.impl
 		
 		protected function onImageReady() : void
 		{
-			this.view.addChild( _source.content as Bitmap );
+			var bitmapData:BitmapData = (_source as ImageResource).getBitmapData();
+			this.view.graphics.beginBitmapFill( bitmapData, null, false );
+			this.view.graphics.drawRect( 0, 0, bitmapData.width, bitmapData.height );
+			this.view.graphics.endFill();
+//			this.view.addChild( _source.content as Bitmap );
 		}
 		
 		private function onResourceComplete( event:ResourceEvent ) : void

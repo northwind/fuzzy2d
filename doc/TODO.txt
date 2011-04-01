@@ -1,7 +1,11 @@
 # 安装parsley 2.4，并成功运行hello world ( 2.4 有warning)  
 #创建MAP类
-判断单元格是否在有效范围
-screen可拖拽
+#判断单元格是否在有效范围
+#screen可拖拽    scrollScreen
+#ImageLayer 用Gragic 或者bitmap
+#battleScreen特殊分层处理
+DebugMsgLayer
+swfResources
 绘制2.5等距视图
 放置物件、选择物件
 排序

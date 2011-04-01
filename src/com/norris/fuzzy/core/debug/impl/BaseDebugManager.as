@@ -4,21 +4,22 @@ package com.norris.fuzzy.core.debug.impl
 	import com.norris.fuzzy.core.debug.IDebugManamger;
 	import com.norris.fuzzy.core.debug.Stats;
 	import com.norris.fuzzy.core.input.IInputManager;
+	import com.norris.fuzzy.core.input.impl.InputKey;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
-	import com.norris.fuzzy.core.input.impl.InputKey;
 	
-	import flash.events.Event;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	
-	public class BaseDebugManager extends BaseManager implements IDebugManamger
+	public class BaseDebugManager implements IDebugManamger
 	{
-		private var _enable :Boolean = true;
+		protected var _enable :Boolean = true;
 		private var prefix:String = "";
 		private var console :IConsole;
 		private var container:Sprite;
 		private var _stats:Stats;
+		private var _items:BaseManager = new BaseManager();
 		
 		public var inputMgr:IInputManager;
 		
@@ -94,7 +95,7 @@ package com.norris.fuzzy.core.debug.impl
 		{
 			var ret :String = "";
 			
-			var all:Object = this.getAll();
+			var all:Object = this._items.getAll();
 			for( var key :String in all ){
 				ret += key + "  :  " + ( all[ key ] as Command ).desc + "\n";
 			} 
@@ -104,7 +105,7 @@ package com.norris.fuzzy.core.debug.impl
 		
 		public function registerCommand( name:String, callback:Function, desc :String = "" ) : void
 		{
-			if ( this.has( name ) ){
+			if ( this._items.has( name ) ){
 				Logger.warning( "registerCommand : " + name + " is already exist." );
 				return;
 			}
@@ -114,7 +115,12 @@ package com.norris.fuzzy.core.debug.impl
 			}
 			
 			var command :Command = new Command( name, callback, desc  ) ;
-			this.reg( name, command );
+			this._items.reg( name, command );
+		}
+		
+		public function unregisterCommand( name:String  ) : void
+		{
+			_items.unreg( name );
 		}
 		
 		/**
@@ -125,7 +131,8 @@ package com.norris.fuzzy.core.debug.impl
 		 */		
 		public function excute(line:String ):void
 		{
-			Logger.debug( "line : " + line );
+			if ( !_enable )
+				return;
 			
 			var method:String, args:Array;
 			
@@ -151,7 +158,7 @@ package com.norris.fuzzy.core.debug.impl
 				args = [];
 			}
 			
-			var c:Command = this.find( method ) as Command;
+			var c:Command = this._items.find( method ) as Command;
 			
 			if ( c == null ){
 				console.writeLine( prefix + method + " is not a command.", 0xff0000 );

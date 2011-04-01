@@ -19,21 +19,46 @@ package controlers
 	
 	public class TileLayer extends BaseLayer
 	{
+		public var coordLayer :DebugMsgLayer;
+		
 		private var _showgrid:Boolean = false;
-		private var _gridct:Sprite = new Sprite();
+		private var _coordable:Boolean = false;		//是否显示坐标
+		
+		private var _gridWrap:Sprite = new Sprite();
 		private var _paintCt:Sprite = new Sprite();
+		private var _select:SelectTile = new SelectTile();
+		private var _movedTile:MoveTile = new MoveTile();
 		
 		private var _model:MapModel;
 		private var _painted:Object = {};
-		private var _select:SelectTile = new SelectTile();		
+				
 		private var _weight:uint;
+
+		private var w:Number;
+		private var h:Number;
+		private var outerWidth:Number;
+		private var outerHeight:Number;
 		
-		private var _lastRow:int = -9999; 
-		private var _lastCol:int = -9999;
+		private var _tileWidth:Number;
+		private var _tileHeight:Number;
+		
+		private var minSum:uint;
+		private var maxSum:uint;
+		private var maxMinus:uint;
+		
+		private var _cols:int;
+		private var _rows:int;
+		
+		private var _lastRow:int = -999;
+		private var _lastCol:int = -999;
+		
+		private var _gridX:Number;
+		private var _gridY:Number;
+		private var _mouseMoveOffsetX:Number;
 		
 		private var _currentCoord:TextField;
-		
-		private var _coordable:Boolean = false;		//是否显示坐标
+		private var _iso:Isometric;
+		private var _parentView:Sprite;
 		
 		public function TileLayer( model:MapModel )
 		{
@@ -42,21 +67,54 @@ package controlers
 			this._model = model;
 			this._weight = model.cellXNum;
 			
-			var coord:Coordinate = MyWorld.mapToScreen( 0, model.background.rs - 1 );
-//			this.view.x = -1 * coord.x;
-//			this.view.y = -1 * coord.y;
+			_iso = MyWorld.isometric;
+			
+			//figure out the width of the tile in 3D space
+			_tileWidth = _iso.mapToIsoWorld( MyWorld.CELL_WIDTH, 0).x;
+			
+			//the tile is a square in 3D space so the height matches the width
+			_tileHeight = _tileWidth;
+			
+			w =  model.cellYNum * MyWorld.CELL_WIDTH;
+			h =  model.cellXNum * MyWorld.CELL_HEIGHT;
+			
+			//菱形的数量等于宽高单元格的个数相加
+			_cols = model.cellXNum + model.cellYNum;
+			_rows =  _cols;
+			
+			//设置有效范围
+			minSum = _cols - model.cellXNum;
+			maxSum = (_cols - 1) * 2 - minSum ;
+			maxMinus = model.cellYNum - 1;
+			
+			_movedTile.visible = false;
+			_gridWrap.mouseEnabled = false;
+			_gridWrap.mouseChildren = false;
 			
 			//添加到显示列表 取消显示时只隐藏不移除
-			this.view.addChild( _gridct );
+			this.view.addChild( _gridWrap );
 			this.view.addChild( _paintCt );
-			this.view.addChild( _select );
+			this.view.addChild( _movedTile );
 			
-//			_select.x = -9999;
+			//设置3d世界坐标偏移量
+			_gridWrap.x = w / 2 -  MyWorld.CELL_WIDTH / 2 + model.background.oL;
+			_gridWrap.y = -(_cols * MyWorld.CELL_HEIGHT - h) / 2 + model.background.oT;
 			
-//			this.showGrid();
-//			this.showMoves( [ [1,2], [1,3], [1,4], [1,2] ] );
-//			this.showAttacks(  [ [5,2], [5,3], [5,4], [5,2] ]  );
+			_gridX = _gridWrap.x;
+			_gridY = _gridWrap.y;
+			_mouseMoveOffsetX = MyWorld.CELL_WIDTH  /2;
 			
+//			this.setCoord();
+			this.showCoord();
+			this.showGrid();
+			
+			if ( this.view.stage )	
+				onAddStage();
+			else	
+				this.view.addEventListener(Event.ADDED_TO_STAGE, onAddStage );
+		}
+		
+		private function setCoord() :void {
 			/* 坐标信息 */
 			_currentCoord = new TextField();
 			_currentCoord.textColor = 0xff0000;
@@ -66,24 +124,50 @@ package controlers
 			_currentCoord.backgroundColor = 0xaaaaaa;
 			_currentCoord.x = -1 * this.view.x + 20;
 			_currentCoord.y = -1 *  this.view.y + 20;
+			this.view.addChild( _currentCoord );			
+		}
+
+		protected function onAddStage( event:Event = null )  : void
+		{
+			this.view.removeEventListener(Event.ADDED_TO_STAGE, onAddStage );
 			
-			this.view.addChild( _currentCoord );
-			
-			this.showCoord();
-			
-			MyWorld.instance.inputMgr.on( InputKey.MOUSE_MOVE, onMouseMove );
+			_parentView = this.view.parent as Sprite ;
+			//MyWorld.instance.inputMgr.on( InputKey.MOUSE_MOVE, onMouseMove );
+			_parentView.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove );
+			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OUT, onMouseOut );
+			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OVER, onMouseOver );
 			
 			/* 添加调试信息 */
 			MyWorld.instance.debugMgr.registerCommand( "grid", toggleGrid, "toggle grid." );
 			MyWorld.instance.debugMgr.registerCommand( "coord", toggleCoord, "toggle coord." );
+			
+			this.view.addEventListener(Event.REMOVED_FROM_STAGE, onRemoveStage );
+		}
+		
+		private function onRemoveStage( event:Event ) : void
+		{
+			this.view.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoveStage );
+			
+			_parentView.removeEventListener( MouseEvent.MOUSE_MOVE, onMouseMove );
+			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OUT, onMouseOut );
+			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OVER, onMouseOver );
+			
+			/* 添加调试信息 */
+			MyWorld.instance.debugMgr.unregisterCommand( "grid" );
+			MyWorld.instance.debugMgr.unregisterCommand( "coord" );
 		}
 		
 		private function onMouseMove( event:MouseEvent ) : void
 		{
-			var coord:Coordinate = MyWorld.mapToIsoWorld( event.stageX - this.view.x - MyWorld.CELL_WIDTH / 2 , event.stageY - this.view.y );
+//			var coord:Coordinate = _iso.mapToIsoWorld( event.localX  - _mouseMoveOffsetX, 
+//																							event.localY );
+			var coord:Coordinate = _iso.mapToIsoWorld( _parentView.mouseX - _gridX - _mouseMoveOffsetX, 
+																							_parentView.parent.mouseY - _gridY );
+//			var coord:Coordinate = _iso.mapToIsoWorld( event.localX - _mouseMoveOffsetX, 
+//																							event.localY );
 			
-			var row:int = coord.x;
-			var col:int = coord.y;
+			var row:int = Math.floor(Math.abs(coord.x / _tileWidth)) ;
+			var col:int = Math.floor( Math.abs( coord.z ) / _tileHeight ) ;
 			
 			if ( _lastRow == row && _lastCol == col )
 				return;
@@ -91,45 +175,86 @@ package controlers
 			_lastRow = row;
 			_lastCol   = col;
 			
-			//显示坐标信息
-			_currentCoord.text = row + "," + col;
+			if ( _coordable && coordLayer )
+				coordLayer.showMsg( row + "," + col );
+//				_currentCoord.text = row + "," + col;
 			
-			coord = MyWorld.mapToScreen( row, col );
-			
-			_select.x  = coord.x;
-			_select.y  = coord.y;			
+			//TODO 继续优化
+			if ( isValid( row, col )  ){
+				if ( _movedTile.visible == false )
+					_movedTile.visible = true;
+				
+				coord = _iso.mapToScreen( row * _tileHeight, 0, -col * _tileWidth );
+				
+				_movedTile.x  = coord.x + _gridX;
+				_movedTile.y  = coord.y + _gridY;				
+			}else{
+				_movedTile.visible = false;
+			}			
+		}
+		
+		private function onMouseOut( event:Event ) : void
+		{
+			this._movedTile.visible = false;
+		}
+		private function onMouseOver( event:Event ) : void
+		{
+			this._movedTile.visible = true;
 		}
 		
 		public function showGrid() : void
 		{
 			_showgrid = true;
 			
-			if ( _gridct.numChildren > 0 ){
-				_gridct.visible = true;
+			if ( _gridWrap.numChildren > 0 ){
+				_gridWrap.visible = true;
 				return;
 			}
 			
-			//++i
-			for (var i:int = 0; i < this._model.cellXNum;i++) {
-				for (var j:int = 0; j < this._model.cellYNum ;j++) {
-//					var tile:GridTile = new GridTile();
-					var tile:DebugTile = new DebugTile( i, j );
+			for (var i:int = 0; i < _rows;++i) {
+				for (var j:int = 0; j < _cols;++j) {
+					//只绘制落在可操控区域中的表格
+					if ( !isValid( i, j ) )
+						continue;
 					
-					//3d 换算为 屏幕对应的位置
-					var coord:Coordinate = MyWorld.mapToScreen( i, j );
+					var t:GridTile = new GridTile();
+//					var t:DebugNumberTile = new DebugNumberTile( i,j );
 					
-					tile.x = coord.x;
-					tile.y = coord.y;
+					var tx:Number = i * _tileHeight;
+					var tz:Number = -j * _tileWidth;
 					
-					_gridct.addChild( tile );
+					var coord:Coordinate = _iso.mapToScreen(tx, 0, tz);
+					
+					t.x = coord.x;
+					t.y = coord.y;
+					
+					_gridWrap.addChild(t);
 				}
-			}
+			}	
+		}
+		
+		/**
+		 *  校验单元格的有效性
+		 *  相加最大值检验screen中的y，相减的绝对值校验screen中的x 
+		 * @param x
+		 * @param z
+		 * @return 
+		 * 
+		 */		
+		public function isValid( x:int, z:int ) : Boolean
+		{
+			var sum:int = x + z;
+			var diff:uint = Math.abs( x - z );
+			if ( sum >= minSum && sum <= maxSum && diff <= maxMinus )
+				return true;
+			else
+				return false;
 		}
 		
 		public function hideGrid() : void
 		{
 			_showgrid = false;
-			_gridct.visible = false;
+			_gridWrap.visible = false;
 		}
 		
 		public function toggleGrid() : void
@@ -152,21 +277,21 @@ package controlers
 		public function hideCoord() :void
 		{
 			_coordable = false;
-			
-			if ( !_currentCoord.visible )
-				return;
-			
-			_currentCoord.visible = false;
+//			
+//			if ( !_currentCoord.visible )
+//				return;
+//			
+//			_currentCoord.visible = false;
 		}
 		
 		public function showCoord() :void
 		{
 			_coordable = true;
-			
-			if ( _currentCoord.visible )
-				return;
-			
-			_currentCoord.visible = true;
+//			
+//			if ( _currentCoord.visible )
+//				return;
+//			
+//			_currentCoord.visible = true;
 		}
 		
 		/**

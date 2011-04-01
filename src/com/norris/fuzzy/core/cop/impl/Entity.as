@@ -1,11 +1,16 @@
 package com.norris.fuzzy.core.cop.impl
 {
+	import com.norris.fuzzy.core.cop.IComponent;
+	import com.norris.fuzzy.core.cop.IEntity;
 	import com.norris.fuzzy.core.cop.impl.ComponentInfo;
 	import com.norris.fuzzy.core.cop.impl.ComponentInfoFactory;
-	import com.norris.fuzzy.core.cop.IEntity;
-	import com.norris.fuzzy.core.cop.IComponent;
 	
-	public class Entity implements IEntity
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	
+	[Event(name="complete", type="flash.events.Event")]
+	
+	public class Entity extends EventDispatcher implements IEntity
 	{
 		private var components:Array = [];
 		protected var setuped:Boolean = false;
@@ -49,6 +54,7 @@ package com.norris.fuzzy.core.cop.impl
 				info.component.onSetup();
 			}
 			
+			this.dispatchEvent( new Event( Event.COMPLETE ) );
 		}
 		
 		public function destroy():void
