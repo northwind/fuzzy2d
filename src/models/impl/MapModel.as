@@ -4,7 +4,7 @@ package models.impl
 	
 	import flash.events.IEventDispatcher;
 	
-	import screens.MapItem;
+	import views.MapItem;
 	
 	import server.*;
 	

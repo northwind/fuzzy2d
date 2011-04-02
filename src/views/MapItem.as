@@ -1,4 +1,4 @@
-package screens
+package views
 {
 	import com.norris.fuzzy.core.display.IDataSource;
 	import com.norris.fuzzy.core.resource.IResource;

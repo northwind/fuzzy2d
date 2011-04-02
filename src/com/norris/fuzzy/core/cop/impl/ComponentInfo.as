@@ -17,6 +17,8 @@ package com.norris.fuzzy.core.cop.impl
 	public class ComponentInfo
 	{
 		public var component : IComponent;
+		
+		public var name:String;
 		/**
 		 * [ [ name, type ], ...  ] 
 		 */		
@@ -45,6 +47,8 @@ package com.norris.fuzzy.core.cop.impl
 			var accessors:XMLList = xml.accessor;
 			var interfaces:XMLList = xml.implementsInterface;
 			var node :XML, type:String, access:String;
+			
+			name = xml.@name.toString();
 			
 			//属性
 			for each (var variable:XML in variables) {
@@ -114,7 +118,7 @@ package com.norris.fuzzy.core.cop.impl
 		 */		
 		public function isInterfaceOf ( type:String ) : Boolean
 		{
-			return _interfaces.indexOf( type ) > -1;	
+			return name == type || _interfaces.indexOf( type ) > -1;	
 		}
 		
 	}

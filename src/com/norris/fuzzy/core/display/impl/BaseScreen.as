@@ -19,13 +19,9 @@ package com.norris.fuzzy.core.display.impl
 	 */	
 	public class BaseScreen extends Entity implements IScreen
 	{
-		private var _layers:Array = [];
-		private var _view:Sprite = new Sprite();
+		protected var _layers:Array = [];
+		protected var _view:Sprite = new Sprite();
 		private var _name:String;
-		
-		protected var _step:uint = 32;
-		private var _totalHeight:Number = 0;
-		private var _totalWidth:Number = 0;
 		
 		public function BaseScreen()
 		{

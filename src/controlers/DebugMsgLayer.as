@@ -3,18 +3,11 @@ package controlers
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
 	import com.norris.fuzzy.core.log.Logger;
 	
-	import flash.text.engine.ElementFormat;
-	import flash.text.engine.FontDescription;
-	import flash.text.engine.TextBlock;
-	import flash.text.engine.TextElement;
-	import flash.text.engine.TextLine;
+	import flash.text.TextField;
 	
 	public class DebugMsgLayer extends BaseLayer
 	{
-		private var textFormat:ElementFormat = new ElementFormat( new FontDescription() );
-		private var block:TextBlock = new TextBlock();
-		
-		public var lineWidth:uint = 50;
+		private var text:TextField = new TextField();
 		
 		public function DebugMsgLayer()
 		{
@@ -23,6 +16,12 @@ package controlers
 			this.view.mouseChildren = false;
 			this.view.mouseEnabled = false;
 			
+			text.textColor = 0xffffff;
+//			text.backgroundColor = 0x000000;
+			text.x = 10;
+			text.y = 10;
+			
+			this.view.addChild( text );
 		}
 		
 		public function showMsg( msg:String ) : void
@@ -30,16 +29,7 @@ package controlers
 			if ( msg == null || msg == "" )
 				return;
 			
-			Logger.debug( msg );
-			
-			block.content = new TextElement( msg,  textFormat );
-			
-			var line:TextLine = block.createTextLine( null, lineWidth );
-			
-			while( this.view.numChildren > 0 )
-				this.view.removeChildAt( 0 );
-			
-			this.view.addChild( line );
+			text.text = msg;
 		}
 	}
 }

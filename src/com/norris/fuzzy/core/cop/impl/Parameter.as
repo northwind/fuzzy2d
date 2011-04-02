@@ -1,8 +1,5 @@
 package com.norris.fuzzy.core.cop.impl
 {
-	import com.norris.fuzzy.core.input.IInputManager;
-	import com.norris.fuzzy.core.input.impl.InputManager;
-	
 	import flash.display.Sprite;
 	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
