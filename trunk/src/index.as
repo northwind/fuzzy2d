@@ -16,7 +16,7 @@ package
 	import models.impl.RecordModel;
 	
 	import screens.BattleScreen;
-	import screens.MapItem;
+	import views.MapItem;
 	
 	import server.IDataServer;
 	import server.ProxyServer;

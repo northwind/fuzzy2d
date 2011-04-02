@@ -91,12 +91,8 @@ package server.impl
 						failedN		: 0,      //已达到的失败条件数
 						
 						units		    : [{
-							id: "caocao", gx :  7,  gy : 0, range : 1, rangeType : 2, hpMax : 110, step:7, hp : 110, 
-							direct : "down",  attack : 10,
-							faction : 1, team : 100,  name : "曹操", level : 1,  visiable : true	
-						},{
 							id: "zhangfei", gx :  6,  gy : 5, range : 1, rangeType : 2, hpMax : 110, step:7, hp : 110, 
-							direct : "up",  attack : 20, 
+							direct : 225,  attack : 20, figure : "assets/zhangfei.swf", symbol : "zhangfei", 
 							faction : 0, team : 1,  name : "张飞", level : 1,  visiable : true		
 						}],
 						
@@ -111,8 +107,8 @@ package server.impl
 						name : "汜水关之战",
 						cellXNum : 20,
 						cellYNum : 20,
-//						oX		: 	-150,
-//						oY		:   -150,
+						oX		: 	150,
+						oY		:   150,
 						
 						bg		: {
 							src   : "assets/bgtest8.png",
@@ -136,19 +132,20 @@ package server.impl
 						}],
 						//渲染场景
 						items	: [{
-							d : "npc2",	x : 3, y :3
-						},{
 							d : "npc2",	x : 3, y :20
 						},{
 							d : "house2",	x : 5, y :6
 						}],
-//						items	: [],
 						//1 = true 0 = false
 						//改用简写节省空间
+						//rs = rows 占的行数 cs = cols 占的列数 oX = offsetX, oY=offsetY, o = overley, w=walkable, s=src
+						// type: 1 静态 2 动态  sb = symbol 
 						defines	: [{
-							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1
+							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1,
+							type : 1
 						},{
-							id	: "npc2", s : "assets/walk.png", oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1
+							id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
+							type : 2, sb : "ZhangFei"
 						}]
 					};
 					break;

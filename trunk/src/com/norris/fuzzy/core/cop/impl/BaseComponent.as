@@ -2,7 +2,9 @@ package com.norris.fuzzy.core.cop.impl
 {
 	import com.norris.fuzzy.core.cop.IComponent;
 	
-	public class BaseComponent implements IComponent
+	import flash.events.EventDispatcher;
+	
+	public class BaseComponent extends EventDispatcher  implements IComponent
 	{
 		public function BaseComponent()
 		{

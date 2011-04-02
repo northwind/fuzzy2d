@@ -7,6 +7,8 @@ package controlers
 	import com.norris.fuzzy.map.Isometric;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
+	import controlers.events.TileEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -17,6 +19,16 @@ package controlers
 	
 	import views.tiles.*;
 	
+	[Event(name="move_tile", type="controlers.events.TileEvent")]
+	
+	[Event(name="select_tile", type="controlers.events.TileEvent")]
+	
+	/**
+	 *  处理与单元格相关的逻辑
+	 *  TODO 优化显示方式，采用Shape/fillBitmap方式绘制单元格 
+	 * @author Administrator
+	 * 
+	 */	
 	public class TileLayer extends BaseLayer
 	{
 		public var coordLayer :DebugMsgLayer;
@@ -104,7 +116,6 @@ package controlers
 			_gridY = _gridWrap.y;
 			_mouseMoveOffsetX = MyWorld.CELL_WIDTH  /2;
 			
-//			this.setCoord();
 			this.showCoord();
 			this.showGrid();
 			
@@ -112,19 +123,6 @@ package controlers
 				onAddStage();
 			else	
 				this.view.addEventListener(Event.ADDED_TO_STAGE, onAddStage );
-		}
-		
-		private function setCoord() :void {
-			/* 坐标信息 */
-			_currentCoord = new TextField();
-			_currentCoord.textColor = 0xff0000;
-			_currentCoord.width = 30;
-			_currentCoord.height = 20;
-			_currentCoord.background = true;
-			_currentCoord.backgroundColor = 0xaaaaaa;
-			_currentCoord.x = -1 * this.view.x + 20;
-			_currentCoord.y = -1 *  this.view.y + 20;
-			this.view.addChild( _currentCoord );			
 		}
 
 		protected function onAddStage( event:Event = null )  : void
@@ -134,6 +132,7 @@ package controlers
 			_parentView = this.view.parent as Sprite ;
 			//MyWorld.instance.inputMgr.on( InputKey.MOUSE_MOVE, onMouseMove );
 			_parentView.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove );
+			MyWorld.instance.inputMgr.on( InputKey.MOUSE_UP, onMouseUp );
 			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OUT, onMouseOut );
 			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OVER, onMouseOver );
 			
@@ -151,20 +150,22 @@ package controlers
 			_parentView.removeEventListener( MouseEvent.MOUSE_MOVE, onMouseMove );
 			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OUT, onMouseOut );
 			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OVER, onMouseOver );
+			MyWorld.instance.inputMgr.un( InputKey.MOUSE_UP, onMouseUp );
 			
 			/* 添加调试信息 */
 			MyWorld.instance.debugMgr.unregisterCommand( "grid" );
 			MyWorld.instance.debugMgr.unregisterCommand( "coord" );
 		}
 		
+		/**
+		 *  移动鼠标 
+		 * @param event
+		 * 
+		 */		
 		private function onMouseMove( event:MouseEvent ) : void
 		{
-//			var coord:Coordinate = _iso.mapToIsoWorld( event.localX  - _mouseMoveOffsetX, 
-//																							event.localY );
 			var coord:Coordinate = _iso.mapToIsoWorld( _parentView.mouseX - _gridX - _mouseMoveOffsetX, 
-																							_parentView.parent.mouseY - _gridY );
-//			var coord:Coordinate = _iso.mapToIsoWorld( event.localX - _mouseMoveOffsetX, 
-//																							event.localY );
+																						   _parentView.mouseY - _gridY );
 			
 			var row:int = Math.floor(Math.abs(coord.x / _tileWidth)) ;
 			var col:int = Math.floor( Math.abs( coord.z ) / _tileHeight ) ;
@@ -175,11 +176,11 @@ package controlers
 			_lastRow = row;
 			_lastCol   = col;
 			
-			if ( _coordable && coordLayer )
+			if ( _coordable && coordLayer ){
 				coordLayer.showMsg( row + "," + col );
-//				_currentCoord.text = row + "," + col;
+			}
 			
-			//TODO 继续优化
+			//TODO 继续优化 将坐标对应位置存储起来，不在计算
 			if ( isValid( row, col )  ){
 				if ( _movedTile.visible == false )
 					_movedTile.visible = true;
@@ -187,10 +188,30 @@ package controlers
 				coord = _iso.mapToScreen( row * _tileHeight, 0, -col * _tileWidth );
 				
 				_movedTile.x  = coord.x + _gridX;
-				_movedTile.y  = coord.y + _gridY;				
+				_movedTile.y  = coord.y + _gridY;
+				
+				this.dispatchEvent( new TileEvent( TileEvent.MOVE, row, col ) );
 			}else{
 				_movedTile.visible = false;
 			}			
+		}
+		
+		/**
+		 *  鼠标松开时才会触发选中事件 
+		 * @param event
+		 * 
+		 */		
+		private function onMouseUp( event:MouseEvent ) : void
+		{
+			var coord:Coordinate = _iso.mapToIsoWorld( _parentView.mouseX - _gridX - _mouseMoveOffsetX, 
+				_parentView.mouseY - _gridY );
+			
+			var row:int = Math.floor(Math.abs(coord.x / _tileWidth)) ;
+			var col:int = Math.floor( Math.abs( coord.z ) / _tileHeight ) ;
+			
+			if ( isValid( row, col )  ){
+				this.dispatchEvent( new TileEvent( TileEvent.SELECT, row, col ) );				
+			}
 		}
 		
 		private function onMouseOut( event:Event ) : void
@@ -277,21 +298,11 @@ package controlers
 		public function hideCoord() :void
 		{
 			_coordable = false;
-//			
-//			if ( !_currentCoord.visible )
-//				return;
-//			
-//			_currentCoord.visible = false;
 		}
 		
 		public function showCoord() :void
 		{
 			_coordable = true;
-//			
-//			if ( _currentCoord.visible )
-//				return;
-//			
-//			_currentCoord.visible = true;
 		}
 		
 		/**

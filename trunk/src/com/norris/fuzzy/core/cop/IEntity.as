@@ -1,5 +1,7 @@
 package com.norris.fuzzy.core.cop
 {
+	import com.norris.fuzzy.core.cop.IComponent;
+	
 	[Event(name="complete", type="flash.events.Event")]
 	/**
 	 * IEntity 不知道内部的组件数量和属性

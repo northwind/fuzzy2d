@@ -8,6 +8,7 @@ package com.norris.fuzzy.core.display
 
 	/**
 	 *  显示层 用来叠加显示
+	 *  TODO 采用DisplayObject 替代 Sprite
 	 * @author norris
 	 * 
 	 */	

@@ -4,7 +4,7 @@
 #screen可拖拽    scrollScreen
 #ImageLayer 用Gragic 或者bitmap
 #battleScreen特殊分层处理
-DebugMsgLayer
+#DebugMsgLayer
 swfResources
 绘制2.5等距视图
 放置物件、选择物件
