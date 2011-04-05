@@ -5,11 +5,14 @@ package com.norris.fuzzy.core.display.impl
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.core.resource.impl.SWFResource;
 	
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	
 	public class SWFLayer extends BaseLayer implements IDataSource
 	{
 		public var symbol:String;
+		public var movieClip:MovieClip;
+		
 		private var _source:SWFResource;
 		
 		public function SWFLayer( symbol:String = null )
@@ -54,7 +57,8 @@ package com.norris.fuzzy.core.display.impl
 		{
 			this.view.removeEventListener(Event.ADDED_TO_STAGE, onStage );
 			
-			this.view.addChild( _source.getMovieClip( this.symbol ) );
+			movieClip = _source.getMovieClip( this.symbol );
+			this.view.addChild(  movieClip );
 		}
 		
 		public function get dataSource():IResource

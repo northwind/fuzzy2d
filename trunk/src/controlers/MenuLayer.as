@@ -17,6 +17,10 @@ package controlers
 		{
 			super.onStage( event );
 			
+			movieClip.cacheAsBitmap = true;
+			movieClip.y = 3;
+			movieClip.x = ( this.view.stage.stageWidth - movieClip.width ) / 2;
+			
 			this.view.graphics.beginFill( 0xCCCCCC );
 			this.view.graphics.drawRect( 0, 0, this.view.stage.stageWidth, 30 );
 			this.view.graphics.endFill();

@@ -7,7 +7,8 @@
 #DebugMsgLayer
 #swfResources
 #绘制2.5等距视图
-放置物件、选择物件
+添加mapItem
+#可放置动画物件 swfMapItem
 排序
 移植寻路算法
 #logger类

@@ -1,12 +1,17 @@
 package models.impl
 {
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
+	import com.norris.fuzzy.core.resource.impl.SWFResource;
+	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.item.ImageMapItem;
+	import com.norris.fuzzy.map.item.MapItemType;
+	import com.norris.fuzzy.map.item.SWFMapItem;
 	
 	import flash.events.IEventDispatcher;
 	
-	import views.MapItem;
-	
 	import server.*;
+	
+	import views.MapItem;
 	
 	public class MapModel extends BaseModel
 	{
@@ -62,28 +67,33 @@ package models.impl
 				if ( items == null )
 					items = [];
 				
-				var  o:Object, item:MapItem;
+				var  o:Object, item:IMapItem, itemType:int;
 				for each( var a:Object in items){
-					item = new MapItem();
-					
-					item.raw = a.x;
-					item.col = a.y;
-					item.define   = a.d;
-
-					this._items.reg( a.x + "_" + a.y, item );
-					
-					//复制属性
+					//查找对应的定义
 					o = this._defines.find( a.d );
-					if ( o == null )
+					if ( o == null || a.d == undefined )
 						continue;
 					
-					item.src = o.s;
+					itemType = o.type ||  MapItemType.IMAGE ;
+					if( itemType == MapItemType.IMAGE ){
+						item = new ImageMapItem();
+					} else if( itemType == MapItemType.SWF ){
+						item = new SWFMapItem( o.sb );
+					}
+					else
+						continue;
+					
+					item.define = a.d;
+					item.row = a.x;
+					item.col = a.y;
 					item.offsetX = o.oX;
 					item.offsetY = o.oY;
 					item.cols 	 = o.cs;
-					item.raws     = o.rs;
-					item.walkable = o.w == 1 ? true : false;
-					item.overlap = o.o == 1 ? true : false;
+					item.rows     = o.rs;
+					item.isWalkable = o.w == 1 ? true : false;
+					item.isOverlap = o.o == 1 ? true : false;
+					
+					this._items.reg( a.x + "_" + a.y, item );
 				}
 				
 				this.onCompleted( value );
@@ -108,7 +118,7 @@ package models.impl
 		 * @return 
 		 * 
 		 */		
-		public function get  defineSrcs() :Array
+		public function get  defines() :Array
 		{
 			var ret:Array = [];
 			
@@ -116,7 +126,7 @@ package models.impl
 				return ret;
 			
 			for each( var d:Object in this._data["defines"] ){
-				ret.push( [ d.id, d.src ] );
+				ret.push( [ d.id, d.s ] );
 			}
 			
 			return ret;

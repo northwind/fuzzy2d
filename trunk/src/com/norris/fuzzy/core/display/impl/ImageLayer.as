@@ -13,7 +13,7 @@ package com.norris.fuzzy.core.display.impl
 	
 	public class ImageLayer extends BaseLayer implements IDataSource
 	{
-		private var _source:IResource;
+		private var _resource:IResource;
 		
 		public function ImageLayer()
 		{
@@ -29,23 +29,23 @@ package com.norris.fuzzy.core.display.impl
 		 */		
 		public function set dataSource( value:IResource ) : void
 		{
-			if ( _source != null ){
-				_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			if ( _resource != null ){
+				_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 			}
 			
-			_source = value;
+			_resource = value;
 			
-			if ( _source.isFinish() ){
+			if ( _resource.isFinish() ){
 				onImageReady();
 			}else{
-				_source.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
-				_source.load();
+				_resource.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+				_resource.load();
 			}
 		}
 		
 		protected function onImageReady() : void
 		{
-			var bitmapData:BitmapData = (_source as ImageResource).getBitmapData();
+			var bitmapData:BitmapData = (_resource as ImageResource).getBitmapData();
 			this.view.graphics.beginBitmapFill( bitmapData, null, false );
 			this.view.graphics.drawRect( 0, 0, bitmapData.width, bitmapData.height );
 			this.view.graphics.endFill();
@@ -60,7 +60,7 @@ package com.norris.fuzzy.core.display.impl
 		{
 			this.view.removeEventListener(Event.ADDED_TO_STAGE, onStage );
 			
-			var bitmapData:BitmapData = (_source as ImageResource).getBitmapData();
+			var bitmapData:BitmapData = (_resource as ImageResource).getBitmapData();
 			this.view.graphics.beginBitmapFill( bitmapData, null, false );
 			this.view.graphics.drawRect( 0, 0, bitmapData.width, bitmapData.height );
 			this.view.graphics.endFill();
@@ -68,14 +68,14 @@ package com.norris.fuzzy.core.display.impl
 		
 		private function onResourceComplete( event:ResourceEvent ) : void
 		{
-			_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 			if ( event.ok )
 				onImageReady();
 		}
 		
 		public function get dataSource() : IResource
 		{
-			return _source;
+			return _resource;
 		}
 		
 	}

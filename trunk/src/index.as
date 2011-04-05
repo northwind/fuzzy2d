@@ -1,10 +1,12 @@
 package
 {
+	import com.norris.fuzzy.core.display.IDataSource;
 	import com.norris.fuzzy.core.display.impl.ImageLayer;
 	import com.norris.fuzzy.core.resource.IResource;
 	import com.norris.fuzzy.core.resource.IResourceManager;
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.core.resource.impl.SWFResource;
+	import com.norris.fuzzy.map.IMapItem;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -107,11 +109,9 @@ package
 							resourceMgr.add( map.background.src );
 							resource.push( map.background.src );
 							
-							var items:Object = map.items;
-							for each( var item:MapItem in items ){
-								//下载好后直接赋值给mapItem
-								item.dataSource = resourceMgr.add( item.define, item.src );
-								resource.push( item.define );
+							for each( var define:Array in map.defines ){
+								resourceMgr.add( define[0], define[1] );
+								resource.push( define[0] );
 							}
 							
 							//下载战场附件资源
@@ -125,6 +125,12 @@ package
 							} ,  function( event:ResourceEvent ):void{
 								if ( event.ok ){
 									world.addLoadingText( "成功下载场景资源" );
+									
+									for each ( var item:IMapItem in map.items ){
+										if ( item is IDataSource ){
+											( item as IDataSource ).dataSource = resourceMgr.getResource( item.define );
+										}
+									}
 									
 									//---------------------------------------5-----------------------------
 									battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
