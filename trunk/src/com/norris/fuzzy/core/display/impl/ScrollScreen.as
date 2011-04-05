@@ -119,6 +119,12 @@ package com.norris.fuzzy.core.display.impl
 			}
 		}
 		
+		public function moveTo( x:Number, y:Number ) :void
+		{
+			scrollArea.x = x;
+			scrollArea.y = y;
+		}
+		
 		private function onMouseUp( event:MouseEvent ) : void
 		{
 			_mousedown = false;
@@ -137,10 +143,6 @@ package com.norris.fuzzy.core.display.impl
 		public function pushToScroll(layer:ILayer):void
 		{
 			_layers.push( layer );
-			
-			//如果没有view强制指定
-			if ( layer.view == null )
-				layer.view = new Sprite();
 			
 			scrollArea.addChild( layer.view );
 			

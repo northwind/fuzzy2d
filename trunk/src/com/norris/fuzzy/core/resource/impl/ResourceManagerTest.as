@@ -34,7 +34,7 @@ package com.norris.fuzzy.core.resource.impl
 			mgr.add( "aaa", "dddd" );
 			mgr.add( "bbb", "bbb" );
 			
-			Assert.assertEquals( mgr.count, 2 );
+			Assert.assertEquals( mgr.count , 2 );
 		}
 		
 		[Test]

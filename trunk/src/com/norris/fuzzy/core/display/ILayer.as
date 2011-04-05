@@ -20,6 +20,6 @@ package com.norris.fuzzy.core.display
 		
 		function get view() :Sprite;
 		
-		function set view( value:Sprite ) :void;
+//		function set view( value:Sprite ) :void;
 	}
 }

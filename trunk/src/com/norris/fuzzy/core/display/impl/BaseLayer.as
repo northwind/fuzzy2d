@@ -31,10 +31,10 @@ package com.norris.fuzzy.core.display.impl
 			return _view;
 		}
 		
-		public function set view( value:Sprite ) :void
-		{
-			_view = value;
-		}
+//		public function set view( value:Sprite ) :void
+//		{
+//			_view = value;
+//		}
 		
 		override public function destroy() : void
 		{

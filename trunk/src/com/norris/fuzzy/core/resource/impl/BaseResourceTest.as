@@ -5,6 +5,8 @@ package com.norris.fuzzy.core.resource.impl
 	import com.norris.fuzzy.core.resource.impl.*;
 	
 	import flash.display.*;
+	import flash.display.MovieClip;
+	import flash.events.Event;
 	import flash.media.Sound;
 	import flash.media.Video;
 	import flash.utils.ByteArray;
@@ -232,17 +234,25 @@ package com.norris.fuzzy.core.resource.impl
 //			
 //			r4.load();	
 			
-			var r2:VideoResource  = new VideoResource( "test flv", "http://www.sinaimg.cn/cj/stockwin/images/balls.flv", true );
+//			var r2:VideoResource  = new VideoResource( "test flv", "http://www.sinaimg.cn/cj/stockwin/images/balls.flv", true );
+//			r2.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+//				var video:Video = r2.getVideo();
+//				if ( video != null ){
+//				}
+//			} );
+//			r2.load();
 			
+			var r2:SWFResource  = new SWFResource( "testswf", "assets/navbar.swf", true );
 			r2.addEventListener( ResourceEvent.COMPLETE, function( event:ResourceEvent ) : void {
+				trace( "loaded" );
+				var bar:MovieClip = new ( r2.getSymbol( "NavBar" )  as MovieClip ); 
+				bar.addEventListener( "auto", function( e:Event ) :void{
+					trace( "auto event" );
+				} );
 				
-				var video:Video = r2.getVideo();
-				if ( video != null ){
-					
-				}
+				
 			} );
-			
-			r2.load();
+			r2.load();			
 		}
 		
 		[AfterClass]

@@ -87,7 +87,7 @@ package com.norris.fuzzy.core.resource.impl
 				return ImageResource;
 				
 			else if ( /swf/i.test( extension ) )
-				return VideoResource;
+				return SWFResource;
 				
 			else if ( /xml|mxml/i.test( extension ) )
 				return XMLResource;
@@ -350,6 +350,11 @@ package com.norris.fuzzy.core.resource.impl
 					r.destroy();
 			}
 			Logger.warning( " ResourceManager all resources is destroyed ." );
+		}
+		
+		public function get count():uint
+		{
+			return this._items.count;
 		}
 		
 		public function isRunning() :Boolean

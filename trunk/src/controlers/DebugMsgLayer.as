@@ -19,7 +19,7 @@ package controlers
 			text.textColor = 0xffffff;
 //			text.backgroundColor = 0x000000;
 			text.x = 10;
-			text.y = 10;
+			text.y = 40;
 			
 			this.view.addChild( text );
 		}
