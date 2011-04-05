@@ -1,6 +1,8 @@
 package controlers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import flash.display.DisplayObject;
 	
@@ -13,6 +15,8 @@ package controlers
 	{
 		private var _model:MapModel;
 		private var _items:Object;
+		
+//		public var tileLayer:TileLayer;
 		
 		public function StaticLayer( model :MapModel )
 		{
@@ -33,8 +37,13 @@ package controlers
 		{
 			_items = _model.items;
 			
-			for each( var item:MapItem in _items ){
-				this.view.addChild( item.view );
+			var coord:Coordinate;
+			for each( var item:IMapItem in _items ){
+				if ( item.view != null ){
+					coord = MyWorld.mapToScreen( item.row, item.col );
+					item.adjustPosition( 300, 300 );
+					this.view.addChild( item.view );
+				}
 			}
 		}
 		

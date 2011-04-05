@@ -1,4 +1,4 @@
-package screens
+package com.norris.fuzzy.map
 {
 	public interface ISortable
 	{
@@ -6,8 +6,8 @@ package screens
 		
 		function get row():int;
 		
-		function get cols():int;
+		function get cols():uint;
 		
-		function get rows():int;
+		function get rows():uint;
 	}
 }

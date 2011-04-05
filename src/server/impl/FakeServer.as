@@ -59,7 +59,7 @@ package server.impl
 		{
 			switch( req["type"] )
 			{
-				case DataRequest.TYPE_Player:			//人物信息
+				case DataRequest.TYPE_Player:			//玩家信息
 					req.rtype = 0;
 					req.rvalue = {
 						name : "李健",
@@ -132,9 +132,9 @@ package server.impl
 						}],
 						//渲染场景
 						items	: [{
-							d : "npc2",	x : 3, y :20
+							d : "npc2",	x : 6, y : 20
 						},{
-							d : "house2",	x : 5, y :6
+//							d : "house2",	x : 5, y :6
 						}],
 						//1 = true 0 = false
 						//改用简写节省空间
@@ -144,7 +144,7 @@ package server.impl
 							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1,
 							type : 1
 						},{
-							id	: "npc2", s : "assets/walk.png",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
+							id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
 							type : 2, sb : "ZhangFei"
 						}]
 					};

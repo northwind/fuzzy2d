@@ -5,11 +5,12 @@ package views
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.core.resource.impl.ImageResource;
 	
-	import flash.display.Sprite;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	
-	import screens.ISortable;
+	import com.norris.fuzzy.map.ISortable;
 	
 	public class MapItem implements IDataSource
 	{
@@ -28,7 +29,7 @@ package views
 		public var walkable:Boolean = false;
 		public var overlap:Boolean = false;
 		
-		public var view:Sprite;
+		public var view:DisplayObject;
 		private var _source:IResource;
 		
 		public function MapItem()
@@ -44,29 +45,20 @@ package views
 			
 			_source = value;
 			
-			if ( this.view == null )
-				this.view = new Sprite();
-			
-			this.view.x =  raw * 64;
-			this.view.y =  col * 32;
-			
-			//先清空
-			while( this.view.numChildren > 0 )
-				this.view.removeChildAt( 0 );
-			
 			if ( _source.isFinish() ){
-				this.view.addChild( _source.content as Bitmap );
+				onResourceComplete();
 			}else{
 				_source.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
 				_source.load();
 			}
 		}
 		
-		private function onResourceComplete( event:ResourceEvent ) : void
+		private function onResourceComplete( event:ResourceEvent = null ) : void
 		{
 			_source.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
-			if ( event.ok )
-				this.view.addChild( _source.content as Bitmap );
+			
+			if ( !_source.isFailed() )
+				this.view = _source.content as DisplayObject;
 		}
 		
 		public function get dataSource() : IResource
