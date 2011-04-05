@@ -11,6 +11,7 @@ package screens
 	public class BattleScreen extends ScrollScreen
 	{
 		public var mapLayer:MapLayer;
+		public var menuLayer:MenuLayer;
 		public var model:RecordModel;
 		
 		public function BattleScreen(  model :RecordModel )
@@ -28,9 +29,8 @@ package screens
 		
 		protected function initLayers( event:ModelEvent = null ) :void
 		{
-			this.view.x = model.mapModel.offsetX;
-			this.view.y = model.mapModel.offsetY;
-			
+			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
+		 	
 			mapLayer  = new MapLayer( model.mapModel );
 
 			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
@@ -38,7 +38,7 @@ package screens
 			var unitsLayer:UnitsLayer = new UnitsLayer( model.mapModel );
 			
 			var tipsLayer:TipsLayer = new TipsLayer();
-			var menuLayer:MenuLayer = new MenuLayer();
+			this.menuLayer = new MenuLayer();
 			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
 			
 			//需要卷屏

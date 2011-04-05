@@ -35,12 +35,6 @@ package com.norris.fuzzy.core.display.impl
 			
 			_source = value;
 			
-			if ( this.view == null ){
-				this.view = new Sprite();
-				this.view.mouseEnabled = false;
-				this.view.mouseChildren = false;
-			}
-			
 			if ( _source.isFinish() ){
 				onImageReady();
 			}else{
@@ -55,7 +49,21 @@ package com.norris.fuzzy.core.display.impl
 			this.view.graphics.beginBitmapFill( bitmapData, null, false );
 			this.view.graphics.drawRect( 0, 0, bitmapData.width, bitmapData.height );
 			this.view.graphics.endFill();
-//			this.view.addChild( _source.content as Bitmap );
+			
+//			if ( this.view.stage )
+//				onStage();
+//			else
+//				this.view.addEventListener(Event.ADDED_TO_STAGE, onStage );
+		}
+		
+		private function onStage( event:Event = null ) :void
+		{
+			this.view.removeEventListener(Event.ADDED_TO_STAGE, onStage );
+			
+			var bitmapData:BitmapData = (_source as ImageResource).getBitmapData();
+			this.view.graphics.beginBitmapFill( bitmapData, null, false );
+			this.view.graphics.drawRect( 0, 0, bitmapData.width, bitmapData.height );
+			this.view.graphics.endFill();
 		}
 		
 		private function onResourceComplete( event:ResourceEvent ) : void

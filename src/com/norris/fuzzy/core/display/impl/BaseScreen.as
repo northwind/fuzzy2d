@@ -43,8 +43,8 @@ package com.norris.fuzzy.core.display.impl
 			_layers.push( layer );
 			
 			//如果没有view强制指定
-			if ( layer.view == null )
-				layer.view = new Sprite();
+//			if ( layer.view == null )
+//				layer.view = new Sprite();
 					
 			_view.addChild( layer.view );
 			

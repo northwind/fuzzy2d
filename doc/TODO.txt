@@ -5,8 +5,8 @@
 #ImageLayer 用Gragic 或者bitmap
 #battleScreen特殊分层处理
 #DebugMsgLayer
-swfResources
-绘制2.5等距视图
+#swfResources
+#绘制2.5等距视图
 放置物件、选择物件
 排序
 移植寻路算法
@@ -27,7 +27,7 @@ swfResources
 #FakeServer
 不再继承BaseManager, 改为内部属性
 
-
+增加view概念，限制screen展示
 
 
 

@@ -107,8 +107,8 @@ package server.impl
 						name : "汜水关之战",
 						cellXNum : 20,
 						cellYNum : 20,
-						oX		: 	150,
-						oY		:   150,
+						oX		: 	-150,
+						oY		:   -150,
 						
 						bg		: {
 							src   : "assets/bgtest8.png",
@@ -144,7 +144,7 @@ package server.impl
 							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1,
 							type : 1
 						},{
-							id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
+							id	: "npc2", s : "assets/walk.png",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
 							type : 2, sb : "ZhangFei"
 						}]
 					};

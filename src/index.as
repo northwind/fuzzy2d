@@ -1,8 +1,10 @@
 package
 {
 	import com.norris.fuzzy.core.display.impl.ImageLayer;
+	import com.norris.fuzzy.core.resource.IResource;
 	import com.norris.fuzzy.core.resource.IResourceManager;
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
+	import com.norris.fuzzy.core.resource.impl.SWFResource;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -16,13 +18,14 @@ package
 	import models.impl.RecordModel;
 	
 	import screens.BattleScreen;
-	import views.MapItem;
 	
 	import server.IDataServer;
 	import server.ProxyServer;
 	import server.event.ServerEvent;
 	import server.impl.FakeServer;
 	import server.impl.SocketServer;
+	
+	import views.MapItem;
 	
 	[SWF(frameRate="24", bgcolor="0x000000" )]
 	public class index extends Sprite
@@ -111,6 +114,10 @@ package
 								resource.push( item.define );
 							}
 							
+							//下载战场附件资源
+							var battleSwf:IResource = resourceMgr.add( "battle", "assets/battle.swf" );
+							resource.push( battleSwf );
+							
 							world.addLoadingText( "0/" + resource.length +"下载场景资源" );
 							resourceMgr.load( resource, function( event:ResourceEvent ):void{
 								//显示下载进度
@@ -121,6 +128,7 @@ package
 									
 									//---------------------------------------5-----------------------------
 									battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
+									battle.menuLayer.dataSource = battleSwf;
 									battle.setup();
 									
 									world.screenMgr.add("battle", battle );
