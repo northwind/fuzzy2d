@@ -16,7 +16,7 @@ package controlers
 		private var _model:MapModel;
 		private var _items:Object;
 		
-//		public var tileLayer:TileLayer;
+		public var tileLayer:TileLayer;
 		
 		public function StaticLayer( model :MapModel )
 		{
@@ -35,13 +35,15 @@ package controlers
 		
 		private function onModelCompleted( event :ModelEvent = null ) :void
 		{
+			this._model.removeEventListener( ModelEvent.COMPLETED, onModelCompleted );
+			
 			_items = _model.items;
 			
 			var coord:Coordinate;
 			for each( var item:IMapItem in _items ){
 				if ( item.view != null ){
-					coord = MyWorld.mapToScreen( item.row, item.col );
-					item.adjustPosition( 300, 300 );
+					tileLayer.adjustPosition( item.view, item.row, item.col, item.rows, item.cols );
+					
 					this.view.addChild( item.view );
 				}
 			}

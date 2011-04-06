@@ -194,6 +194,26 @@ package controlers
 			}else{
 				_movedTile.visible = false;
 			}			
+
+		}
+		
+		public function adjustPosition( item:DisplayObject, row:int, col:int, rows:uint, cols:uint ) : void
+		{
+			//不在显示范围内的，隐藏
+			if ( !isValid( row, col ) ){
+				item.visible = false;
+				return;
+			}
+			var coord:Coordinate = _iso.mapToScreen( row * _tileHeight, 0, -col * _tileWidth );
+			
+//			item.x = coord.x + _gridX - (item.width - MyWorld.CELL_WIDTH - (rows - 1) * MyWorld.CELL_WIDTH / 2 );
+//			item.y = coord.y + _gridY;
+//			item.y = coord.y + _gridY - (cols - 1) * MyWorld.CELL_HEIGHT;
+//			item.y = coord.y + _gridY - (item.height - MyWorld.CELL_HEIGHT);
+			
+			
+			item.x = coord.x + _gridX - (cols - 1 )* MyWorld.CELL_WIDTH / 2 ;
+			item.y = coord.y + _gridY - (rows -1 ) * MyWorld.CELL_HEIGHT;
 		}
 		
 		/**
@@ -238,8 +258,8 @@ package controlers
 					if ( !isValid( i, j ) )
 						continue;
 					
-					var t:GridTile = new GridTile();
-//					var t:DebugNumberTile = new DebugNumberTile( i,j );
+//					var t:GridTile = new GridTile();
+					var t:DebugNumberTile = new DebugNumberTile( i,j );
 					
 					var tx:Number = i * _tileHeight;
 					var tz:Number = -j * _tileWidth;
