@@ -6,6 +6,7 @@ package server.impl
 	import flash.events.*;
 	
 	import server.*;
+	import server.impl.*;
 	import server.event.ServerEvent;
 	
 	public class FakeServer extends EventDispatcher implements IDataServer
@@ -102,52 +103,7 @@ package server.impl
 					break;
 				
 				case DataRequest.TYPE_Map:			//地图信息
-					req.rtype = 0;
-					req.rvalue = {
-						name : "汜水关之战",
-						cellXNum : 20,
-						cellYNum : 20,
-						oX		: 	-150,
-						oY		:   -150,
-						
-						bg		: {
-							src   : "assets/bgtest8.png",
-							oT   : 50,
-							oL	: 50,
-							oR   : 50,
-							oB   : 50,
-							color : "0x333333"
-						},
-						
-						sound	: {
-							src   :  "assets/ddd.mp3",
-							loop : true
-						},
-						
-						//不可行走
-						blocks : [{
-							x:1, y : 1
-						},{
-							x : 4, y: 4
-						}],
-						//渲染场景
-						items	: [{
-							d : "npc2",	x : 6, y : 20
-						},{
-//							d : "house2",	x : 5, y :6
-						}],
-						//1 = true 0 = false
-						//改用简写节省空间
-						//rs = rows 占的行数 cs = cols 占的列数 oX = offsetX, oY=offsetY, o = overley, w=walkable, s=src
-						// type: 1 静态 2 动态  sb = symbol 
-						defines	: [{
-							id	: "house2", s : "assets/house2.png", oX :0, oY:0, rs:6, cs:7, w : 0, o : 1,
-							type : 1
-						},{
-							id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
-							type : 2, sb : "ZhangFei"
-						}]
-					};
+					FakeResponse.createMap( req );
 					break;
 				
 				case DataRequest.TYPE_Script:			//脚本信息

@@ -84,8 +84,8 @@ package models.impl
 						continue;
 					
 					item.define = a.d;
-					item.row = a.x;
-					item.col = a.y;
+					item.row = a.r;
+					item.col = a.c;
 					item.offsetX = o.oX;
 					item.offsetY = o.oY;
 					item.cols 	 = o.cs;
@@ -93,7 +93,7 @@ package models.impl
 					item.isWalkable = o.w == 1 ? true : false;
 					item.isOverlap = o.o == 1 ? true : false;
 					
-					this._items.reg( a.x + "_" + a.y, item );
+					this._items.reg( a.r + "_" + a.c, item );
 				}
 				
 				this.onCompleted( value );
