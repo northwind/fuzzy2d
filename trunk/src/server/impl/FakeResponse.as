@@ -14,7 +14,7 @@ package server.impl
 				cellXNum : 20,
 				cellYNum : 20,
 				oX		: 	-150,
-					oY		:   -150,
+				oY		:   -150,
 					
 					bg		: {
 						src   : "assets/bgtest8.png",
@@ -32,13 +32,19 @@ package server.impl
 					
 					//不可行走
 					blocks : [{
-						x:1, y : 1
+						r:6, c:24
 					},{
-						x : 4, y: 4
+						r:6, c:25
+					},{
+						r:9, c:25
+					},{
+						r:10, c:26
+					},{
+						r:11, c:27
 					}],
 					//渲染场景
 					items	: [{
-//						d : "npc2",	r : 6, z : 20
+						d : "npc2",	r : 6, c : 20
 					},{
 						d : "train", r: 5, c : 16
 					},{
@@ -75,22 +81,22 @@ package server.impl
 					//rs = rows 占的行数 cs = cols 占的列数 oc = offsetX, oY=offsetY, o = overlap, w=walkable, s=src
 					// type: 1 静态 2 动态  sb = symbol 
 					defines	: [{
-						id	: "tree", s : "assets/tree.png", oX :0, oY:0, rs:1, cs:1, w : 0, o : 0,
+						id	: "tree", s : "assets/tree.png", oX :18, oY:0, rs:1, cs:1, w : 0, o : 0,
 						type : 1
 					},{
-						id	: "train", s : "assets/train.png", oX :0, oY:0, rs:4, cs:1, w : 0, o : 0,
+						id	: "train", s : "assets/train.png", oX :30, oY:-13, rs:1, cs:4, w : 0, o : 0,
 						type : 1
 					},{
-						id	: "garden", s : "assets/garden.png", oX :0, oY:0, rs:2, cs:2, w : 0, o : 0,
+						id	: "garden", s : "assets/garden.png", oX :13, oY:-5, rs:2, cs:2, w : 0, o : 0,
 						type : 1
 					},{
-						id	: "busstation", s : "assets/busstation.png", oX :0, oY:0, rs:2, cs:1, w : 0, o : 0,
+						id	: "busstation", s : "assets/busstation.png", oX :0, oY:0, rs:1, cs:2, w : 0, o : 0,
 						type : 1
 					},{
-						id	: "house1", s : "assets/house1.png", oX :0, oY:0, rs:1, cs:2, w : 0, o : 0,
+						id	: "house1", s : "assets/house1.png", oX :8, oY:-3, rs:2, cs:1, w : 0, o : 0,
 						type : 1
 					},{
-						id	: "grass3", s : "assets/grass3.png", oX :0, oY:0, rs:1, cs:1, w : 1, o : 1,
+						id	: "grass3", s : "assets/grass3.png", oX :10, oY:0, rs:1, cs:1, w : 1, o : 1,
 						type : 1
 					},{
 						id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,

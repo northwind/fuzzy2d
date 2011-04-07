@@ -4,6 +4,7 @@ package controlers
 	import com.norris.fuzzy.core.input.impl.InputKey;
 	import com.norris.fuzzy.core.input.impl.InputManager;
 	import com.norris.fuzzy.core.log.Logger;
+	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.Isometric;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
@@ -19,9 +20,9 @@ package controlers
 	
 	import views.tiles.*;
 	
-	[Event(name="move_tile", type="controlers.events.TileEvent")]
+	[Event(name="move", type="controlers.events.TileEvent")]
 	
-	[Event(name="select_tile", type="controlers.events.TileEvent")]
+	[Event(name="select", type="controlers.events.TileEvent")]
 	
 	/**
 	 *  处理与单元格相关的逻辑
@@ -197,23 +198,21 @@ package controlers
 
 		}
 		
-		public function adjustPosition( item:DisplayObject, row:int, col:int, rows:uint, cols:uint ) : void
+		public function adjustPosition( item:IMapItem ) : void
 		{
+			var row:int = item.row;
+			var col:int = item.col;
+			var view:DisplayObject = item.view;
+			
 			//不在显示范围内的，隐藏
 			if ( !isValid( row, col ) ){
-				item.visible = false;
+				view.visible = false;
 				return;
 			}
 			var coord:Coordinate = _iso.mapToScreen( row * _tileHeight, 0, -col * _tileWidth );
 			
-//			item.x = coord.x + _gridX - (item.width - MyWorld.CELL_WIDTH - (rows - 1) * MyWorld.CELL_WIDTH / 2 );
-//			item.y = coord.y + _gridY;
-//			item.y = coord.y + _gridY - (cols - 1) * MyWorld.CELL_HEIGHT;
-//			item.y = coord.y + _gridY - (item.height - MyWorld.CELL_HEIGHT);
-			
-			
-			item.x = coord.x + _gridX - (cols - 1 )* MyWorld.CELL_WIDTH / 2 ;
-			item.y = coord.y + _gridY - (rows -1 ) * MyWorld.CELL_HEIGHT;
+			view.x = coord.x + _gridX - (item.rows - 1)* MyWorld.CELL_WIDTH / 2 + item.offsetX;
+			view.y = coord.y + _gridY - (view.height - MyWorld.CELL_HEIGHT )  + item.offsetY ;
 		}
 		
 		/**
@@ -259,7 +258,8 @@ package controlers
 						continue;
 					
 //					var t:GridTile = new GridTile();
-					var t:DebugNumberTile = new DebugNumberTile( i,j );
+//					var t:DebugNumberTile = new DebugNumberTile( i,j );
+					var t:DebugBlockTile = new DebugBlockTile( i,j, _model.isBlock( i, j ) );
 					
 					var tx:Number = i * _tileHeight;
 					var tz:Number = -j * _tileWidth;

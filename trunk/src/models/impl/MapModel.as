@@ -23,7 +23,9 @@ package models.impl
 		public var cellHeight:uint = 0;
 		
 		private var _items:BaseManager = new BaseManager();
+		private var _itemsUnique:Object = {};
 		private var _defines:BaseManager = new BaseManager();
+		private var _blocks:Object = {};
 		
 		public function MapModel( id:String = null )
 		{
@@ -49,6 +51,17 @@ package models.impl
 				cellYNum = value[ "cellYNum" ];
 				cellWidth = value[ "cellWidth" ];
 				cellHeight = value[ "cellHeight" ];
+
+				//存储障碍单元
+				var blocks:Array;
+				if ( value["blocks"] is Array ){
+					blocks = value["blocks"] as Array;
+				}else{
+					blocks = [];
+				}
+				for each (var b:Object in blocks) {
+					setBlockPos( b.r, b.c );					
+				}
 				
 				//存储item define
 				var defines:Array;
@@ -93,16 +106,56 @@ package models.impl
 					item.isWalkable = o.w == 1 ? true : false;
 					item.isOverlap = o.o == 1 ? true : false;
 					
-					this._items.reg( a.r + "_" + a.c, item );
+					addMapItem( item );
 				}
 				
 				this.onCompleted( value );
 			}
 		}
 		
+		private function addMapItem( item:IMapItem ) : void
+		{
+			_itemsUnique[ item.row + "_" + item.col ] = item;
+			//设置障碍单元
+			for (var i:int = item.rows - 1; i >= 0; i-- ) 
+			{
+				this._items.reg( (item.row -i) + "_" + item.col, item );
+			
+				if ( !item.isWalkable )
+					setBlockPos( item.row - i, item.col );
+			}
+			for (var j:int = item.cols - 1; j >= 0; j-- ) 
+			{
+				this._items.reg( item.row + "_" + ( item.col - j ), item );
+				
+				if ( !item.isWalkable )
+					setBlockPos( item.row, item.col - j );
+			}
+		}
+		
+		public function setBlockPos( row:int, col:int ) : void
+		{
+			_blocks[ row+"_" + col ] = 1;
+		}
+		
+		public function isBlock(  row:int, col:int ) : Boolean
+		{
+			return _blocks[ row+"_" + col ] === 1;
+		}
+		
+		public function get blocks() :Object
+		{
+			return _blocks;
+		}
+		
+		public function getItem( row:int, col:int ) :IMapItem
+		{
+			return _items.find( row +"_" + col ) as IMapItem;
+		}
+		
 		public function get items() :Object
 		{
-			return this._items.getAll();
+			return this._itemsUnique;
 		}
 		
 		public function get background() :Object
