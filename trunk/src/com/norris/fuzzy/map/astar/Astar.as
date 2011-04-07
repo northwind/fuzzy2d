@@ -1,22 +1,20 @@
-package com.gamebook.utils.astar {
-	/**
-	 * This class is used to perform A* searches. Most commonly, the A* search is used for pathfinding through a tile-based map. A grid (map) to be searched using this class must implement ISearchable. The tiles on that grid must implement INode.
-	 * <br><br>By default allowDiag is true, which means that diagonal paths are allowed. You can change that with the setAllowDiag method. By default, the max search time is 2000 ms. Thsi can be changed via the setMaxSearchTime method.
-	 */
+package com.norris.fuzzy.map.astar {
+
 	public class Astar {
 		private var startNode:INode;
 		private var goalNode:INode;
 		private var closed:Object;
 		private var allowDiag:Boolean;
 		private var grid:ISearchable;
-		private var maxSearchTime:Number;
+		
+		public var maxSearchTime:Number;
 		/**
 		 * Creates a new instance of the Astar class. 
 		 */
 		public function Astar(grid:ISearchable) {	
 			this.grid = grid;
-			setAllowDiag(true);
-			setMaxSearchTime(2000);
+			setAllowDiag(false);
+			maxSearchTime = 200000;
 		}
 		/**
 		 * Performs an A* search from one tile (INode) to another, using a grid (ISearchable). 
@@ -39,20 +37,20 @@ package com.gamebook.utils.astar {
 			
 			var startTime:Date = new Date();
 			
-			while (queue.hasNextItem()) {
+			while (queue.hasPath()) {
 				var now:Date = new Date();
 				if (now.valueOf() - startTime.valueOf() > maxSearchTime) {
 					break;
 				}
-				var p:Path = queue.getNextItem();
+				var p:Path = queue.getBestPath();
 				var lastNode:INode = p.getLastNode();
 				if (isInClosed(lastNode)) {
 					continue;
 				} else if (lastNode == goalNode) {
 					results.setIsSuccess(true);
 					results.setPath(p);
-					//trace("cost: "+p.getCost())
-					//trace("f: "+p.getF())
+					trace("cost: "+p.getCost())
+					trace("f: "+p.getF())
 					break;
 				} else {
 					closed[lastNode.getNodeId()] = true;
@@ -62,8 +60,10 @@ package com.gamebook.utils.astar {
 						//var h:Number = Math.abs(lastNode.getCol()-t.getCol())+Math.abs(lastNode.getRow()-t.getRow());
 						var h:Number = Math.sqrt(Math.pow(goalNode.getCol()-t.getCol(), 2) + Math.pow(goalNode.getRow()-t.getRow(), 2));
 						t.setHeuristic(h);
+						
 						var pp:Path = p.clone();
 						pp.addNode(t);
+						
 						var cost:Number;
 						if (t.getCol() == lastNode.getCol() || t.getRow() == lastNode.getRow()) {
 							cost = 1;
@@ -71,9 +71,10 @@ package com.gamebook.utils.astar {
 							cost = diag;
 						}
 						var costMultiplier:Number = grid.getNodeTransitionCost(lastNode, t);
-						//var costMultiplier:Number = costs[lastNode.getNodeType()+t.getNodeType()];
 						cost *= costMultiplier;
+						
 						pp.incrementCost(cost);
+						
 						queue.enqueue(pp);
 					}
 				}
@@ -81,13 +82,7 @@ package com.gamebook.utils.astar {
 			
 			return results;
 		}
-		/**
-		 * Sets the maximum search time in milliseconds.
-		 * @param	Time in milliseconds.
-		 */
-		public function setMaxSearchTime(maxSearchTime:Number):void {
-			this.maxSearchTime = maxSearchTime;
-		}
+		
 		/**
 		 * Flags the allowDiag property to true or false. If true, then diagonal legs are allowed from one tile to the next. If false, then only vertical and horizontal are allowed.
 		 * @param	allowDiag
@@ -107,40 +102,43 @@ package com.gamebook.utils.astar {
 			var r:int = n.getRow();
 			var max_c:int = grid.getCols();
 			var max_r:int = grid.getRows();
+			
 			if (arr == null) {
 				arr = new Array();
 				var t:INode;
+				
 				if (c+1 < max_c) {
-					t = grid.getNode(c+1, r);
+					t = grid.getNode( r, c+1  );
 					arr.push(t);
 				}
 				if (r+1 < max_r) {
-					t = grid.getNode(c, r+1);
+					t = grid.getNode( r+1 , c);
 					arr.push(t);
 				}
 				if (c-1 >= 0) {
-					t = grid.getNode(c-1, r);
+					t = grid.getNode(r, c-1);
 					arr.push(t);
 				}
 				if (r-1 >= 0) {
-					t = grid.getNode(c, r-1);
+					t = grid.getNode( r-1, c );
 					arr.push(t);
 				}
+				
 				if (allowDiag) {
 					if (c-1 > 0 && r+1 < max_r) {
-						t = grid.getNode(c-1, r+1);
+						t = grid.getNode( r+1, c-1);
 						arr.push(t);
 					}
 					if (c+1 < max_c && r+1 < max_r) {
-						t = grid.getNode(c+1, r+1);
+						t = grid.getNode( r+1, c+1);
 						arr.push(t);
 					}
 					if (c-1 > 0 && r-1 > 0) {
-						t = grid.getNode(c-1, r-1);
+						t = grid.getNode(r-1, c-1);
 						arr.push(t);
 					}
 					if (c+1 < max_c && r-1 > 0) {
-						t = grid.getNode(c+1, r-1);
+						t = grid.getNode( r-1, c+1);
 						arr.push(t);
 					}
 				}

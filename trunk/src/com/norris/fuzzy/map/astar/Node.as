@@ -1,4 +1,4 @@
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * A tile that will work with the A* search needs to implment INode. It can extend this class for convenience, which already implements INode.
 	 */
@@ -9,7 +9,10 @@ package com.gamebook.utils.astar {
 		private var row:int;
 		private var nodeType:String;
 		private var nodeId:String;
-		public function Node() {			
+		public function Node( row:int, col:int ) {
+			this.row = row;
+			this.col = col;
+			nodeId = row + "_" + col;
 		}
 		public function setNodeId(nodeId:String):void {
 			this.nodeId = nodeId;

@@ -1,17 +1,15 @@
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * This class represents a path of INodes. If a successful search is performed then SearchResults.getPath() returns the most optimal path.
 	 */
 	public class Path {
-		private var nodes:Array;
-		private var cost:Number;
+		private var nodes:Array = [];
+		private var cost:Number = 0;
 		private var lastNode:INode;
 		/**
 		 * Creates a new instance of the Path class.
 		 */
 		public function Path() {
-			cost = 0;
-			nodes = new Array();
 		}
 		/**
 		 * Clones the class. This is used during the search algorithm when trying to find the most optimal path.
@@ -35,7 +33,7 @@ package com.gamebook.utils.astar {
 		 * @return The cost of the path plus heuristic.
 		 */
 		public function getF():Number {
-			return getCost()+lastNode.getHeuristic();
+			return cost + lastNode.getHeuristic();
 		}
 		/**
 		 * Gets the cost from the start node to this point.
@@ -49,7 +47,7 @@ package com.gamebook.utils.astar {
 		 * @param	Amount to increment the cost.
 		 */
 		public function incrementCost(num:Number):void {
-			cost = getCost()+num;
+			cost += num;
 		}
 		/**
 		 * Sets an initial array of INodes.

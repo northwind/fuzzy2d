@@ -1,4 +1,4 @@
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * This class is used to represent the results of an A* search. If the search was successful, then getIsSuccess() returns true and getPath() returns the most optimal path.
 	 */
