@@ -6,6 +6,9 @@ package controlers
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.Isometric;
+	import com.norris.fuzzy.map.astar.INode;
+	import com.norris.fuzzy.map.astar.ISearchable;
+	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
@@ -30,7 +33,7 @@ package controlers
 	 * @author Administrator
 	 * 
 	 */	
-	public class TileLayer extends BaseLayer
+	public class TileLayer extends BaseLayer implements ISearchable 
 	{
 		public var coordLayer :DebugMsgLayer;
 		
@@ -44,34 +47,32 @@ package controlers
 		
 		private var _model:MapModel;
 		private var _painted:Object = {};
-				
-		private var _weight:uint;
-
-		private var w:Number;
-		private var h:Number;
-		private var outerWidth:Number;
-		private var outerHeight:Number;
 		
-		private var _tileWidth:Number;
-		private var _tileHeight:Number;
+		private var _weight:Number;
 		
-		private var minSum:uint;
-		private var maxSum:uint;
-		private var maxMinus:uint;
+		private var w:Number;						//有效操作区域宽度
+		private var h:Number;						//有效操作区域高度
 		
-		private var _cols:int;
-		private var _rows:int;
+		private var _tileWidth:Number;		//2.5D中格子宽
+		private var _tileHeight:Number;     //2.5D中格子高
 		
-		private var _lastRow:int = -999;
+		private var minSum:uint;					//单元格X和Z轴值相加最小值
+		private var maxSum:uint;                //单元格X和Z轴值相加最大值
+		private var maxMinus:uint;             //单元格X和Z轴值相减的绝对值的最大值
+		
+		private var _cols:int;								//2.5d世界中列数
+		private var _rows:int;						    //2.5d世界中行数
+		private var _grid:Array = [];						//存放单元格，用于搜索路径
+		
+		private var _lastRow:int = -999;							//移动单元格上次坐标
 		private var _lastCol:int = -999;
 		
-		private var _gridX:Number;
-		private var _gridY:Number;
-		private var _mouseMoveOffsetX:Number;
+		private var _gridX:Number;									//格子整体的X偏移量
+		private var _gridY:Number;									//格子整体的X偏移量
+		private var _mouseMoveOffsetX:Number;		//鼠标移动时X的偏移量
 		
-		private var _currentCoord:TextField;
 		private var _iso:Isometric;
-		private var _parentView:Sprite;
+		private var _parentView:Sprite;		//父容器
 		
 		public function TileLayer( model:MapModel )
 		{
@@ -252,6 +253,7 @@ package controlers
 			}
 			
 			for (var i:int = 0; i < _rows;++i) {
+				_grid[i] = [];
 				for (var j:int = 0; j < _cols;++j) {
 					//只绘制落在可操控区域中的表格
 					if ( !isValid( i, j ) )
@@ -270,8 +272,28 @@ package controlers
 					t.y = coord.y;
 					
 					_gridWrap.addChild(t);
+					
+					var node:INode = new Node( i, j ) ;
+					
+					_grid[i][j] = node;
 				}
 			}	
+		}
+		
+		/**
+		 *  对其他层提供查询接口 
+		 * @param row
+		 * @param col
+		 * @return 
+		 * 
+		 */		
+		public function getNode( row:int, col:int ) :INode
+		{
+			var r :Array = _grid[ row ] as Array;
+			if ( r == null )
+				return null;
+			
+			return r[ col ] as INode;
 		}
 		
 		/**
@@ -282,10 +304,10 @@ package controlers
 		 * @return 
 		 * 
 		 */		
-		public function isValid( x:int, z:int ) : Boolean
+		public function isValid( row:int, col:int ) : Boolean
 		{
-			var sum:int = x + z;
-			var diff:uint = Math.abs( x - z );
+			var sum:int = row + col;
+			var diff:uint = Math.abs( row - col );
 			if ( sum >= minSum && sum <= maxSum && diff <= maxMinus )
 				return true;
 			else
@@ -389,5 +411,25 @@ package controlers
 			_select.x = coord.x;
 			_select.y = coord.y;
 		}
+		
+		public function getCols():int 
+		{
+			return _cols;
+		}
+		
+		public function getRows():int
+		{
+			return _rows;
+		}
+		
+		public	function getNodeTransitionCost(n1:INode, n2:INode):Number
+		{
+			var cost:Number = 1;
+//			if ( !Tile(n1).walkable || !Tile(n2).walkable ) {
+//				cost = 100000;
+//			}
+			return cost;
+		}
+		
 	}
 }

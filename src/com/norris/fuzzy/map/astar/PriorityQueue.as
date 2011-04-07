@@ -1,20 +1,19 @@
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * This class is used to sort the paths in the queue by priority.
 	 */
 	public class PriorityQueue {
-		private var items:Array;
+		private var items:Array = [];
 		/**
 		 * Creates a new instance of the PriorityQueue class.
 		 */
 		public function PriorityQueue() {
-			items = new Array();
 		}
 		/**
 		 * Gets the next item off of the queue.
 		 * @return The highest priority item.
 		 */
-		public function getNextItem():Path {
+		public function getBestPath():Path {
 			var p:Path = Path(items.shift());
 			return p;
 		}
@@ -22,7 +21,7 @@ package com.gamebook.utils.astar {
 		 * Checks to see if there is anything in the queue.
 		 * @return True or false.
 		 */
-		public function hasNextItem():Boolean {
+		public function hasPath():Boolean {
 			return items.length > 0;
 		}
 		/**

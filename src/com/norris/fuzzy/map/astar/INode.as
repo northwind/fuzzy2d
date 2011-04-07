@@ -1,5 +1,5 @@
 
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * This class must be implemented by a tile that is used in a search by the Astar class. They just have to be implmented as getters and setters -- no logic.
 	 */

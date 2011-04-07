@@ -1,4 +1,4 @@
-package com.gamebook.utils.astar {
+package com.norris.fuzzy.map.astar {
 	/**
 	 * This interface must be implemented by anything that wants to be searchable by the Astar class.
 	 */

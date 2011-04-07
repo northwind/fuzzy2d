@@ -3,6 +3,7 @@ package models.impl
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	import com.norris.fuzzy.core.resource.impl.SWFResource;
 	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.item.ImageMapItem;
 	import com.norris.fuzzy.map.item.MapItemType;
 	import com.norris.fuzzy.map.item.SWFMapItem;
@@ -13,7 +14,7 @@ package models.impl
 	
 	import views.MapItem;
 	
-	public class MapModel extends BaseModel
+	public class MapModel extends BaseModel 
 	{
 		public var id:String;
 		public var cellXNum:uint = 0;
@@ -119,17 +120,13 @@ package models.impl
 			//设置障碍单元
 			for (var i:int = item.rows - 1; i >= 0; i-- ) 
 			{
-				this._items.reg( (item.row -i) + "_" + item.col, item );
-			
-				if ( !item.isWalkable )
-					setBlockPos( item.row - i, item.col );
-			}
-			for (var j:int = item.cols - 1; j >= 0; j-- ) 
-			{
-				this._items.reg( item.row + "_" + ( item.col - j ), item );
-				
-				if ( !item.isWalkable )
-					setBlockPos( item.row, item.col - j );
+				for (var j:int = item.cols - 1; j >= 0; j-- ) 
+				{
+					this._items.reg( (item.row - i) + "_" + ( item.col - j ), item );
+					
+					if ( !item.isWalkable )
+						setBlockPos( item.row - i, item.col - j );
+				}			
 			}
 		}
 		

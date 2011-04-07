@@ -1,8 +1,12 @@
 package controlers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.ISortable;
+	import com.norris.fuzzy.map.astar.Astar;
+	import com.norris.fuzzy.map.astar.INode;
+	import com.norris.fuzzy.map.astar.SearchResults;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
@@ -19,6 +23,7 @@ package controlers
 		private var _model:MapModel;
 		private var _items:Object;
 		private var _sortedItems:Array = [];
+		private var _astar:Astar;
 		
 		public var tileLayer:TileLayer;
 		
@@ -56,6 +61,8 @@ package controlers
 			
 			render();
 			
+			_astar = new Astar( tileLayer );
+			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
 			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);
@@ -63,7 +70,31 @@ package controlers
 		
 		private function onSelectTile( event:TileEvent ):void
 		{
-			// TODO Auto Generated method stub
+			var row:int = event.row;
+			var col:int = event.col;
+			
+			if ( !this.isWalkable(row, col ) )
+				return;
+			
+			var goalNode:INode = tileLayer.getNode( row, col );
+			if ( goalNode == null )
+				return;
+			
+			var startNode:INode = tileLayer.getNode( 6, 20 );
+			if ( startNode == null )
+				return;
+			
+			var results:SearchResults = _astar.search(startNode, goalNode);
+			if (results.getIsSuccess()) {
+				Logger.debug( "success" );
+			}
+			
+		}
+		
+		private function isWalkable( row:int, col:int ) : Boolean
+		{
+			//TODO 友军敌军判断
+			return !_model.isBlock( row, col );		
 		}
 		
 		private var _lastMoveItem:IMapItem = null;

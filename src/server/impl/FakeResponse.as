@@ -13,8 +13,8 @@ package server.impl
 				name : "汜水关之战",
 				cellXNum : 20,
 				cellYNum : 20,
-				oX		: 	-150,
-				oY		:   -150,
+				oX		: 	-50,
+				oY		:   -50,
 					
 					bg		: {
 						src   : "assets/bgtest8.png",
