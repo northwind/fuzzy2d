@@ -12,11 +12,11 @@ package com.norris.fuzzy.core.input.impl
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
-	public class InputManager extends BaseManager implements IInputManager
+	public class InputManager implements IInputManager
 	{
 		private var _enableKeyboard : Boolean = true;
 		private var _enableMouse :Boolean = true;
-		
+		private var _items:BaseManager = new BaseManager();
 		private var _dirtykeys :Array = [];
 		
 		public function InputManager( ct:Sprite )
@@ -62,8 +62,8 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
-			excuteCallbacks( this.find( InputKey.ANYKEY.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( InputKey.ANYKEY.toString() ), event );
 		}
 		
 		private function excuteCallbacks( arr:Array, event:Event ) : void
@@ -88,8 +88,8 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( InputKey.MOUSE_LEFT.toString() ), event );
-			excuteCallbacks( this.find( InputKey.ANYKEY.toString() ), event );
+			excuteCallbacks( this._items.find( InputKey.MOUSE_LEFT.toString() ), event );
+			excuteCallbacks( this._items.find( InputKey.ANYKEY.toString() ), event );
 		}
 		
 		private function onMouseUp( event:MouseEvent ) : void
@@ -104,7 +104,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( InputKey.MOUSE_UP.toString() ), event );
+			excuteCallbacks( this._items.find( InputKey.MOUSE_UP.toString() ), event );
 		}		
 		
 		private function onMouseMove( event:MouseEvent ) : void
@@ -119,7 +119,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
 		}
 		
 		private function onMouseWheel( event:MouseEvent ) : void
@@ -134,7 +134,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
 		}
 		
 		private function onMouseOver( event:MouseEvent ) : void
@@ -149,7 +149,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
 		}
 		
 		private function onMouseOut( event:MouseEvent ) : void
@@ -164,7 +164,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
 		}
 		
 		private function onContext ( event:Event ) : void
@@ -179,7 +179,7 @@ package com.norris.fuzzy.core.input.impl
 			if ( _dirtykeys.indexOf( key ) > -1  )
 				return;
 			
-			excuteCallbacks( this.find( key.toString() ), event );
+			excuteCallbacks( this._items.find( key.toString() ), event );
 			//任意键不包括右键
 			//excuteCallbacks( this.getItem( InputKey.ANYKEY.toString() ), event );
 		}
@@ -190,7 +190,7 @@ package com.norris.fuzzy.core.input.impl
 				Logger.warning( "InputManager on " + key + " : callback is null." );
 				return;
 			}
-			var arr : Array = this.find( key.toString() );
+			var arr : Array = this._items.find( key.toString() );
 			//new an array
 			if ( arr == null )
 				arr = [];
@@ -199,7 +199,7 @@ package com.norris.fuzzy.core.input.impl
 				Logger.warning( "InputManager on " + key + " : callback is already exist." );
 			}else{
 				arr.push( callback );
-				this.reg( key.toString(), arr );
+				this._items.reg( key.toString(), arr );
 			}
 		}
 		
@@ -212,14 +212,14 @@ package com.norris.fuzzy.core.input.impl
 		public function un(key:uint, callback:Function=null):void
 		{
 			if ( callback == null ){
-				this.unreg( key.toString());
+				this._items.unreg( key.toString());
 			}else{
-				var arr : Array = this.find( key.toString() );
+				var arr : Array = this._items.find( key.toString() );
 				if ( arr != null ){
 					var i:int = arr.indexOf( callback );
 					if ( i > -1 ){
 						arr.splice( i, 1 );
-						this.reg( key.toString(), arr );
+						this._items.reg( key.toString(), arr );
 					}
 				}
 			}
@@ -261,6 +261,11 @@ package com.norris.fuzzy.core.input.impl
 						_dirtykeys.splice( i , 1 ); 
 				}
 			}
+		}
+		
+		public function get count() : int
+		{
+			return _items.count;
 		}
 		
 	}

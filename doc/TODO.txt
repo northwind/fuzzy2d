@@ -10,7 +10,7 @@
 #添加mapItem
 #可放置动画物件 swfMapItem
 #排序
-移植寻路算法
+#移植寻路算法  优化ASTAR
 #logger类
 #debug工具             focus 阻止键盘事件
 #增加cop模块           增加一静态类 检测接口继承 factory 
@@ -26,10 +26,25 @@
 #IDataModel
 简化JSON.Decode
 #FakeServer
-不再继承BaseManager, 改为内部属性
+#不再继承BaseManager, 改为内部属性
+scroll区域可设置宽高位置
+加载游戏角色
+显示游戏角色的4个朝向
+显示可移动区域
+移动角色
+设置多个角色，增加队伍属性
+角色移动时友军可以通过，敌军不能通过
+
 
 增加view概念，限制screen展示
 
-
+Layer层次关系:
+bg
+  static
+     units
+     	action
+     		tip
+     			animation
+     				number
 
 

@@ -99,7 +99,7 @@ package server.impl
 						id	: "grass3", s : "assets/grass3.png", oX :10, oY:0, rs:1, cs:1, w : 1, o : 1,
 						type : 1
 					},{
-						id	: "npc2", s : "assets/zhangfei.swf",  oX :-2, oY:-2, rs:1, cs:1, w : 0, o : 1,
+						id	: "npc2", s : "assets/zhangfei.swf",  oX :0, oY:15, rs:1, cs:1, w : 0, o : 1,
 						type : 2, sb : "ZhangFei"
 					}]
 			};			

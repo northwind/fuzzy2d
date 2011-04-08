@@ -1,74 +1,76 @@
 package com.norris.fuzzy.map.astar {
 
 	public class Astar {
-		private var startNode:INode;
-		private var goalNode:INode;
-		private var closed:Object;
-		private var allowDiag:Boolean;
+		private var startNode:Node;
+		private var goalNode:Node;
 		private var grid:ISearchable;
+		private var closed:Object;
 		
-		public var maxSearchTime:Number;
+		public var allowDiag:Boolean;
+		
+		public var maxSearchTimes:uint = 100;		//最大循环次数
+		private var _searchTimes:uint = 0;
+		
+		public static const DIAG:Number = Math.sqrt(2);		//拐弯的cost
 		/**
 		 * Creates a new instance of the Astar class. 
 		 */
-		public function Astar(grid:ISearchable) {	
+		public function Astar(grid:ISearchable, allowDiag:Boolean = false ) {	
 			this.grid = grid;
-			setAllowDiag(false);
-			maxSearchTime = 200000;
+			this.allowDiag = allowDiag;
 		}
+		
 		/**
-		 * Performs an A* search from one tile (INode) to another, using a grid (ISearchable). 
-		 * @param	The starting INode point on the grid.
-		 * @param	The target INode point on the grid.
+		 * Performs an A* search from one tile (Node) to another, using a grid (ISearchable). 
+		 * @param	The starting Node point on the grid.
+		 * @param	The target Node point on the grid.
 		 * @return SearchResults class instance. If the search yielded a path then SearchResults.getIsSuccess() method returns true, and SearchResults.getPath() returns a Path instance that defines the path.
 		 */
-		public function search(start_node:INode, goal_node:INode):SearchResults {
+		public function search(start_node:Node, goal_node:Node):Path {
 			startNode = start_node;
 			goalNode = goal_node;
 			closed = new Object();
-			var results:SearchResults = new SearchResults();
+			_searchTimes = 0;
+			
+			var results:Path;
 			var queue:PriorityQueue = new PriorityQueue();
 			
 			var path:Path = new Path();
 			path.addNode(start_node);
 			queue.enqueue(path);
 			
-			var diag:Number = Math.sqrt(2);
-			
-			var startTime:Date = new Date();
-			
 			while (queue.hasPath()) {
-				var now:Date = new Date();
-				if (now.valueOf() - startTime.valueOf() > maxSearchTime) {
+				if ( _searchTimes++ >= maxSearchTimes ) {
 					break;
 				}
 				var p:Path = queue.getBestPath();
-				var lastNode:INode = p.getLastNode();
-				if (isInClosed(lastNode)) {
+				var lastNode:Node = p.lastNode;
+				//忽略已存在结点
+				if ( closed[ lastNode.id ] != null ) {
 					continue;
 				} else if (lastNode == goalNode) {
-					results.setIsSuccess(true);
-					results.setPath(p);
-					trace("cost: "+p.getCost())
-					trace("f: "+p.getF())
+					results = p;
+					
+					trace("f: "+p.getF());
+					
 					break;
 				} else {
-					closed[lastNode.getNodeId()] = true;
+					closed[lastNode.id] = true;
 					var neighbors:Array = getNeighbors(lastNode);
+					
 					for (var i:int=0;i<neighbors.length;++i) {
-						var t:INode = INode(neighbors[i]);
-						//var h:Number = Math.abs(lastNode.getCol()-t.getCol())+Math.abs(lastNode.getRow()-t.getRow());
-						var h:Number = Math.sqrt(Math.pow(goalNode.getCol()-t.getCol(), 2) + Math.pow(goalNode.getRow()-t.getRow(), 2));
-						t.setHeuristic(h);
+						var t:Node = Node(neighbors[i]);
+						var h:Number = Math.sqrt(Math.pow(goalNode.col-t.col, 2) + Math.pow(goalNode.row-t.row, 2));
+						t.heuristic = h;
 						
 						var pp:Path = p.clone();
 						pp.addNode(t);
 						
 						var cost:Number;
-						if (t.getCol() == lastNode.getCol() || t.getRow() == lastNode.getRow()) {
+						if (t.col == lastNode.col || t.row == lastNode.row) {
 							cost = 1;
 						} else {
-							cost = diag;
+							cost = Astar.DIAG;
 						}
 						var costMultiplier:Number = grid.getNodeTransitionCost(lastNode, t);
 						cost *= costMultiplier;
@@ -84,76 +86,62 @@ package com.norris.fuzzy.map.astar {
 		}
 		
 		/**
-		 * Flags the allowDiag property to true or false. If true, then diagonal legs are allowed from one tile to the next. If false, then only vertical and horizontal are allowed.
-		 * @param	allowDiag
-		 */
-		public function setAllowDiag(allowDiag:Boolean):void {
-			this.allowDiag = allowDiag;
-		}
-		/**
-		 * Gets the neighbor INodes of the one passed in.
+		 * Gets the neighbor Nodes of the one passed in.
 		 * @private
-		 * @param	The INode for which you want to know the the neighbors.
-		 * @return Array of INode instances.
+		 * @param	The Node for which you want to know the the neighbors.
+		 * @return Array of Node instances.
 		 */
-		private function getNeighbors(n:INode):Array {
-			var arr:Array = n.getNeighbors();
-			var c:int = n.getCol();
-			var r:int = n.getRow();
+		private function getNeighbors(n:Node):Array {
+			var arr:Array = n.neighbors;
+			var c:int = n.col;
+			var r:int = n.row;
 			var max_c:int = grid.getCols();
 			var max_r:int = grid.getRows();
 			
 			if (arr == null) {
 				arr = new Array();
-				var t:INode;
+				var t:Node;
 				
 				if (c+1 < max_c) {
-					t = grid.getNode( r, c+1  );
-					arr.push(t);
+					insertNode( arr, r, c+1 );
 				}
 				if (r+1 < max_r) {
-					t = grid.getNode( r+1 , c);
-					arr.push(t);
+					insertNode( arr, r+1, c );
 				}
 				if (c-1 >= 0) {
-					t = grid.getNode(r, c-1);
-					arr.push(t);
+					insertNode( arr, r, c -1 );
 				}
 				if (r-1 >= 0) {
-					t = grid.getNode( r-1, c );
-					arr.push(t);
+					insertNode( arr, r-1, c );
 				}
 				
 				if (allowDiag) {
 					if (c-1 > 0 && r+1 < max_r) {
-						t = grid.getNode( r+1, c-1);
-						arr.push(t);
+						insertNode( arr, r+1, c-1 );
 					}
 					if (c+1 < max_c && r+1 < max_r) {
-						t = grid.getNode( r+1, c+1);
-						arr.push(t);
+						insertNode( arr, r+1, c+1 );
 					}
 					if (c-1 > 0 && r-1 > 0) {
-						t = grid.getNode(r-1, c-1);
-						arr.push(t);
+						insertNode( arr, r-1, c-1 );
 					}
 					if (c+1 < max_c && r-1 > 0) {
-						t = grid.getNode( r-1, c+1);
-						arr.push(t);
+						insertNode( arr, r-1, c+1 );
 					}
 				}
-				n.setNeighbors(arr);
+				
+				n.neighbors = arr;
 			}
 			return arr;
 		}
-		/**
-		 * Checks to see if the INode passed in is in the close object.
-		 * @param	The INode instance to check.
-		 * @return True or false.
-		 */
-		private function isInClosed(n:INode):Boolean {
-			return closed[n.getNodeId()] != null;
+		
+		private function insertNode( arr:Array, row:int, col:int ) : void
+		{
+			var t:Node = grid.getNode( row, col );
+			if ( t != null )
+				arr.push( t );
 		}
+		
 	}
 	
 }
