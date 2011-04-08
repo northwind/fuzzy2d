@@ -19,14 +19,14 @@ package com.norris.fuzzy.map.astar {
 		 * @param	Row that the node is in.
 		 * @return The INode instance.
 		 */
-		function getNode(col:int, row:int):INode
+		function getNode( row:int, col:int ):Node
 		/**
 		 * Gets the terrain transition cost between one node type and another.
 		 * @param	The first node.
 		 * @param	The second node.
 		 * @return The transition cost.
 		 */
-		function getNodeTransitionCost(n1:INode, n2:INode):Number;
+		function getNodeTransitionCost(n1:Node, n2:Node):Number;
 	}
 	
 }

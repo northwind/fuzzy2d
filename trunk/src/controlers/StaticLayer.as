@@ -5,13 +5,15 @@ package controlers
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.ISortable;
 	import com.norris.fuzzy.map.astar.Astar;
-	import com.norris.fuzzy.map.astar.INode;
-	import com.norris.fuzzy.map.astar.SearchResults;
+	import com.norris.fuzzy.map.astar.Node;
+	import com.norris.fuzzy.map.astar.Path;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
 	
 	import flash.display.DisplayObject;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
@@ -76,19 +78,43 @@ package controlers
 			if ( !this.isWalkable(row, col ) )
 				return;
 			
-			var goalNode:INode = tileLayer.getNode( row, col );
+			var goalNode:Node = tileLayer.getNode( row, col );
 			if ( goalNode == null )
 				return;
 			
-			var startNode:INode = tileLayer.getNode( 6, 20 );
+			var startNode:Node = tileLayer.getNode( 6, 20 );
 			if ( startNode == null )
 				return;
 			
-			var results:SearchResults = _astar.search(startNode, goalNode);
-			if (results.getIsSuccess()) {
+			var results:Path = _astar.search(startNode, goalNode);
+			if ( results ) {
 				Logger.debug( "success" );
+				walk( results );
 			}
 			
+		}
+		
+		private function walk( path:Path ) : void
+		{
+			var t:Timer =new Timer( 250, path.nodes.length );
+			var n:int = 0, current:Node, 
+				item:IMapItem = this._model.getItem( 6, 20 );
+			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
+				if ( n < path.nodes.length ){
+					current = path.nodes[ n++ ] as Node;
+					
+					item.row = current.row;
+					item.col = current.col;
+					
+					tileLayer.adjustPosition( item );
+					
+					render();
+				}else{
+					t.stop();
+				}
+			});
+			
+			t.start();
 		}
 		
 		private function isWalkable( row:int, col:int ) : Boolean

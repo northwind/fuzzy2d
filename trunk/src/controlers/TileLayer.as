@@ -6,7 +6,6 @@ package controlers
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.Isometric;
-	import com.norris.fuzzy.map.astar.INode;
 	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.geom.Coordinate;
@@ -273,7 +272,7 @@ package controlers
 					
 					_gridWrap.addChild(t);
 					
-					var node:INode = new Node( i, j ) ;
+					var node:Node = new Node( i, j ) ;
 					
 					_grid[i][j] = node;
 				}
@@ -287,13 +286,13 @@ package controlers
 		 * @return 
 		 * 
 		 */		
-		public function getNode( row:int, col:int ) :INode
+		public function getNode( row:int, col:int ) :Node
 		{
 			var r :Array = _grid[ row ] as Array;
 			if ( r == null )
 				return null;
 			
-			return r[ col ] as INode;
+			return r[ col ] as Node;
 		}
 		
 		/**
@@ -422,12 +421,12 @@ package controlers
 			return _rows;
 		}
 		
-		public	function getNodeTransitionCost(n1:INode, n2:INode):Number
+		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
 		{
 			var cost:Number = 1;
-//			if ( !Tile(n1).walkable || !Tile(n2).walkable ) {
-//				cost = 100000;
-//			}
+			if ( _model.isBlock( n1.row, n1.col ) || _model.isBlock( n2.row, n2.col )  )
+				cost = 10000;
+			
 			return cost;
 		}
 		

@@ -1,25 +1,31 @@
 package com.norris.fuzzy.core.sound.impl
 {
+	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
+	import com.norris.fuzzy.core.resource.IResource;
 	import com.norris.fuzzy.core.sound.ISounder;
 	import com.norris.fuzzy.core.sound.ISounderManager;
-	import com.norris.fuzzy.core.resource.IResource;
-	import com.norris.fuzzy.core.log.Logger;
 	
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
 	import flash.utils.ByteArray;
 	
 	
-	public class SounderManager extends BaseManager implements ISounderManager
+	public class SounderManager implements ISounderManager
 	{
 		private var _muted :Boolean = false;
+		private var _items:BaseManager = new BaseManager();
 		
 		public function SounderManager()
 		{
 			super();
 		}
 		
+		/**
+		 * TODO check 
+		 * @return 
+		 * 
+		 */		
 		public static function get aviable() :Boolean
 		{
 //			return SoundMixer.areSoundsInaccessible();
@@ -75,17 +81,17 @@ package com.norris.fuzzy.core.sound.impl
 				return;
 			}
 			
-			this.reg( sounder.name, sounder );
+			this._items.reg( sounder.name, sounder );
 		}
 		
 		public function remove(name:String):void
 		{
-			this.unreg( name );
+			this._items.unreg( name );
 		}
 		
 		public function get(name:String):ISounder
 		{
-			return this.find( name );
+			return this._items.find( name );
 		}
 		
 		public function play(name:String ):void
@@ -93,21 +99,21 @@ package com.norris.fuzzy.core.sound.impl
 			if ( !SounderManager.aviable )
 				return;
 			
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.play();
 		}
 		
 		public function stop(name:String ):void
 		{
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.stop();
 		}
 		
 		public function stopAll() : void
 		{
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				if ( item.isPlaying() )
 					item.stop();
 			}
@@ -116,7 +122,7 @@ package com.norris.fuzzy.core.sound.impl
 		public function mute(name:String , off:Boolean):void
 		{
 			//单个元素
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.mute = off;	
 		}
@@ -126,7 +132,7 @@ package com.norris.fuzzy.core.sound.impl
 			//记住
 			_muted = off;
 			
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				if ( item.isPlaying() )
 					item.mute = off;
 			}
@@ -137,7 +143,7 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.volume += value;
 		}
@@ -147,7 +153,7 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				if ( item.isPlaying() )
 					item.volume += value;
 			}
@@ -158,7 +164,7 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.volume -= value;
 		}
@@ -168,7 +174,7 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				if ( item.isPlaying() )
 					item.volume -= value;
 			}
@@ -179,7 +185,7 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.volume = value;			
 		}
@@ -189,14 +195,14 @@ package com.norris.fuzzy.core.sound.impl
 			if ( value > 1 || value < 0 )
 				return;
 			
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				item.volume = value;
 			}
 		}
 		
 		public function loops(name:String, times:uint):void
 		{
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.loops = times;					
 		}
@@ -206,21 +212,21 @@ package com.norris.fuzzy.core.sound.impl
 			if ( !SounderManager.aviable )
 				return;
 				
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.replay();	
 		}
 		
 		public function destroyResource(name:String):void
 		{
-			var sounder:ISounder = this.find( name ) as ISounder;
+			var sounder:ISounder = this._items.find( name ) as ISounder;
 			if ( sounder != null )
 				sounder.destroy();	
 		}
 		
 		public function destroyAll():void
 		{
-			for each( var item:ISounder in this.getAll() ){
+			for each( var item:ISounder in this._items.getAll() ){
 				item.destroy();
 			}
 		}

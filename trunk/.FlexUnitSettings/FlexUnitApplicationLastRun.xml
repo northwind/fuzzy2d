@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testrun name="" >
 <testsuite  name="Default Test Suite" project="fuzzy">
-<testsuite name="com.norris.fuzzy.core.resource.impl:BaseResourceTest" type="testcaseclass"/>
+<testsuite name="com.norris.fuzzy.core.sound.impl:SounderManagerTest" type="testsuiteclass"/>
 </testsuite>
 </testrun>
