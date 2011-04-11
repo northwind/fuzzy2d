@@ -11,7 +11,7 @@ package models.impl
 		
 		private var _map:MapModel;
 		private var _script:ScriptModel;
-		private var _units :Array = [];
+		private var _units:Object;
 		
 		private var _relates:uint;
 		private var _downloads:uint;
@@ -44,7 +44,7 @@ package models.impl
 				
 				this._relates = 2 + units.length;			//需要下载的资源数
 				this._downloads = 0;
-				this._units = [];
+				this._units = {};
 				
 				//继续下载地图信息和脚本信息和角色信息
 				//TODO 考虑已下载的情况
@@ -59,19 +59,20 @@ package models.impl
 				_script.loadData();
 				
 				//读取角色信息
-				var u:UnitModel;
+				var u:UnitModel, id:String;
 				for( var i:uint=0; i <units.length; i++ ){
-					u = new UnitModel( units[i]["id"], units[i] );
-					this._units.push( u );
-					
+					id = units[i]["id"];
+					u = new UnitModel( id , units[i] );
 					u.addEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
 					u.addEventListener( ModelEvent.ERROR, onRelatedError );
 					u.loadData();
+					
+					_units[ id ] = u;
 				}
 			}
 		}
 		
-		private function onRelatedCompleted( event:ModelEvent ) :void
+		private function onRelatedCompleted( event:ModelEvent = null ) :void
 		{
 			//clear listner 防止相关model再次读取数据时调用次接口
 			event.model.removeEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
@@ -103,7 +104,7 @@ package models.impl
 			return _script;
 		}
 		
-		public function get unitModels() :Array
+		public function get unitModels() :Object
 		{
 			return _units;
 		}

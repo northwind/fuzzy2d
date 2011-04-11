@@ -19,6 +19,7 @@ package screens
 			super();
 			
 			this._step = MyWorld.CELL_HEIGHT;
+			
 			this.model = model;
 			
 			if ( model.data != null )
@@ -29,17 +30,17 @@ package screens
 		
 		protected function initLayers( event:ModelEvent = null ) :void
 		{
-			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
-		 	
-			mapLayer  = new MapLayer( model.mapModel );
-
 			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
 			var tileLayer:TileLayer = new TileLayer( model.mapModel );
 			var unitsLayer:UnitsLayer = new UnitsLayer( model.mapModel );
 			
+			this.mapLayer  = new MapLayer( model.mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
 			this.menuLayer = new MenuLayer();
 			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
+			
+			this._offsetTop = menuLayer.height;
+			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
 			
 			//需要卷屏
 			this.pushToScroll( mapLayer );

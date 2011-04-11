@@ -2,6 +2,12 @@ package models.impl
 {
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	
+	/**
+	 * 技能管理器，所有的技能都存放在这里
+	 * DEMO期间写死，后期考虑延迟加载脚本方式实现
+	 * @author norris
+	 * 
+	 */	
 	public class SkillModelManager
 	{
 		private static var _items:BaseManager = new BaseManager();
@@ -12,17 +18,17 @@ package models.impl
 		
 		public static function reg( id:String, skill:SkillModel ) : void
 		{
-			this._items.reg( id, skill );
+			SkillModelManager._items.reg( id, skill );
 		}
 		
 		public static function unreg( id:String ) :void
 		{
-			this._items.unreg( id );
+			SkillModelManager._items.unreg( id );
 		}
 		
 		public static function get( id:String ) : SkillModel
 		{
-			return this._items.find( id ) as SkillModel ;
+			return SkillModelManager._items.find( id ) as SkillModel ;
 		}
 		
 	}

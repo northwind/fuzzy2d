@@ -27,7 +27,8 @@
 简化JSON.Decode
 #FakeServer
 #不再继承BaseManager, 改为内部属性
-scroll区域可设置宽高位置
+#scroll区域可设置宽高位置      
+修正BUG，底图上显示items后，可滚动的高度不对了
 #PlayerModel
 #UnitModel
 #剥离Figure类，DEMO中不做纸娃娃系统
