@@ -153,12 +153,7 @@ package server.impl
 					break;
 				
 				case DataRequest.TYPE_Unit:			//角色信息
-					req.rtype = 0;
-					req.rvalue = {
-						name : "曹操",
-						id	  : "caocao",
-						figure : "caocao"
-					};
+					FakeResponse.createUnit( req );
 					break;
 				
 				default:

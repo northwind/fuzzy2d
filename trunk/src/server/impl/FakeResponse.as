@@ -105,5 +105,40 @@ package server.impl
 			};			
 		}
 		
+		public static function createUnit( req:Object ) : void
+		{
+			req.rtype = 0;
+			req.rvalue = {
+				name : "曹操",
+				id	 : "caocao",
+				fg   : "caocao",			//形象
+				lv	 : 1,  					//级别
+				
+				cH : 200,					//当前血量 currentHP
+				bH : 100,					//自身属性血量 bodyHP
+				fH : 50,					//装备加成    fixHP
+				oH : 50,					//技能加成   offsetHP
+					
+				cA : 100,
+				bA : 50,
+				fA : 25,
+				oA : 25,
+				
+				sk : [ 1, 2 ],				//技能表
+				
+				r : 6,						//row
+				c : 20,						//col
+				
+				rg  : 6,					//range
+				rt  : 2,					//rangeType
+				st  : 7,					//step				
+				
+				fa  : 1,					//faction 势力
+				tm	: 100,					//team 队伍
+				
+				v   : 1						//visiable 是否可见  1可见 0不可见
+			};
+		}
+		
 	}
 }

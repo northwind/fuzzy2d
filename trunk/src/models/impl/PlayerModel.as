@@ -7,6 +7,9 @@ package models.impl
 	public class PlayerModel extends BaseModel implements IDataModel
 	{
 		public var id:String = "";
+		public var name:String = "";
+		public var imgUrl:String = "";		//头像地址
+		public var snsType:String = "";		//SNS网站
 		
 		public function PlayerModel( id:String )
 		{
