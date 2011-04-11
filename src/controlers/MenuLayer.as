@@ -8,6 +8,8 @@ package controlers
 	
 	public class MenuLayer extends SWFLayer
 	{
+		public var height:int = 30;
+		
 		public function MenuLayer()
 		{
 			super( "NavBar" );
@@ -22,7 +24,7 @@ package controlers
 			movieClip.x = ( this.view.stage.stageWidth - movieClip.width ) / 2;
 			
 			this.view.graphics.beginFill( 0xCCCCCC );
-			this.view.graphics.drawRect( 0, 0, this.view.stage.stageWidth, 30 );
+			this.view.graphics.drawRect( 0, 0, this.view.stage.stageWidth, height );
 			this.view.graphics.endFill();
 			
 		}

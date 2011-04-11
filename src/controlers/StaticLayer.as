@@ -89,7 +89,7 @@ package controlers
 			var results:Path = _astar.search(startNode, goalNode);
 			if ( results ) {
 				Logger.debug( "success" );
-				walk( results );
+//				walk( results );
 			}
 			
 		}

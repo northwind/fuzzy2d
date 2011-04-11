@@ -73,33 +73,7 @@ package server.impl
 					break;
 				
 				case DataRequest.TYPE_Record:			//记录信息
-					req.rtype = 0;
-					req.rvalue = {
-						time			: 345678988,			//记录的时间
-					
-						mapID		: "2222",
-						scriptID   : "9999",
-						
-						teams		:  [{
-							faction : 1, team : 100, name : "我军"
-						},{
-							faction : 1, team : 200, name : "友军"
-						},{
-							faction : 0, team : 1, name : "敌军"
-						}],
-						
-						victoryN 	: 0, 		//已达到的胜利条件数
-						failedN		: 0,      //已达到的失败条件数
-						
-						units		    : [{
-							id: "zhangfei", gx :  6,  gy : 5, range : 1, rangeType : 2, hpMax : 110, step:7, hp : 110, 
-							direct : 225,  attack : 20, figure : "assets/zhangfei.swf", symbol : "zhangfei", 
-							faction : 0, team : 1,  name : "张飞", level : 1,  visiable : true		
-						}],
-						
-						misfiring	: [ "start", "open", "move" ]			//脚本中已触发过的事件 
-						
-					};
+					FakeResponse.createRecord( req );
 					break;
 				
 				case DataRequest.TYPE_Map:			//地图信息

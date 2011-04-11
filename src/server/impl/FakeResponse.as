@@ -43,9 +43,8 @@ package server.impl
 						r:11, c:27
 					}],
 					//渲染场景
+//					items   : [],
 					items	: [{
-						d : "npc2",	r : 6, c : 20
-					},{
 						d : "train", r: 5, c : 16
 					},{
 						d : "train", r: 5, c : 25
@@ -98,9 +97,6 @@ package server.impl
 					},{
 						id	: "grass3", s : "assets/grass3.png", oX :10, oY:0, rs:1, cs:1, w : 1, o : 1,
 						type : 1
-					},{
-						id	: "npc2", s : "assets/zhangfei.swf",  oX :0, oY:15, rs:1, cs:1, w : 0, o : 1,
-						type : 2, sb : "ZhangFei"
 					}]
 			};			
 		}
@@ -109,34 +105,57 @@ package server.impl
 		{
 			req.rtype = 0;
 			req.rvalue = {
-				name : "曹操",
-				id	 : "caocao",
-				fg   : "caocao",			//形象
+				id	 :  1,
+				na : "张飞",
+				fg   : "zhangfei",			//形象
 				lv	 : 1,  					//级别
 				
-				cH : 200,					//当前血量 currentHP
 				bH : 100,					//自身属性血量 bodyHP
 				fH : 50,					//装备加成    fixHP
-				oH : 50,					//技能加成   offsetHP
 					
-				cA : 100,
 				bA : 50,
 				fA : 25,
-				oA : 25,
 				
 				sk : [ 1, 2 ],				//技能表
 				
-				r : 6,						//row
-				c : 20,						//col
-				
 				rg  : 6,					//range
 				rt  : 2,					//rangeType
-				st  : 7,					//step				
+				st  : 7					//step				
+			};
+		}
+		
+		public static function createRecord( req:Object ) : void
+		{	
+			req.rtype = 0;
+			req.rvalue = {
+				time			: 345678988,			//记录的时间
 				
-				fa  : 1,					//faction 势力
-				tm	: 100,					//team 队伍
+				mapID		: "2222",
+				scriptID   : "9999",
 				
-				v   : 1						//visiable 是否可见  1可见 0不可见
+				teams		:  [{
+					fa : 1, tm : 100, na : "我军"
+				},{
+					fa : 1, tm : 200, na : "友军"
+				},{
+					fa : 0, tm : 1, na : "敌军"
+				}],
+				
+				victoryN 	: 0, 		//已达到的胜利条件数
+				failedN		: 0,      //已达到的失败条件数
+				
+				//r = row, c = col d= direct
+				//fa = faction 势力	tm = team 队伍  v = visiable 是否可见  1可见 0不可见 oH : 50,					
+				//cH = currentHP 当前血量  oH = offsetHP 技能加成   
+				units		    : [{
+					id: 1,  r :  6,  c : 5,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
+				},{
+					id: "zb1",  r :  12,  c : 18,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					na : "杂兵1", fg:"zhangfei", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+				}],
+				
+				//脚本中已触发过的事件
+				misfiring	: [ "start", "open", "move" ]			 
 			};
 		}
 		
