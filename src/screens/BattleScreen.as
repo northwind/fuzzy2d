@@ -38,6 +38,7 @@ package screens
 			var tipsLayer:TipsLayer = new TipsLayer();
 			this.menuLayer = new MenuLayer();
 			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
+			var animationLayer:AnimationLayer = new AnimationLayer();
 			
 			this._offsetTop = menuLayer.height;
 			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
@@ -47,6 +48,7 @@ package screens
 			this.pushToScroll( tileLayer );
 			this.pushToScroll( staticLayer );
 			this.pushToScroll( unitsLayer );
+			this.pushToScroll( animationLayer );
 			
 			//固定区域
 			this.push( tipsLayer );
