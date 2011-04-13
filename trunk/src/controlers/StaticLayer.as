@@ -70,8 +70,15 @@ package controlers
 			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);
 		}
 		
+		private var _moving:Boolean = false;
+		private var _lastMoveRow:int = 6;
+		private var _lastMoveCol:int = 20;
+		
 		private function onSelectTile( event:TileEvent ):void
 		{
+			if ( _moving )
+				return;
+			
 			var row:int = event.row;
 			var col:int = event.col;
 			
@@ -82,36 +89,39 @@ package controlers
 			if ( goalNode == null )
 				return;
 			
-			var startNode:Node = tileLayer.getNode( 6, 20 );
+			var startNode:Node = tileLayer.getNode( _lastMoveRow, _lastMoveCol );
 			if ( startNode == null )
 				return;
 			
 			var results:Path = _astar.search(startNode, goalNode);
 			if ( results ) {
-				Logger.debug( "success" );
-//				walk( results );
+				walk( results );
 			}
 			
 		}
 		
 		private function walk( path:Path ) : void
 		{
-			var t:Timer =new Timer( 250, path.nodes.length );
+			_moving = true;
+			
+			var t:Timer =new Timer( 100, path.nodes.length );
 			var n:int = 0, current:Node, 
 				item:IMapItem = this._model.getItem( 6, 20 );
 			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
-				if ( n < path.nodes.length ){
-					current = path.nodes[ n++ ] as Node;
-					
-					item.row = current.row;
-					item.col = current.col;
-					
-					tileLayer.adjustPosition( item );
-					
-					render();
-				}else{
-					t.stop();
-				}
+				current = path.nodes[ n++ ] as Node;
+				
+				item.row = current.row;
+				item.col = current.col;
+				
+				tileLayer.adjustPosition( item );
+				
+				render();
+			});
+			t.addEventListener(TimerEvent.TIMER_COMPLETE, function( event:TimerEvent ): void{
+				_moving = false;
+				var lastNode:Node = path.nodes[ path.nodes.length - 1 ] as Node;
+				_lastMoveRow = lastNode.row;
+				_lastMoveCol = lastNode.col;
 			});
 			
 			t.start();
