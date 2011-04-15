@@ -1,0 +1,200 @@
+package controlers.layers
+{
+	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.core.log.Logger;
+	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.ISortable;
+	import com.norris.fuzzy.map.astar.Astar;
+	import com.norris.fuzzy.map.astar.Node;
+	import com.norris.fuzzy.map.astar.Path;
+	import com.norris.fuzzy.map.geom.Coordinate;
+	
+	import controlers.events.TileEvent;
+	import controlers.unit.Unit;
+	
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	
+	import models.event.ModelEvent;
+	import models.impl.MapModel;
+	import models.impl.RecordModel;
+	import models.impl.UnitModel;
+	
+	public class UnitsLayer extends BaseLayer
+	{
+		public var tileLayer:TileLayer;
+		public var tipsLayer:TipsLayer;
+		public var staticLayer:StaticLayer;
+		
+		private var _model:RecordModel;
+		private var _units:Object;
+		private var _sortedItems:Array = [];
+		
+		private var _astar:Astar;
+		private var _moving:Boolean = false;
+		private var _lastMoveRow:int = 6;
+		private var _lastMoveCol:int = 20;
+		
+		public function UnitsLayer( model:RecordModel )
+		{
+			super();
+			
+			this._model = model;
+		}
+		
+		override public function onSetup() :void
+		{
+			if ( this._model.data == null )
+				this._model.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
+			else 
+				onModelCompleted();
+		}
+		
+		private function onModelCompleted( event :ModelEvent = null ) :void
+		{
+			this._model.removeEventListener( ModelEvent.COMPLETED, onModelCompleted );
+			
+			var models:Object = this._model.unitModels;
+			
+			_units = {};
+			var coord:Coordinate, unit:Unit, mapItem:IMapItem;
+			for ( var id:String in models ){
+				unit = new Unit( models[ id ] );
+				unit.setup();
+				 
+				_units[ id ] = unit;
+				 
+				if ( unit.figure != null && unit.figure.mapItem != null ){
+					mapItem = unit.figure.mapItem;
+					tileLayer.adjustPosition( mapItem );
+					
+					this.view.addChild( mapItem.view );
+					
+					_sortedItems.push( mapItem );
+				}
+			}
+			
+			render();
+			
+//			_astar = new Astar( tileLayer );
+			
+			//监听单元格事件
+//			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
+//			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);			
+		}
+		
+		private function onSelectTile( event:TileEvent ):void
+		{
+			if ( _moving )
+				return;
+			
+			var row:int = event.row;
+			var col:int = event.col;
+			
+			if ( !this.isWalkable(row, col ) )
+				return;
+			
+			var goalNode:Node = tileLayer.getNode( row, col );
+			if ( goalNode == null )
+				return;
+			
+			var startNode:Node = tileLayer.getNode( _lastMoveRow, _lastMoveCol );
+			if ( startNode == null )
+				return;
+			
+			var results:Path = _astar.search(startNode, goalNode);
+			if ( results ) {
+				walk( results );
+			}
+			
+		}
+		
+		private var _lastMoveItem:IMapItem = null;
+		private function onMoveTile( event:TileEvent ):void
+		{
+			var item:IMapItem = this._model.mapModel.getItem( event.row, event.col );
+			if (  _lastMoveItem != item && _lastMoveItem != null )
+				_lastMoveItem.view.alpha = 1;
+			
+			if ( item == null )
+				return;
+			
+			_lastMoveItem = item;
+			
+			item.view.alpha = 0.5;
+		}
+		
+		private function isWalkable( row:int, col:int ) : Boolean
+		{
+			//TODO 友军敌军判断
+			return !_model.mapModel.isBlock( row, col );		
+		}
+		
+		private function walk( path:Path ) : void
+		{
+			_moving = true;
+			
+			var t:Timer =new Timer( 100, path.nodes.length );
+			var n:int = 0, current:Node, 
+				item:IMapItem = this._model.mapModel.getItem( 6, 20 );
+			
+			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
+				current = path.nodes[ n++ ] as Node;
+				
+				item.row = current.row;
+				item.col = current.col;
+				
+				tileLayer.adjustPosition( item );
+				
+				render();
+			});
+			t.addEventListener(TimerEvent.TIMER_COMPLETE, function( event:TimerEvent ): void{
+				_moving = false;
+				var lastNode:Node = path.nodes[ path.nodes.length - 1 ] as Node;
+				_lastMoveRow = lastNode.row;
+				_lastMoveCol = lastNode.col;
+			});
+			
+			t.start();
+		}
+		
+		/**
+		 * 每当有item更改位置时，需要调用该方法，重新排序 
+		 * 
+		 */		
+		public function render() : void
+		{
+			sortAllItems();
+		}
+		
+		private function sortAllItems() : void 
+		{
+			var list:Array = _sortedItems.slice(0);
+			
+			_sortedItems = [];
+			
+			for (var i:int = 0; i < list.length;++i) {
+				var nsi:ISortable = list[i];
+				
+				var added:Boolean = false;
+				for (var j:int = 0; j < _sortedItems.length;++j ) {
+					var si:ISortable = _sortedItems[j];
+					
+					if (nsi.col <= si.col && nsi.row <= si.row ) {
+						_sortedItems.splice(j, 0, nsi);
+						added = true;
+						break;
+					}
+				}
+				if (!added) {
+					_sortedItems.push(nsi);
+				}
+			}
+			
+			for (i = 0; i < _sortedItems.length;++i) {
+				var disp:IMapItem = _sortedItems[i] as IMapItem;
+				this.view.addChildAt(disp.view, i);
+			}
+		}
+	}
+}

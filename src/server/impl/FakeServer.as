@@ -130,6 +130,14 @@ package server.impl
 					FakeResponse.createUnit( req );
 					break;
 				
+				case DataRequest.TYPE_Skill:			//技能信息
+					FakeResponse.createSkill( req );
+					break;
+				
+				case DataRequest.TYPE_Figure:			//形象信息
+					FakeResponse.createFigure( req );
+					break;
+				
 				default:
 					req.rtype = 1;
 			}	

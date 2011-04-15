@@ -27,7 +27,7 @@ package views
 			if ( name == null)
 				return false;
 			
-			IconButtonMgr._items.has( name );
+			return IconButtonMgr._items.has( name );
 		}
 		
 		public static function get( name:String) :IconButton
@@ -35,7 +35,7 @@ package views
 			if ( name == null)
 				return null;
 			
-			IconButtonMgr._items.find( name ) as IconButton;
+			return IconButtonMgr._items.find( name ) as IconButton;
 		}
 		
 	}

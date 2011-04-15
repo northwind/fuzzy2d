@@ -1,4 +1,4 @@
-package controlers
+package controlers.layers
 {
 	import com.norris.fuzzy.core.display.impl.ImageLayer;
 	import com.norris.fuzzy.core.input.impl.InputKey;

@@ -1,21 +1,28 @@
 package views
 {
+	import com.norris.fuzzy.core.display.IDataSource;
+	import com.norris.fuzzy.core.resource.IResource;
+	import com.norris.fuzzy.core.resource.event.ResourceEvent;
+	import com.norris.fuzzy.core.resource.impl.ImageResource;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	
-	public class IconButton extends Sprite
+	public class IconButton extends Sprite implements IDataSource 
 	{
 		public var tips:String;
-
+		private var _resource:ImageResource;
+		
 		/**
 		 * TODO dataresource 
 		 */		
 		private var _available:Boolean;
 		
-		public function IconButton( bitmapData:BitmapData = null, tips:String = null )
+		public function IconButton( tips:String = null, bitmapData:BitmapData = null )
 		{
 			super();
 			
@@ -53,6 +60,41 @@ package views
 		public function get available() :Boolean
 		{
 			return _available;
+		}
+		
+		public function set dataSource( value:IResource ) : void
+		{
+			if ( _resource != null ){
+				_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			}
+			
+			_resource = value as ImageResource ;
+			if ( _resource == null )
+				return;
+			
+			if ( _resource.isFinish() ){
+				onImageReady();
+			}else{
+				_resource.addEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+				_resource.load();
+			}
+		}
+		
+		private function onResourceComplete( event:ResourceEvent ) : void
+		{
+			_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			if ( event.ok )
+				onImageReady();
+		}
+		
+		protected function onImageReady() : void
+		{
+			drawIcon( _resource.getBitmapData() );
+		}
+		
+		public function get dataSource() : IResource
+		{
+			return _resource;
 		}
 		
 	}

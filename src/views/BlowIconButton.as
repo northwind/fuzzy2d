@@ -5,9 +5,9 @@ package views
 	
 	public class BlowIconButton extends IconButton
 	{
-		public function BlowIconButton(bitmapData:BitmapData=null, tips:String=null)
+		public function BlowIconButton(tips:String=null, bitmapData:BitmapData=null )
 		{
-			super(bitmapData, tips);
+			super(tips, bitmapData);
 			
 			this.addEventListener(MouseEvent.ROLL_OVER, onRollOver);
 			this.addEventListener(MouseEvent.ROLL_OUT, onRollOut);
