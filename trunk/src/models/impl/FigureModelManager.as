@@ -2,13 +2,11 @@ package models.impl
 {
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	
+	import models.impl.FigureModel;
+	
 	public class FigureModelManager
 	{
 		private static var _items:BaseManager = new BaseManager();
-		
-		public function FigureModelManager()
-		{
-		}
 		
 		public static function reg( name:String, figure:FigureModel ) : void
 		{
@@ -20,9 +18,14 @@ package models.impl
 			FigureModelManager._items.unreg( name );
 		}
 		
+		public static function has( name:String ) :Boolean
+		{
+			return FigureModelManager._items.has( name );
+		}
+		
 		public static function get( name:String ) : FigureModel
 		{
-			return FigureModelManager._items.find( name ) as FigureModel ;
+			return FigureModelManager._items.find( name ) as FigureModel;
 		}
 		
 	}

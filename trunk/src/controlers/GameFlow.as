@@ -23,6 +23,7 @@ package controlers
 	import server.impl.FakeServer;
 	import server.impl.SocketServer;
 	
+	import views.*;
 	import views.MapItem;
 	
 	public class GameFlow
@@ -91,7 +92,13 @@ package controlers
 							
 							//下载战场附件资源
 							var battleSwf:IResource = resourceMgr.add( "battle", "assets/battle.swf" );
+							resourceMgr.add( "unit_move", "assets/circle_blue.png" );
+							resourceMgr.add( "unit_standby", "assets/accepted_48.png" );
+							resourceMgr.add( "unit_attack", "assets/circle_red.png" );
 							resource.push( battleSwf );
+							resource.push( "unit_move" );
+							resource.push( "unit_standby" );
+							resource.push( "unit_attack" );
 							
 							world.addLoadingText( "0/" + resource.length +"下载场景资源" );
 							resourceMgr.load( resource, function( event:ResourceEvent ):void{
@@ -106,6 +113,19 @@ package controlers
 											( item as IDataSource ).dataSource = resourceMgr.getResource( item.define );
 										}
 									}
+									
+									//设置弹出菜单按钮
+									var mBtn:IconButton = new IconButton( "移动" );
+									mBtn.dataSource = resourceMgr.getResource( "unit_move" );
+									IconButtonMgr.reg( "move", mBtn );
+									
+									var sBtn:IconButton = new IconButton( "待机" );
+									sBtn.dataSource = resourceMgr.getResource( "unit_standby" );
+									IconButtonMgr.reg( "standby", sBtn );
+									
+									var aBtn:IconButton = new IconButton( "攻击" );
+									aBtn.dataSource = resourceMgr.getResource( "unit_attack" );
+									IconButtonMgr.reg( "attack", aBtn );
 									
 									//---------------------------------------5-----------------------------
 									battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );

@@ -26,6 +26,11 @@ package models.impl
 			SkillModelManager._items.unreg( id );
 		}
 		
+		public static function has( id:String ) :Boolean
+		{
+			return SkillModelManager._items.has( id );
+		}
+		
 		public static function get( id:String ) : SkillModel
 		{
 			return SkillModelManager._items.find( id ) as SkillModel ;

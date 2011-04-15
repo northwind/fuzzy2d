@@ -5,6 +5,21 @@ package models.impl
 	
 	import models.IDataModel;
 	import models.event.ModelEvent;
+
+	/**
+	 * 开始加载 
+	 */	
+	[Event(name="start", type="models.event.ModelEvent")]
+	
+	/**
+	 * 成功加载
+	 */	
+	[Event(name="completed", type="models.event.ModelEvent")]
+	
+	/**
+	 * 加载失败 
+	 */	
+	[Event(name="error", type="models.event.ModelEvent")]
 	
 	public class BaseModel extends EventDispatcher implements IDataModel
 	{

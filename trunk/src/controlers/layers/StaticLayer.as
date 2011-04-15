@@ -1,4 +1,4 @@
-package controlers
+package controlers.layers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
 	import com.norris.fuzzy.core.log.Logger;
@@ -25,7 +25,6 @@ package controlers
 		private var _model:MapModel;
 		private var _items:Object;
 		private var _sortedItems:Array = [];
-		private var _astar:Astar;
 		
 		public var tileLayer:TileLayer;
 		
@@ -62,90 +61,6 @@ package controlers
 			}
 			
 			render();
-			
-			_astar = new Astar( tileLayer );
-			
-			//监听单元格事件
-			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
-			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);
-		}
-		
-		private var _moving:Boolean = false;
-		private var _lastMoveRow:int = 6;
-		private var _lastMoveCol:int = 20;
-		
-		private function onSelectTile( event:TileEvent ):void
-		{
-			if ( _moving )
-				return;
-			
-			var row:int = event.row;
-			var col:int = event.col;
-			
-			if ( !this.isWalkable(row, col ) )
-				return;
-			
-			var goalNode:Node = tileLayer.getNode( row, col );
-			if ( goalNode == null )
-				return;
-			
-			var startNode:Node = tileLayer.getNode( _lastMoveRow, _lastMoveCol );
-			if ( startNode == null )
-				return;
-			
-			var results:Path = _astar.search(startNode, goalNode);
-			if ( results ) {
-				walk( results );
-			}
-			
-		}
-		
-		private function walk( path:Path ) : void
-		{
-			_moving = true;
-			
-			var t:Timer =new Timer( 100, path.nodes.length );
-			var n:int = 0, current:Node, 
-				item:IMapItem = this._model.getItem( 6, 20 );
-			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
-				current = path.nodes[ n++ ] as Node;
-				
-				item.row = current.row;
-				item.col = current.col;
-				
-				tileLayer.adjustPosition( item );
-				
-				render();
-			});
-			t.addEventListener(TimerEvent.TIMER_COMPLETE, function( event:TimerEvent ): void{
-				_moving = false;
-				var lastNode:Node = path.nodes[ path.nodes.length - 1 ] as Node;
-				_lastMoveRow = lastNode.row;
-				_lastMoveCol = lastNode.col;
-			});
-			
-			t.start();
-		}
-		
-		private function isWalkable( row:int, col:int ) : Boolean
-		{
-			//TODO 友军敌军判断
-			return !_model.isBlock( row, col );		
-		}
-		
-		private var _lastMoveItem:IMapItem = null;
-		private function onMoveTile( event:TileEvent ):void
-		{
-			var item:IMapItem = this._model.getItem( event.row, event.col );
-			if (  _lastMoveItem != item && _lastMoveItem != null )
-				_lastMoveItem.view.alpha = 1;
-			
-			if ( item == null )
-				return;
-			
-			_lastMoveItem = item;
-			
-			item.view.alpha = 0.5;
 		}
 		
 		/**

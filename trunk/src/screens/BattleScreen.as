@@ -2,7 +2,7 @@ package screens
 {
 	import com.norris.fuzzy.core.display.impl.ScrollScreen;
 	
-	import controlers.*;
+	import controlers.layers.*;
 	
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
@@ -32,7 +32,8 @@ package screens
 		{
 			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
 			var tileLayer:TileLayer = new TileLayer( model.mapModel );
-			var unitsLayer:UnitsLayer = new UnitsLayer( model.mapModel );
+			var unitsLayer:UnitsLayer = new UnitsLayer( model );
+			var actionLayer:ActionLayer = new ActionLayer();
 			
 			this.mapLayer  = new MapLayer( model.mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
@@ -48,6 +49,7 @@ package screens
 			this.pushToScroll( tileLayer );
 			this.pushToScroll( staticLayer );
 			this.pushToScroll( unitsLayer );
+			this.pushToScroll( actionLayer );
 			this.pushToScroll( animationLayer );
 			
 			//固定区域

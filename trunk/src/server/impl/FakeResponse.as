@@ -1,5 +1,7 @@
 package server.impl
 {
+	import com.norris.fuzzy.map.item.MapItemType;
+	
 	public class FakeResponse
 	{
 		public function FakeResponse()
@@ -45,9 +47,9 @@ package server.impl
 					//渲染场景
 //					items   : [],
 					items	: [{
-						d : "npc2",	r : 6, c : 20
+//						d : "npc2",	r : 6, c : 20
 					},{
-//						d : "train", r: 5, c : 16
+						d : "train", r: 5, c : 16
 					},{
 						d : "train", r: 5, c : 18
 					},{
@@ -113,8 +115,8 @@ package server.impl
 			req.rtype = 0;
 			req.rvalue = {
 				id	 :  1,
-				na : "张飞",
-				fg   : "zhangfei",			//形象
+				na   : "张飞",
+				fg   : 1,			//形象
 				lv	 : 1,  					//级别
 				
 				bH : 100,					//自身属性血量 bodyHP
@@ -123,12 +125,75 @@ package server.impl
 				bA : 50,
 				fA : 25,
 				
-				sk : [ 1, 2 ],				//技能表
+				sk : [ { id : 1, lv : 1 }, 
+					   { id : 2, lv : 2 } ],				//技能表
 				
 				rg  : 6,					//range
 				rt  : 2,					//rangeType
-				st  : 7					//step				
+				st  : 7,					//step				
+				
+				rs  : 1,					//rows
+				cs	: 1						//cols
 			};
+		}
+
+		public static function createFigure( req:Object ) : void
+		{
+			req.rtype = 0;
+			req.rvalue = {
+				id	 :  1,
+				tp	 : MapItemType.SWF,
+				fg   : "assets/zhangfei.swf",			//地址
+				sb   : "ZhangFei",			//symbol
+				
+				oX   :-8, 
+				oY   :15,
+				
+				w : 0, 
+				o : 1,
+				
+				rs  : 1,					//rows
+				cs	: 1						//cols
+			};
+		}
+		
+		public static function createSkill( req:Object ) : void
+		{
+			req.rtype = 0;
+			var id :uint = parseInt( req.data.id );
+			switch( id )
+			{
+				case 1:
+					req.rvalue = {
+						id	: 1,
+						na	: "圣光",
+						de	: "恢复HP",
+						im	: "images/item/82-1.png",
+						an  : "redStar",
+						rg  : 1,
+						rt  : 1,
+						ef  : 3,
+						ct  : 1,
+						ln  : {}
+					};
+					break;
+				
+				case 2:
+					req.rvalue = {
+						id		: 2,
+						na	: "风暴",
+						de	: "单体减伤",
+						im	   	: "images/item/1-1.png",
+						rg	: 4, 			
+						rt : 2,     
+						an : "storm",	
+						ef	: 7,
+						ln : {}
+					};
+					break;
+				default:
+					break;
+			}
 		}
 		
 		public static function createRecord( req:Object ) : void
@@ -158,7 +223,7 @@ package server.impl
 					id: 1,  r :  6,  c : 5,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
 				},{
 					id: "zb1",  r :  12,  c : 18,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵1", fg:"zhangfei", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					na : "杂兵1", fg: 1, lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 				}],
 				
 				//脚本中已触发过的事件

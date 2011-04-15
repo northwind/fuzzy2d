@@ -45,8 +45,8 @@ package
 		private function animate() : void
 		{
 			var blue:Bitmap = new blueAsset() as Bitmap;
-			var blueBtn:BlowIconButton = new BlowIconButton( blue.bitmapData, "I'm blue" );
-			var redBtn:IconButton = new IconButton( (new redAsset() as Bitmap).bitmapData, "I'm red" );
+			var blueBtn:BlowIconButton = new BlowIconButton( "I'm blue", blue.bitmapData );
+			var redBtn:IconButton = new IconButton( "I'm red", (new redAsset() as Bitmap).bitmapData );
 			
 			this.addChild( blueBtn );
 			this.addChild( redBtn );
