@@ -4,10 +4,6 @@ package server.impl
 	
 	public class FakeResponse
 	{
-		public function FakeResponse()
-		{
-		}
-		
 		public static function createMap( req:Object ) : void
 		{
 			req.rtype = 0;
@@ -140,21 +136,41 @@ package server.impl
 		public static function createFigure( req:Object ) : void
 		{
 			req.rtype = 0;
-			req.rvalue = {
-				id	 :  1,
-				tp	 : MapItemType.SWF,
-				fg   : "assets/zhangfei.swf",			//地址
-				sb   : "ZhangFei",			//symbol
-				
-				oX   :-8, 
-				oY   :15,
-				
-				w : 0, 
-				o : 1,
-				
-				rs  : 1,					//rows
-				cs	: 1						//cols
-			};
+			var id :uint = parseInt( req.data.id );
+			switch( id )
+			{
+				case 0:
+					req.rvalue = {
+						id	 :  0,
+						tp	 : MapItemType.SWF,
+						fg   : "assets/systemResource.swf",			//地址
+						sb  : "defaultFigure",
+						
+						oX   : 0, 
+						oY   : 0,
+							
+						rs  : 1,					//rows
+						cs	: 1						//cols
+					};
+					break;
+				case 1:
+					req.rvalue = {
+						id	 :  1,
+						tp	 : MapItemType.SWF,
+							fg   : "assets/zhangfei.swf",			//地址
+							sb   : "ZhangFei",			//symbol
+							
+							oX   :-8, 
+							oY   :15,
+							
+							w : 0, 
+							o : 1,
+							
+							rs  : 1,					//rows
+							cs	: 1						//cols
+					};					
+					break;
+			}
 		}
 		
 		public static function createSkill( req:Object ) : void
@@ -220,10 +236,10 @@ package server.impl
 				//fa = faction 势力	tm = team 队伍  v = visiable 是否可见  1可见 0不可见 oH : 50,					
 				//cH = currentHP 当前血量  oH = offsetHP 技能加成   
 				units		    : [{
-					id: 1,  r :  6,  c : 5,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
+					id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
 				},{
-					id: "zb1",  r :  12,  c : 18,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵1", fg: 1, lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					id: "zb1",  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					na : "杂兵1", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 				}],
 				
 				//脚本中已触发过的事件

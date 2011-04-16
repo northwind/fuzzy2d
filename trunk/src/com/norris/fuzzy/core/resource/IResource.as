@@ -2,13 +2,13 @@ package com.norris.fuzzy.core.resource
 {
 	import flash.events.IEventDispatcher;
 
-	[Event(name="resource_complete", type="resource.event.ResourceEvent")]
+	[Event(name="complete", type="resource.event.ResourceEvent")]
 	
-	[Event(name="resource_process", type="resource.event.ResourceEvent")]
+	[Event(name="process", type="resource.event.ResourceEvent")]
 	
-	[Event(name="resource_error", type="resource.event.ResourceEvent")]
+	[Event(name="error", type="resource.event.ResourceEvent")]
 	
-	[Event(name="resource_stop", type="resource.event.ResourceEvent")]
+	[Event(name="stop", type="resource.event.ResourceEvent")]
 	
 	public interface IResource extends IEventDispatcher
 	{

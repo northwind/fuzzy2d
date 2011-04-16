@@ -6,6 +6,11 @@ package controlers.unit
 	
 	import models.impl.UnitModel;
 	
+	/**
+	 *  TODO mapItem做为unit的view
+	 * @author norris
+	 * 
+	 */	
 	public class Unit extends Entity
 	{
 		public var figure:IFigure;

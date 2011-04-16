@@ -1,7 +1,7 @@
 package com.norris.fuzzy.core.cop.impl
 {
-	import com.norris.fuzzy.core.cop.IEntity;
 	import com.norris.fuzzy.core.cop.IComponent;
+	import com.norris.fuzzy.core.cop.IEntity;
 	import com.norris.fuzzy.core.cop.impl.Parameter;
 	
 	import flash.utils.describeType;
@@ -33,11 +33,12 @@ package com.norris.fuzzy.core.cop.impl
 		private var _interfaces :Array = [];
 		private var _done:Boolean = true;
 		
-		public function ComponentInfo( c:IComponent )
+		public function ComponentInfo( c:IComponent = null )
 		{
-			this.component = c;
-			
-			parseComponent( c );
+			if ( c != null ){
+				this.component = c;
+				parseComponent( c );
+			}	
 		}
 		
 		private function parseComponent( c:IComponent ) : void
@@ -119,6 +120,17 @@ package com.norris.fuzzy.core.cop.impl
 		public function isInterfaceOf ( type:String ) : Boolean
 		{
 			return name == type || _interfaces.indexOf( type ) > -1;	
+		}
+		
+		public function clone() :ComponentInfo
+		{
+			var n:ComponentInfo = new ComponentInfo();
+			n.name = this.name;
+			n._accessors = this._accessors.slice(0, this._accessors.length ); 
+			n._interfaces = this._interfaces.slice(0, this._interfaces.length );
+			n._variables = this._variables.slice(0, this._variables.length );
+			
+			return n;
 		}
 		
 	}

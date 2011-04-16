@@ -11,6 +11,7 @@ package controlers
 	
 	import models.*;
 	import models.event.ModelEvent;
+	import models.impl.*;
 	import models.impl.MapModel;
 	import models.impl.PlayerModel;
 	import models.impl.RecordModel;
@@ -38,6 +39,7 @@ package controlers
 		/**
 		 * 1. 连接server
 		 2. 下载人物信息
+		 2.5 读取公共资源
 		 3. 获取场景信息
 		 4. 获取场景资源
 		 5. 绘制场景
@@ -67,90 +69,99 @@ package controlers
 				player.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
 					world.addLoadingText( "成功下载人物信息" );
 					
-					//---------------------------------------3-----------------------------
-					if ( player.screen == "battle" ){
-						world.addLoadingText( "读取战场记录..." );
-						
-						var record:RecordModel = new RecordModel( player.data[ "record" ] );
-						var battle:BattleScreen = new BattleScreen( record );
-						record.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
-							world.addLoadingText( "成功读取战场记录" );
+					//---------------------------------------2.5-----------------------------
+					//读取公共资源
+					var resourceMgr:IResourceManager = world.resourceMgr;
+					//初始化FigureModelManager TODO考虑没有初始化成功的情况 
+					FigureModelManager.init( function( event:ModelEvent ) :void {
+						resourceMgr.add( "defaultFigure",  ( event.model as FigureModel ).url );
+						resourceMgr.load( "defaultFigure", null, function() :void {
 							
-							//---------------------------------------4-----------------------------
-							var resourceMgr:IResourceManager = world.resourceMgr;
-							var map:MapModel = record.mapModel;
-							var resource:Array = [];
-							
-							//mapLayer接收返回
-							resourceMgr.add( map.background.src );
-							resource.push( map.background.src );
-							
-							for each( var define:Array in map.defines ){
-								resourceMgr.add( define[0], define[1] );
-								resource.push( define[0] );
-							}
-							
-							//下载战场附件资源
-							var battleSwf:IResource = resourceMgr.add( "battle", "assets/battle.swf" );
-							resourceMgr.add( "unit_move", "assets/circle_blue.png" );
-							resourceMgr.add( "unit_standby", "assets/accepted_48.png" );
-							resourceMgr.add( "unit_attack", "assets/circle_red.png" );
-							resource.push( battleSwf );
-							resource.push( "unit_move" );
-							resource.push( "unit_standby" );
-							resource.push( "unit_attack" );
-							
-							world.addLoadingText( "0/" + resource.length +"下载场景资源" );
-							resourceMgr.load( resource, function( event:ResourceEvent ):void{
-								//显示下载进度
-								world.addLoadingText( event.success.length + "/" + event.resources.length +"下载场景资源" ); 
-							} ,  function( event:ResourceEvent ):void{
-								if ( event.ok ){
-									world.addLoadingText( "成功下载场景资源" );
+							//---------------------------------------3-----------------------------
+							if ( player.screen == "battle" ){
+								world.addLoadingText( "读取战场记录..." );
+								
+								var record:RecordModel = new RecordModel( player.data[ "record" ] );
+								var battle:BattleScreen = new BattleScreen( record );
+								record.addEventListener( ModelEvent.COMPLETED, function( event:ModelEvent ) : void{
+									world.addLoadingText( "成功读取战场记录" );
 									
-									for each ( var item:IMapItem in map.items ){
-										if ( item is IDataSource ){
-											( item as IDataSource ).dataSource = resourceMgr.getResource( item.define );
-										}
+									//---------------------------------------4-----------------------------
+									var map:MapModel = record.mapModel;
+									var resource:Array = [];
+									
+									//mapLayer接收返回
+									resourceMgr.add( map.background.src );
+									resource.push( map.background.src );
+									
+									for each( var define:Array in map.defines ){
+										resourceMgr.add( define[0], define[1] );
+										resource.push( define[0] );
 									}
 									
-									//设置弹出菜单按钮
-									var mBtn:IconButton = new IconButton( "移动" );
-									mBtn.dataSource = resourceMgr.getResource( "unit_move" );
-									IconButtonMgr.reg( "move", mBtn );
+									//下载战场附件资源
+									var battleSwf:IResource = resourceMgr.add( "battle", "assets/battle.swf" );
+									resourceMgr.add( "unit_move", "assets/circle_blue.png" );
+									resourceMgr.add( "unit_standby", "assets/accepted_48.png" );
+									resourceMgr.add( "unit_attack", "assets/circle_red.png" );
+									resource.push( battleSwf );
+									resource.push( "unit_move" );
+									resource.push( "unit_standby" );
+									resource.push( "unit_attack" );
 									
-									var sBtn:IconButton = new IconButton( "待机" );
-									sBtn.dataSource = resourceMgr.getResource( "unit_standby" );
-									IconButtonMgr.reg( "standby", sBtn );
+									world.addLoadingText( "0/" + resource.length +"下载场景资源" );
+									resourceMgr.load( resource, function( event:ResourceEvent ):void{
+										//显示下载进度
+										world.addLoadingText( event.success.length + "/" + event.resources.length +"下载场景资源" ); 
+									} ,  function( event:ResourceEvent ):void{
+										if ( event.ok ){
+											world.addLoadingText( "成功下载场景资源" );
+											
+											for each ( var item:IMapItem in map.items ){
+												if ( item is IDataSource ){
+													( item as IDataSource ).dataSource = resourceMgr.getResource( item.define );
+												}
+											}
+											
+											//设置弹出菜单按钮
+											var mBtn:IconButton = new IconButton( "移动" );
+											mBtn.dataSource = resourceMgr.getResource( "unit_move" );
+											IconButtonMgr.reg( "move", mBtn );
+											
+											var sBtn:IconButton = new IconButton( "待机" );
+											sBtn.dataSource = resourceMgr.getResource( "unit_standby" );
+											IconButtonMgr.reg( "standby", sBtn );
+											
+											var aBtn:IconButton = new IconButton( "攻击" );
+											aBtn.dataSource = resourceMgr.getResource( "unit_attack" );
+											IconButtonMgr.reg( "attack", aBtn );
+											
+											//---------------------------------------5-----------------------------
+											battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
+											battle.menuLayer.dataSource = battleSwf;
+											battle.setup();
+											
+											world.screenMgr.add("battle", battle );
+											world.screenMgr.goto( "battle" );
+											
+										}else{
+											world.addLoadingText( "下载场景资源失败" );
+										}
+									} );
 									
-									var aBtn:IconButton = new IconButton( "攻击" );
-									aBtn.dataSource = resourceMgr.getResource( "unit_attack" );
-									IconButtonMgr.reg( "attack", aBtn );
-									
-									//---------------------------------------5-----------------------------
-									battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
-									battle.menuLayer.dataSource = battleSwf;
-									battle.setup();
-									
-									world.screenMgr.add("battle", battle );
-									world.screenMgr.goto( "battle" );
-									
-								}else{
-									world.addLoadingText( "下载场景资源失败" );
-								}
-							} );
+								});
+								record.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
+									world.addLoadingText( "读取战场记录失败" );
+								});
+								
+								record.loadData();
+								
+							}else{
+								//其他场景
+							}
 							
-						});
-						record.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
-							world.addLoadingText( "读取战场记录失败" );
-						});
-						
-						record.loadData();
-						
-					}else{
-						//其他场景
-					}
-					
+						} );
+					} );
 				});
 				player.addEventListener( ModelEvent.ERROR, function( event:ModelEvent ) : void{
 					world.addLoadingText( "下载人物信息失败" );
@@ -161,6 +172,6 @@ package controlers
 			serverObj.connect();		
 			
 		}
-				
+		
 	}
 }

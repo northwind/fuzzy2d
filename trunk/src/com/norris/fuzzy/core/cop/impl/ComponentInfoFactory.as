@@ -1,10 +1,10 @@
 package com.norris.fuzzy.core.cop.impl
 {
-	import com.norris.fuzzy.core.cop.IEntity;
 	import com.norris.fuzzy.core.cop.IComponent;
+	import com.norris.fuzzy.core.cop.IEntity;
 	
-	import flash.utils.getQualifiedClassName;
 	import flash.utils.Dictionary;
+	import flash.utils.getQualifiedClassName;
 	
 	/**
 	 * 简化接口，不去实现IManager 
@@ -15,16 +15,14 @@ package com.norris.fuzzy.core.cop.impl
 	{
 		private static var items:Dictionary = new Dictionary();
 		
-		public function ComponentInfoFactory()
-		{
-		}
-		
 		public static function createComponentInfo( c:IComponent ):ComponentInfo
 		{
 			var key:String = getQualifiedClassName( c );
-			if ( items[ key ] != null )
-				return items[ key ] as ComponentInfo;
-			
+			if ( items[ key ] != null ){
+				var n:ComponentInfo = ( items[ key ] as ComponentInfo ).clone();
+				n.component = c;
+				return n;
+			}
 			//new an instance
 			var info : ComponentInfo = new ComponentInfo( c );
 			items[ key ] = info;
