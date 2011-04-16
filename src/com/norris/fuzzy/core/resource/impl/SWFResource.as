@@ -2,7 +2,7 @@ package com.norris.fuzzy.core.resource.impl
 {
 	import com.norris.fuzzy.core.resource.IResource;
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
-	
+	import com.norris.fuzzy.core.log.Logger;
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -151,10 +151,19 @@ package com.norris.fuzzy.core.resource.impl
 		
 		public function getMovieClip( symbol:String = null ) : MovieClip
 		{
-			if ( symbol == null )
+			if ( symbol == null ){
 				return this._data as MovieClip;
-			else
-				return new (getSymbol( symbol )) as MovieClip;
+			}
+			else{
+				var m:MovieClip;
+				try{
+					m = new (getSymbol( symbol )) as MovieClip;					
+				}catch( e:Error ){
+					Logger.error(  this.name + " has no symbol : " + symbol );
+					m = new MovieClip();
+				}
+				return m;
+			}
 		}
 		
 		public function getSymbol( symbol:String ) :Class
@@ -162,10 +171,19 @@ package com.norris.fuzzy.core.resource.impl
 			if (null == _appDomain) 
 				throw new Error("not initialized");
 			
-			if (_appDomain.hasDefinition(symbol))
-				return _appDomain.getDefinition(symbol) as Class;
-			else
-				return null;			
+			var clazz:Class;
+			if (_appDomain.hasDefinition(symbol)){
+				try{
+					clazz = _appDomain.getDefinition(symbol) as Class;
+				}catch( e:Error ){
+					clazz = null;
+				}
+			}
+			else{
+				clazz = null;
+			}
+			
+			return clazz;
 		}
 		
 	}

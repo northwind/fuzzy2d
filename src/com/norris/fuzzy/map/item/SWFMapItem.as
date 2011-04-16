@@ -19,10 +19,6 @@ package com.norris.fuzzy.map.item
 		
 		public function set dataSource(value:IResource):void
 		{
-			if ( _resource != null ){
-				_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
-			}
-			
 			if ( !(value is SWFResource) )
 				return;
 			

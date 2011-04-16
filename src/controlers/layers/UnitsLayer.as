@@ -10,8 +10,10 @@ package controlers.layers
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
+	import controlers.unit.IFigure;
 	import controlers.unit.Unit;
 	
+	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
@@ -34,6 +36,8 @@ package controlers.layers
 		private var _moving:Boolean = false;
 		private var _lastMoveRow:int = 6;
 		private var _lastMoveCol:int = 20;
+		
+		private var _selectUnit:Unit;
 		
 		public function UnitsLayer( model:RecordModel )
 		{
@@ -68,20 +72,34 @@ package controlers.layers
 					mapItem = unit.figure.mapItem;
 					tileLayer.adjustPosition( mapItem );
 					
-					this.view.addChild( mapItem.view );
-					
 					_sortedItems.push( mapItem );
+					
+					//延迟加载，加载好后调用onFigureComplete
+					unit.figure.addEventListener( Event.COMPLETE, onFigureComplete );
 				}
 			}
 			
 			render();
 			
-//			_astar = new Astar( tileLayer );
+			//使用unitsLayer做为Astar寻路的容器
+			_astar = new Astar( tileLayer );
+			_selectUnit = this.getUnit( "1" );
 			
 			//监听单元格事件
-//			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
-//			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);			
+			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
+			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);			
 		}
+		
+		//重新排序
+		private function onFigureComplete( event:Event ):void
+		{
+			var f:IFigure =event.target as IFigure; 
+			f.removeEventListener( Event.COMPLETE, onFigureComplete );
+			
+			tileLayer.adjustPosition( f.mapItem );
+			render();
+		}
+		
 		
 		private function onSelectTile( event:TileEvent ):void
 		{
@@ -121,7 +139,7 @@ package controlers.layers
 			
 			_lastMoveItem = item;
 			
-			item.view.alpha = 0.5;
+			//TODO 显示角色基本信息
 		}
 		
 		private function isWalkable( row:int, col:int ) : Boolean
@@ -136,7 +154,7 @@ package controlers.layers
 			
 			var t:Timer =new Timer( 100, path.nodes.length );
 			var n:int = 0, current:Node, 
-				item:IMapItem = this._model.mapModel.getItem( 6, 20 );
+				item:IMapItem = _selectUnit.figure.mapItem;
 			
 			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
 				current = path.nodes[ n++ ] as Node;
@@ -156,6 +174,11 @@ package controlers.layers
 			});
 			
 			t.start();
+		}
+		
+		public function getUnit( id:String ) :Unit
+		{
+			return _units[ id ] as Unit;
 		}
 		
 		/**
@@ -190,6 +213,9 @@ package controlers.layers
 					_sortedItems.push(nsi);
 				}
 			}
+			
+			while( this.view.numChildren>0 )
+				this.view.removeChildAt( 0 );
 			
 			for (i = 0; i < _sortedItems.length;++i) {
 				var disp:IMapItem = _sortedItems[i] as IMapItem;

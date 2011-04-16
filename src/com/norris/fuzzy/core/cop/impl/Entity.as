@@ -12,6 +12,7 @@ package com.norris.fuzzy.core.cop.impl
 	
 	public class Entity extends EventDispatcher implements IEntity
 	{
+		private var componentInfos:Array = [];
 		private var components:Array = [];
 		protected var setuped:Boolean = false;
 		
@@ -25,8 +26,8 @@ package com.norris.fuzzy.core.cop.impl
 			if ( this.setuped )
 				return;
 			
-			components.push( ComponentInfoFactory.createComponentInfo( c ) );
-			
+			componentInfos.push( ComponentInfoFactory.createComponentInfo( c ) );
+			components.push( c );
 		}
 		
 		public function setup():void
@@ -37,9 +38,12 @@ package com.norris.fuzzy.core.cop.impl
 			setuped = true;
 			
 			//TODO 优化算法			
-			for each ( var info:ComponentInfo in components ) {
+			for each ( var info:ComponentInfo in componentInfos ) {
+//			var info:ComponentInfo;
+//			for (var i:int = 0; i < componentInfos.length; i++){
+//				info = componentInfos[ i ] as ComponentInfo;
 				if ( info.hasParameter() ){
-					for each ( var inject:ComponentInfo in components ) {
+					for each ( var inject:ComponentInfo in componentInfos ) {
 						if ( inject != info ){
 							info.injectComponent( inject );
 							
@@ -52,6 +56,7 @@ package com.norris.fuzzy.core.cop.impl
 				
 				//init
 				info.component.onSetup();
+//				(components[ i ] as IComponent).onSetup();
 			}
 			
 			this.dispatchEvent( new Event( Event.COMPLETE ) );
@@ -61,11 +66,11 @@ package com.norris.fuzzy.core.cop.impl
 		{
 			this.setuped = false;
 			
-			for each ( var info:ComponentInfo in components ) {
+			for each ( var info:ComponentInfo in componentInfos ) {
 				info.component.destroy();
 			}
 			
-			components = [];
+			componentInfos = [];
 		}
 	}
 }

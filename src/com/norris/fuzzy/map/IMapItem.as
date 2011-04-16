@@ -33,6 +33,6 @@ package com.norris.fuzzy.map
 		
 		function set view( value:DisplayObject ) : void;
 		function get view() : DisplayObject;
-		function adjustPosition( x:Number, y:Number ) : void;
+//		function adjustPosition( x:Number, y:Number ) : void;
 	}
 }

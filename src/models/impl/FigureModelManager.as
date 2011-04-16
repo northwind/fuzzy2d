@@ -2,11 +2,25 @@ package models.impl
 {
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	
+	import models.event.ModelEvent;
 	import models.impl.FigureModel;
 	
 	public class FigureModelManager
 	{
 		private static var _items:BaseManager = new BaseManager();
+		
+		public static var defaultFigureModel:FigureModel;
+		public static function init( callback:Function = null ) : void
+		{
+			var f:FigureModel = new FigureModel( "0" );
+			if ( callback != null )
+				f.addEventListener(ModelEvent.COMPLETED, callback );
+			f.loadData();
+			
+			FigureModelManager._items.reg( f.id, f );
+			
+			FigureModelManager.defaultFigureModel = f;
+		}
 		
 		public static function reg( name:String, figure:FigureModel ) : void
 		{

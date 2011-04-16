@@ -13,6 +13,14 @@ package com.norris.fuzzy.core.resource.impl
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
 	
+	[Event(name="complete", type="resource.event.ResourceEvent")]
+	
+	[Event(name="process", type="resource.event.ResourceEvent")]
+	
+	[Event(name="error", type="resource.event.ResourceEvent")]
+	
+	[Event(name="stop", type="resource.event.ResourceEvent")]
+	
 	public class BaseResource extends EventDispatcher implements IResource
 	{
 		protected var _name:String;
