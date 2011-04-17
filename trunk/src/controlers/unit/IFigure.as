@@ -1,8 +1,10 @@
 package controlers.unit
 {
-	import flash.events.IEventDispatcher;
 	import com.norris.fuzzy.core.cop.IComponent;
 	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.astar.Path;
+	
+	import flash.events.IEventDispatcher;
 	
 	public interface IFigure extends IComponent, IEventDispatcher
 	{
@@ -13,8 +15,7 @@ package controlers.unit
 		 */		
 		function get mapItem () :IMapItem;
 		
-		function walkTo( row:int, col:int ) : void ;
-		
+		function walkPath( path:Path, callback:Function = null ) :  void;
 		
 	}
 }
