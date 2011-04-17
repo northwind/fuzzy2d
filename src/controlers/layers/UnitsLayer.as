@@ -10,6 +10,7 @@ package controlers.layers
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
+	import controlers.events.UnitEvent;
 	import controlers.unit.IFigure;
 	import controlers.unit.Unit;
 	
@@ -122,7 +123,9 @@ package controlers.layers
 			
 			var results:Path = _astar.search(startNode, goalNode);
 			if ( results ) {
-				walk( results );
+				//监听移动事件
+				this._selectUnit.addEventListener(UnitEvent.MOVE, onUnitMove, false, 0, true );
+				this._selectUnit.walkPath( results );
 			}
 			
 		}
@@ -222,5 +225,14 @@ package controlers.layers
 				this.view.addChildAt(disp.view, i);
 			}
 		}
+		
+		protected function onUnitMove(event:UnitEvent):void
+		{
+			var unit:Unit = event.unit;
+			
+			this.tileLayer.adjustPosition( unit.figure.mapItem );
+			this.render();
+		}
+		
 	}
 }
