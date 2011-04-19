@@ -31,6 +31,11 @@ package controlers.unit.impl
 	
 	public class BaseFigure extends BaseComponent implements IFigure
 	{
+		public static const COUNT:uint = 2;
+		public static const INTER:uint = 166;
+		public static const STEPX:Number = MyWorld.CELL_WIDTH / 2/ BaseFigure.COUNT;
+		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / BaseFigure.COUNT;
+		
 		private var _mapItem:SWFMapItem;
 		private var model:UnitModel;
 		private var _figureModel:FigureModel;
@@ -39,6 +44,8 @@ package controlers.unit.impl
 		private var timer:Timer;
 		private var currentNode:Node;
 		private var nextNode:Node;
+		private var offsetX:Number;
+		private var offsetY:Number;
 		
 		public function BaseFigure( model:UnitModel, unit:Unit )
 		{
@@ -47,7 +54,7 @@ package controlers.unit.impl
 			this.unit = unit;
 //			this.currentNode = 
 			
-			this.timer = new Timer( 100, 1 ); 
+			this.timer = new Timer( BaseFigure.INTER, BaseFigure.COUNT ); 
 			this.timer.addEventListener(TimerEvent.TIMER, onTimer );
 			this.timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete );
 		}
@@ -65,6 +72,9 @@ package controlers.unit.impl
 			
 			_mapItem = new SWFMapItem( model.figureModel.symbol );
 			//				_mapItem = new UnitMapItem( model.figureModel.symbol );
+			//记录原始偏移量
+			this.offsetX = this._figureModel.offsetX;
+			this.offsetY = this._figureModel.offsetY;
 			
 			//加载资源
 			_resource = MyWorld.instance.resourceMgr.getResource( _figureModel.url );
@@ -130,8 +140,8 @@ package controlers.unit.impl
 			
 			onWalkPathCallback = callback;
 			currentN = 1;
-			currentNode = nodes[1] as Node;
-			nextNode      = nodes[1] as Node;
+			currentNode = nodes[0] as Node;
+//			nextNode      = nodes[1] as Node;
 			
 			this.walkTo( nodes[1], onNodeCallback );
 		}
@@ -140,8 +150,9 @@ package controlers.unit.impl
 		private var nodes:Array;
 		private function onNodeCallback() : void 
 		{
-			if ( ++currentN < nodes.length ){
-				currentNode = nodes[ currentN ] as Node;
+			currentNode = nextNode;
+			
+			if ( currentN++ < nodes.length -1 ){
 				this.walkTo( nodes[ currentN ], onNodeCallback );
 			}else{
 				if ( onWalkPathCallback != null )
@@ -153,21 +164,30 @@ package controlers.unit.impl
 		
 		private var nodeCallback:Function;
 		private var node:Node;
+		private var lastDirect:String;
 		private function walkTo( node:Node, callback:Function = null ) : void
 		{
-			var direct:String = BaseFigure.getDirect(  node, node );
-			var fn:String = "turn" + direct;
-			try
-			{
-				_mapItem.view[ fn ]();	
-			}
-			catch(error:Error) {
-				Logger.error( this.model.name + " has no function : " +  fn );
+			var direct:String = BaseFigure.getDirect(  currentNode, node );
+			if ( lastDirect != direct ){
+				lastDirect = direct;
+				
+				var fn:String = "turn" + direct;
+				try
+				{
+					_mapItem.view[ fn ]();	
+				}
+				catch(error:Error) {
+					Logger.error( this.model.name + " has no function : " +  fn );
+				}
 			}
 			
-			this.node = node;
+//			this.node = node;
+			this.nextNode = node;
 			this.nodeCallback = callback;
+			this._mapItem.row = this.currentNode.row;
+			this._mapItem.col  = this.currentNode.col;
 			
+			this.timer.reset();
 			this.timer.start();
 		}
 		
@@ -180,19 +200,36 @@ package controlers.unit.impl
 		 */		
 		public static function getDirect( from:Node, to:Node ) :String
 		{
-			return "RightDown";
+			if ( to.row < from.row )
+				return "LeftUp";
+			else if ( to.row > from.row )
+				return "RightDown";
+			else if ( to.col > from.col )
+				return "LeftDown";
+			else if ( to.col < from.col )
+				return "RightUp";
+			else
+				return "";
+			//TODO 8方向
 		}
 		
 		protected function onTimer(event:Event):void
 		{
-			this._mapItem.row = currentNode.row;
-			this._mapItem.col = currentNode.col;
+			this._mapItem.offsetX -= BaseFigure.STEPX;
+			this._mapItem.offsetY += BaseFigure.STEPY;
 			
+			//宿主分发事件
 			unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE, this.unit ) );
 		}
 		
 		protected function onTimerComplete(event:Event):void
 		{
+			this._mapItem.row = nextNode.row;
+			this._mapItem.col = nextNode.col;
+			//还原offset
+			this._mapItem.offsetX = this.offsetX;
+			this._mapItem.offsetY = this.offsetY;
+			
 			if ( nodeCallback != null )
 				nodeCallback.call();
 		}
