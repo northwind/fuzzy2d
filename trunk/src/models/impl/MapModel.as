@@ -17,11 +17,12 @@ package models.impl
 	public class MapModel extends BaseModel 
 	{
 		public var id:String;
-		public var cellXNum:uint = 0;
-		public var cellYNum:uint = 0;
+		public var cellXNum:uint;
+		public var cellYNum:uint;
+		
 		//弃用 改用MyWorld中静态变量
-		public var cellWidth:uint = 0;
-		public var cellHeight:uint = 0;
+		public var cellWidth:uint;
+		public var cellHeight:uint;
 		
 		private var _items:BaseManager = new BaseManager();
 		private var _itemsUnique:Object = {};
@@ -180,6 +181,24 @@ package models.impl
 			}
 			
 			return ret;
+		}
+		
+		public function get totalWidth() :uint
+		{
+			if ( this._data == null )
+				return 0;
+			
+			return cellXNum * MyWorld.CELL_WIDTH + 
+							background.oL + background.oR;
+		}
+		
+		public function get totalHeight() :uint
+		{
+			if ( this._data == null )
+				return 0;
+			
+			return cellYNum * MyWorld.CELL_HEIGHT + 
+							background.oT + background.oB;
 		}
 		
 		public function get offsetX() :int

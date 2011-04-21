@@ -16,7 +16,7 @@ package controlers
 	import models.impl.PlayerModel;
 	import models.impl.RecordModel;
 	
-	import screens.BattleScreen;
+	import controlers.screens.BattleScreen;
 	
 	import server.IDataServer;
 	import server.ProxyServer;

@@ -11,6 +11,7 @@ package com.norris.fuzzy.core.display.impl
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
 	
 	/**
 	 * 按序添加layer 最后加优先级最高,倒序显示
@@ -90,6 +91,5 @@ package com.norris.fuzzy.core.display.impl
 		{
 			return _view as Sprite;
 		}
-		
 	}
 }

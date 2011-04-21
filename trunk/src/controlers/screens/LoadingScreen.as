@@ -1,4 +1,4 @@
-package screens
+package controlers.screens
 {
 	import com.norris.fuzzy.core.display.impl.BaseScreen;
 	

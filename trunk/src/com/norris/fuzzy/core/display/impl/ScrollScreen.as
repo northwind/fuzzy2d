@@ -10,17 +10,23 @@ package com.norris.fuzzy.core.display.impl
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
 	
+	/**
+	 * 分为静止和滚动两个层 
+	 * 可对scrollArea设置scrollRect限制其大小和显示范围 
+	 * @author norris
+	 * 
+	 */	
 	public class ScrollScreen  extends BaseScreen implements IScreen
 	{
 //		public var fixedArea:Sprite = new Sprite();		//固定区域
 		public var scrollArea:Sprite = new Sprite();      //可滚动区域
 		
 		protected var _step:uint = 32;								//滚动距离
-		protected var _offsetTop:int = 0;					//相对父节点高度 
 		
-		private var _totalHeight:Number = 0;
-		private var _totalWidth:Number = 0;
+		protected var _totalHeight:Number;			//screen总高度
+		protected var _totalWidth:Number;				//screen总宽度
 		
 		private var _mousedown:Boolean = false;
 		private var _lastX:Number;
@@ -29,6 +35,8 @@ package com.norris.fuzzy.core.display.impl
 		private var _oriY:Number;
 		private var _minWidth:Number;
 		private var _minHeight:Number;
+		private var _oriRect:Rectangle;
+		private var _rect:Rectangle;				//控制scrollArea显示区域
 		
 		public function ScrollScreen()
 		{
@@ -37,7 +45,7 @@ package com.norris.fuzzy.core.display.impl
 			//固定区域在滚动区域之上
 			_view.addChild( scrollArea );
 //			_view.addChild( fixedArea );
-			
+				
 			this.addEventListener(Event.COMPLETE, onSetupComplete );
 		}
 		
@@ -53,17 +61,21 @@ package com.norris.fuzzy.core.display.impl
 		{
 			scrollArea.removeEventListener(Event.ADDED_TO_STAGE, onAddStage );
 			
-			scrollArea.y = Math.min( _offsetTop, scrollArea.y );
 			//滚动图像
 			_totalWidth  = scrollArea.stage.stageWidth;
-			_totalHeight = scrollArea.stage.stageHeight - _offsetTop;
+			_totalHeight = scrollArea.stage.stageHeight;
 			
 			//可完全显示，则退出
 			if ( scrollArea.height <= _totalHeight && scrollArea.width <= _totalWidth )
 				return;
 			
+			//设置scrollArea显示区域
+//			if ( this.scrollArea.scrollRect == null )
+//				this.scrollArea.scrollRect = new Rectangle( 0, 0, _totalWidth, _totalHeight );
+//			_oriRect = this.scrollArea.scrollRect
+			
 			_minWidth = _totalWidth - scrollArea.width;
-			_minHeight = _totalHeight - scrollArea.height + _offsetTop;
+			_minHeight = _totalHeight - scrollArea.height;
 			
 			//滚动控制上下卷动
 			if ( scrollArea.height > _totalHeight)
@@ -82,12 +94,15 @@ package com.norris.fuzzy.core.display.impl
 			var move:int;
 			if ( event.delta > 0 ){
 				//滚轮向外 屏幕向下卷动	
-				move = Math.min( _offsetTop, scrollArea.y + _step );
+				move = Math.min( 0, scrollArea.y + _step );
 			}else{
 				//滚轮向内 屏幕向上卷动				
 				move = Math.max( scrollArea.y - _step,  _totalHeight - scrollArea.height  );
 			}
 			
+//			_rect = scrollArea.scrollRect;
+//			_rect.y = move;
+//			scrollArea.scrollRect = _rect;
 			scrollArea.y = move;
 		}	
 		
@@ -116,7 +131,7 @@ package com.norris.fuzzy.core.display.impl
 			}
 			
 			var diffY:Number = _oriY + event.stageY - _lastY;
-			if ( diffY <= _offsetTop && diffY >= _minHeight ){
+			if ( diffY <= 0 && diffY >= _minHeight ){
 				scrollArea.y = diffY;
 			}
 		}
@@ -124,7 +139,7 @@ package com.norris.fuzzy.core.display.impl
 		public function moveTo( x:Number, y:Number ) :void
 		{
 			scrollArea.x = x;
-			scrollArea.y = Math.min( _offsetTop, y );
+			scrollArea.y = Math.min( 0, y );
 		}
 		
 		private function onMouseUp( event:MouseEvent ) : void

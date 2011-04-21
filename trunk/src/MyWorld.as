@@ -20,8 +20,8 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	import screens.BattleScreen;
-	import screens.LoadingScreen;
+	import controlers.screens.BattleScreen;
+	import controlers.screens.LoadingScreen;
 	
 	public class MyWorld extends World
 	{
