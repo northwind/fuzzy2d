@@ -11,9 +11,9 @@ package server.impl
 				name : "汜水关之战",
 				cellXNum : 20,
 				cellYNum : 20,
-				oX		: 	-50,
-				oY		:   -50,
-					
+				oX		: 	-50,				oY		:   -50,
+//				oX : 0, oY: 0,
+				
 					bg		: {
 						src   : "assets/bgtest8.png",
 						oT   : 50,
@@ -45,9 +45,7 @@ package server.impl
 					items	: [{
 //						d : "npc2",	r : 6, c : 20
 					},{
-						d : "train", r: 5, c : 16
-					},{
-						d : "train", r: 5, c : 18
+						d : "train", r: 5, c : 15
 					},{
 						d : "train", r: 5, c : 25
 					},{

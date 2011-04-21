@@ -1,8 +1,11 @@
-package screens
+package controlers.screens
 {
 	import com.norris.fuzzy.core.display.impl.ScrollScreen;
 	
 	import controlers.layers.*;
+	
+	import flash.display.BitmapData;
+	import flash.geom.Rectangle;
 	
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
@@ -16,19 +19,18 @@ package screens
 		
 		public function BattleScreen(  model :RecordModel )
 		{
+			this._step = MyWorld.CELL_HEIGHT;
+			this.model = model;
+
 			super();
 			
-			this._step = MyWorld.CELL_HEIGHT;
-			
-			this.model = model;
-			
 			if ( model.data != null )
-				this.initLayers();
+				this.onModelCompleted();
 			else
-				model.addEventListener( ModelEvent.COMPLETED, initLayers );
+				model.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
 		}
 		
-		protected function initLayers( event:ModelEvent = null ) :void
+		protected function onModelCompleted( event:ModelEvent = null ) :void
 		{
 			var staticLayer:StaticLayer = new  StaticLayer( model.mapModel );
 			var tileLayer:TileLayer = new TileLayer( model.mapModel );
@@ -41,7 +43,6 @@ package screens
 			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
 			var animationLayer:AnimationLayer = new AnimationLayer();
 			
-			this._offsetTop = menuLayer.height;
 			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
 			
 			//需要卷屏
@@ -56,6 +57,14 @@ package screens
 			this.push( tipsLayer );
 			this.push( menuLayer );
 			this.push( debugLayer );
+			
+			this.scrollArea.y = menuLayer.height;
+			//限制滚动区域可显示大小
+//			this.scrollArea.scrollRect = new Rectangle( 0, -menuLayer.height, 
+//									model.mapModel.totalWidth, model.mapModel.totalHeight + menuLayer.height );
+//			//hack 让scrollArea的宽高立即生效
+//			var bmpData:BitmapData = new BitmapData(1, 1);
+//			bmpData.draw( this.scrollArea );
 		}
 		
 		public function loadData() :void

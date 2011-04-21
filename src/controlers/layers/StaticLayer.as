@@ -11,9 +11,11 @@ package controlers.layers
 	
 	import controlers.events.TileEvent;
 	
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	import flash.geom.Rectangle;
 	
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
@@ -59,6 +61,11 @@ package controlers.layers
 					_sortedItems.push( item );
 				}
 			}
+			
+			view.scrollRect = new Rectangle( 0, 0, _model.totalWidth, _model.totalHeight);
+			//hack 让宽高立即生效
+			var bmpData:BitmapData = new BitmapData(1, 1);
+			bmpData.draw( view );
 			
 			render();
 		}

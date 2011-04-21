@@ -7,12 +7,10 @@ package
 	
 	import controlers.GameFlow;
 	
-	[SWF(frameRate="24", bgcolor="0x000000" )]
+	[SWF(frameRate="24", backgroundColor="0x000000" )]
 	public class index extends Sprite
 	{
 		public var  world:MyWorld;
-		
-		public static var aaa:uint = 0;
 		
 		public function index()
 		{

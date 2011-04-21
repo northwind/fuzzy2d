@@ -3,8 +3,9 @@ package com.norris.fuzzy.core.display
 	import com.norris.fuzzy.core.cop.IEntity;
 	import com.norris.fuzzy.core.manager.IManager;
 	
-	import flash.display.Sprite;
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.geom.Rectangle;
 
 	/**
 	 *  屏幕类，对层进行管理
