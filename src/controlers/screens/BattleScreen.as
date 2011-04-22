@@ -1,5 +1,7 @@
 package controlers.screens
 {
+	import com.norris.fuzzy.core.display.impl.BaseScreen;
+	import com.norris.fuzzy.core.display.impl.ScrollLayerContainer;
 	import com.norris.fuzzy.core.display.impl.ScrollScreen;
 	
 	import controlers.layers.*;
@@ -11,7 +13,7 @@ package controlers.screens
 	import models.impl.MapModel;
 	import models.impl.RecordModel;
 	
-	public class BattleScreen extends ScrollScreen
+	public class BattleScreen extends BaseScreen
 	{
 		public var mapLayer:MapLayer;
 		public var menuLayer:MenuLayer;
@@ -19,7 +21,6 @@ package controlers.screens
 		
 		public function BattleScreen(  model :RecordModel )
 		{
-			this._step = MyWorld.CELL_HEIGHT;
 			this.model = model;
 
 			super();
@@ -43,28 +44,24 @@ package controlers.screens
 			var debugLayer:DebugMsgLayer = new DebugMsgLayer();
 			var animationLayer:AnimationLayer = new AnimationLayer();
 			
-			this.moveTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
-			
 			//需要卷屏
-			this.pushToScroll( mapLayer );
-			this.pushToScroll( tileLayer );
-			this.pushToScroll( staticLayer );
-			this.pushToScroll( unitsLayer );
-			this.pushToScroll( actionLayer );
-			this.pushToScroll( animationLayer );
+			var scrollLayer:ScrollLayerContainer = new ScrollLayerContainer();
+			scrollLayer.push( mapLayer );
+			scrollLayer.push( tileLayer );
+			scrollLayer.push( staticLayer );
+			scrollLayer.push( unitsLayer );
+			scrollLayer.push( actionLayer );
+			scrollLayer.push( animationLayer );
+			scrollLayer.view.y = menuLayer.height;
+			//scrollLayer.clip = new Rectangle( 0, -menuLayer.height, model.mapModel.totalWidth, model.mapModel.totalHeight + menuLayer.height );  
+			scrollLayer.step = MyWorld.CELL_HEIGHT;
+			scrollLayer.scrollTo( model.mapModel.offsetX || 0, model.mapModel.offsetY || 0 );
 			
-			//固定区域
+			//按深度添加
+			this.push( scrollLayer );
 			this.push( tipsLayer );
 			this.push( menuLayer );
 			this.push( debugLayer );
-			
-			this.scrollArea.y = menuLayer.height;
-			//限制滚动区域可显示大小
-//			this.scrollArea.scrollRect = new Rectangle( 0, -menuLayer.height, 
-//									model.mapModel.totalWidth, model.mapModel.totalHeight + menuLayer.height );
-//			//hack 让scrollArea的宽高立即生效
-//			var bmpData:BitmapData = new BitmapData(1, 1);
-//			bmpData.draw( this.scrollArea );
 		}
 		
 		public function loadData() :void

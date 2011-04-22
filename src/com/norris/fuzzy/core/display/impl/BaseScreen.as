@@ -3,6 +3,7 @@ package com.norris.fuzzy.core.display.impl
 	import com.norris.fuzzy.core.cop.IComponent;
 	import com.norris.fuzzy.core.cop.impl.Entity;
 	import com.norris.fuzzy.core.display.ILayer;
+	import com.norris.fuzzy.core.display.ILayerContainer;
 	import com.norris.fuzzy.core.display.IScreen;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
@@ -43,13 +44,22 @@ package com.norris.fuzzy.core.display.impl
 		{
 			_layers.push( layer );
 			
-			//如果没有view强制指定
-//			if ( layer.view == null )
-//				layer.view = new Sprite();
-					
-			_view.addChild( layer.view );
+			try
+			{
+				_view.addChild( layer.view );
+			}
+			catch(error:Error) 
+			{
+				Logger.error( "Screen : " + this._name + " add layer " + _layers.length + " view error." );
+			}
 			
-			//自动添加component
+			//自动添加component  先添加子元素
+			if ( layer is ILayerContainer ){
+				for each (var l:ILayer in ( layer as ILayerContainer ).layers ) {
+					this.addComponent( l );
+				}
+			}
+			
 			if ( layer is IComponent )
 				this.addComponent( layer );
 		}
