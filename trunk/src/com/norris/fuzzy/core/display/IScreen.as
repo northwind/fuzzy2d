@@ -20,7 +20,7 @@ package com.norris.fuzzy.core.display
 		function get name() : String;
 		
 		function push( layer:ILayer ) : void ;
-		
+
 //		function remove( pri:uint ) : void ;
 		
 		function get( pri:uint  ) :ILayer;
@@ -28,5 +28,6 @@ package com.norris.fuzzy.core.display
 		function get count() : uint;
 		
 		function get view() : Sprite;
+		
 	}
 }

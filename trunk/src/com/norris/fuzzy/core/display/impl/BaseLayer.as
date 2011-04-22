@@ -9,7 +9,7 @@ package com.norris.fuzzy.core.display.impl
 	public class BaseLayer extends BaseComponent implements ILayer
 	{
 		private var _pri:uint;
-		private var _view:Sprite = new Sprite();
+		protected var _view:Sprite = new Sprite();
 		
 		public function BaseLayer()
 		{

@@ -13,6 +13,7 @@ package com.norris.fuzzy.core.display.impl
 	import flash.geom.Rectangle;
 	
 	/**
+	 * 废弃采用layerContainer
 	 * 分为静止和滚动两个层 
 	 * 可对scrollArea设置scrollRect限制其大小和显示范围 
 	 * @author norris
@@ -33,8 +34,8 @@ package com.norris.fuzzy.core.display.impl
 		private var _lastY:Number;
 		private var _oriX:Number;
 		private var _oriY:Number;
-		private var _minWidth:Number;
-		private var _minHeight:Number;
+		private var _maxWidth:Number;
+		private var _maxHeight:Number;
 		private var _oriRect:Rectangle;
 		private var _rect:Rectangle;				//控制scrollArea显示区域
 		
@@ -74,8 +75,8 @@ package com.norris.fuzzy.core.display.impl
 //				this.scrollArea.scrollRect = new Rectangle( 0, 0, _totalWidth, _totalHeight );
 //			_oriRect = this.scrollArea.scrollRect
 			
-			_minWidth = _totalWidth - scrollArea.width;
-			_minHeight = _totalHeight - scrollArea.height;
+			_maxWidth = _totalWidth - scrollArea.width;
+			_maxHeight = _totalHeight - scrollArea.height;
 			
 			//滚动控制上下卷动
 			if ( scrollArea.height > _totalHeight)
@@ -126,12 +127,12 @@ package com.norris.fuzzy.core.display.impl
 		private function onMouseMove( event:MouseEvent ) : void
 		{
 			var diffX:Number = _oriX + event.stageX - _lastX;
-			if ( diffX <= 0 && diffX >= _minWidth ){
+			if ( diffX <= 0 && diffX >= _maxWidth ){
 				scrollArea.x = diffX;
 			}
 			
 			var diffY:Number = _oriY + event.stageY - _lastY;
-			if ( diffY <= 0 && diffY >= _minHeight ){
+			if ( diffY <= 0 && diffY >= _maxHeight ){
 				scrollArea.y = diffY;
 			}
 		}
