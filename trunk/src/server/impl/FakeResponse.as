@@ -108,28 +108,59 @@ package server.impl
 		public static function createUnit( req:Object ) : void
 		{
 			req.rtype = 0;
-			req.rvalue = {
-				id	 :  1,
-				na   : "张飞",
-				fg   : 1,			//形象
-				lv	 : 1,  					//级别
-				
-				bH : 100,					//自身属性血量 bodyHP
-				fH : 50,					//装备加成    fixHP
-					
-				bA : 50,
-				fA : 25,
-				
-				sk : [ { id : 1, lv : 1 }, 
-					   { id : 2, lv : 2 } ],				//技能表
-				
-				rg  : 6,					//range
-				rt  : 2,					//rangeType
-				st  : 7,					//step				
-				
-				rs  : 1,					//rows
-				cs	: 1						//cols
-			};
+			var id :uint = parseInt( req.data.id );
+			switch( id )
+			{
+				case 1:
+					req.rvalue = {
+						id	 :  1,
+						na   : "张飞",
+						fg   : 1,			//形象
+						lv	 : 1,  					//级别
+						
+						bH : 100,					//自身属性血量 bodyHP
+						fH : 50,					//装备加成    fixHP
+						
+						bA : 50,
+						fA : 25,
+						
+						sk : [ { id : 1, lv : 1 }, 
+							{ id : 2, lv : 2 } ],				//技能表
+						
+						rg  : 6,					//range
+						rt  : 2,					//rangeType
+						st  : 7,					//step				
+						
+						rs  : 1,					//rows
+						cs	: 1						//cols
+					};
+					break;
+				case 2:
+					req.rvalue = {
+						id	 :  2,
+						na   : "剑士",
+						fg   : 2,			//形象
+						lv	 : 1,  					//级别
+						
+						bH : 100,					//自身属性血量 bodyHP
+						fH : 50,					//装备加成    fixHP
+						
+						bA : 50,
+						fA : 25,
+						
+						sk : [ { id : 1, lv : 1 }, 
+							{ id : 2, lv : 2 } ],				//技能表
+						
+						rg  : 7,					//range
+						rt  : 3,					//rangeType
+						st  : 5,					//step				
+						
+						rs  : 1,					//rows
+						cs	: 1						//cols
+					};					
+					break;
+			}
+
 		}
 
 		public static function createFigure( req:Object ) : void
@@ -161,6 +192,23 @@ package server.impl
 							
 							oX   :-8, 
 							oY   :15,
+							
+							w : 0, 
+							o : 1,
+							
+							rs  : 1,					//rows
+							cs	: 1						//cols
+					};					
+					break;
+				case 2:
+					req.rvalue = {
+						id	 :  2,
+						tp	 : MapItemType.SWF,
+							fg   : "assets/swordman.swf",			//地址
+							sb   : "swordman",			//symbol
+							
+							oX   :5, 
+							oY   :-5,
 							
 							w : 0, 
 							o : 1,
@@ -237,8 +285,10 @@ package server.impl
 				units		    : [{
 					id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
 				},{
-					id: "zb1",  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
 					na : "杂兵1", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+				},{
+					id: 2,  r :  20,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 200,   v : 1		
 				}],
 				
 				//脚本中已触发过的事件

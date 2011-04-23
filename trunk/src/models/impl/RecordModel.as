@@ -62,6 +62,10 @@ package models.impl
 				var u:UnitModel, id:String;
 				for( var i:uint=0; i <units.length; i++ ){
 					id = units[i]["id"];
+					if ( id == null || id == "" ){
+						this._relates--;	//减少下载数量
+						continue;
+					}
 					u = new UnitModel( id , units[i] );
 					u.addEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
 					u.addEventListener( ModelEvent.ERROR, onRelatedError );

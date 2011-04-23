@@ -149,6 +149,8 @@ package models.impl
 				o = _skills[ i ] as Object;
 				if ( SkillModelManager.has( o.id ) ){
 					skills.push( SkillModelManager.get( o.id ) );
+					//等同于已经加载完毕
+					onRelatedCompleted();
 				}else{
 					s = new SkillModel( o.id );
 					SkillModelManager.reg( o.id, s );
@@ -160,9 +162,10 @@ package models.impl
 			}
 		}
 		
-		private function onRelatedCompleted( event:ModelEvent ):void
+		private function onRelatedCompleted( event:ModelEvent = null ):void
 		{
-			event.model.removeEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
+			if ( event != null )
+				event.model.removeEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
 			
 			_related--;
 			

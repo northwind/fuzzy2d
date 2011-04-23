@@ -1,5 +1,6 @@
 package controlers.unit.impl
 {
+	import com.hurlant.eval.ast.Void;
 	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.display.IDataSource;
 	import com.norris.fuzzy.core.log.Logger;
@@ -31,8 +32,8 @@ package controlers.unit.impl
 	
 	public class BaseFigure extends BaseComponent implements IFigure
 	{
-		public static const COUNT:uint = 2;
-		public static const INTER:uint = 166;
+		public static const COUNT:uint = 15;
+		public static const INTER:uint = 30;
 		public static const STEPX:Number = MyWorld.CELL_WIDTH / 2/ BaseFigure.COUNT;
 		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / BaseFigure.COUNT;
 		
@@ -44,8 +45,11 @@ package controlers.unit.impl
 		private var timer:Timer;
 		private var currentNode:Node;
 		private var nextNode:Node;
-		private var offsetX:Number;
+		
+		private var offsetX:Number;		
 		private var offsetY:Number;
+		private var calcX:int;		//判断X坐标加还是减
+		private var calcY:int;		//判断Y坐标加还是减
 		
 		public function BaseFigure( model:UnitModel, unit:Unit )
 		{
@@ -164,10 +168,10 @@ package controlers.unit.impl
 		
 		private var nodeCallback:Function;
 		private var node:Node;
-		private var lastDirect:String;
+		private var lastDirect:uint;
 		private function walkTo( node:Node, callback:Function = null ) : void
 		{
-			var direct:String = BaseFigure.getDirect(  currentNode, node );
+			var direct:uint = BaseFigure.getDirect(  currentNode, node );
 			if ( lastDirect != direct ){
 				lastDirect = direct;
 				
@@ -179,6 +183,9 @@ package controlers.unit.impl
 				catch(error:Error) {
 					Logger.error( this.model.name + " has no function : " +  fn );
 				}
+				
+				calcX = direct % 3 - 1;
+				calcY = direct / 3 - 1;
 			}
 			
 //			this.node = node;
@@ -192,31 +199,34 @@ package controlers.unit.impl
 		}
 		
 		/**
-		 * 计算角色朝向 
+		 * 计算9宫格方向 
+		 * [0,1,2,
+			3,4,5,
+			6,7,8]
+			  0
+		    3    1
+		  6    4   2
+		     7   5
+			   8
+			 
 		 * @param from
 		 * @param to
 		 * @return 
 		 * 
 		 */		
-		public static function getDirect( from:Node, to:Node ) :String
+		public static function getDirect( from:Node, to:Node ) :uint
 		{
-			if ( to.row < from.row )
-				return "LeftUp";
-			else if ( to.row > from.row )
-				return "RightDown";
-			else if ( to.col > from.col )
-				return "LeftDown";
-			else if ( to.col < from.col )
-				return "RightUp";
-			else
-				return "";
-			//TODO 8方向
+			var diffX:int = from.row - to.row,
+				diffY:int = from.col - to.col;
+			
+			return (diffX > 0 ? 0 : diffX< 0 ? 2 : 1 ) + 
+					(diffY > 0 ? 0 : diffY< 0 ? 6 : 3 );
 		}
 		
 		protected function onTimer(event:Event):void
 		{
-			this._mapItem.offsetX -= BaseFigure.STEPX;
-			this._mapItem.offsetY += BaseFigure.STEPY;
+			this._mapItem.offsetX += calcX * BaseFigure.STEPX;
+			this._mapItem.offsetY += calcY * BaseFigure.STEPY;
 			
 			//宿主分发事件
 			unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE, this.unit ) );

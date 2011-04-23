@@ -23,6 +23,11 @@ package controlers.layers
 	import models.impl.RecordModel;
 	import models.impl.UnitModel;
 	
+	/**
+	 * 统筹管理unit，并分配用户的操作，不直接响应用户的操作 
+	 * @author norris
+	 * 
+	 */	
 	public class UnitsLayer extends BaseLayer
 	{
 		public var tileLayer:TileLayer;
@@ -84,7 +89,7 @@ package controlers.layers
 			
 			//使用unitsLayer做为Astar寻路的容器
 			_astar = new Astar( tileLayer );
-			_selectUnit = this.getUnit( "1" );
+			_selectUnit = this.getUnit( "2" );
 			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
