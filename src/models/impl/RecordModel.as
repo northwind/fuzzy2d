@@ -12,6 +12,7 @@ package models.impl
 		private var _map:MapModel;
 		private var _script:ScriptModel;
 		private var _units:Object;
+		private var _unitsPos:Object;
 		
 		private var _relates:uint;
 		private var _downloads:uint;
@@ -101,6 +102,11 @@ package models.impl
 		public function get mapModel() :MapModel
 		{
 			return _map;
+		}
+		
+		public function getUnitModel( row:int, col:int ):UnitModel
+		{
+			return _unitsPos[ row + "_" + col ] as UnitModel;
 		}
 		
 		public function get scriptModel() :ScriptModel

@@ -36,5 +36,7 @@ package controlers.unit
 			this.figure.walkPath( path, callback );
 		}
 		
+		public function autoTo()
+		
 	}
 }
