@@ -9,8 +9,11 @@ package models.impl
 	
 	import models.IDataModel;
 	import models.event.ModelEvent;
+	import models.event.UnitModelEvent;
 	
 	import server.*;
+	
+	[Event(name="change_position", type="models.event.UnitModelEvent")]
 	
 	public class UnitModel extends BaseModel implements IDataModel
 	{
@@ -31,8 +34,8 @@ package models.impl
 		public var fixAttack:int;				//装备等固定增加的HP
 		public var offsetAttack:int;			//使用技能等增加的会有变动的HP
 		
-		public var row:int;
-		public var col:int;
+		private var row:int;
+		private var col:int;
 		public var rows:uint;
 		public var cols:uint;
 		
@@ -44,7 +47,8 @@ package models.impl
 		public var step:int;						//行动力
 		public var direct:int;						//朝向
 		
-		private var _skills:Array;
+		private var _skills:Array;				//技能
+		private var _stuffs:Array;				//物品
 		private var _needLoad:Boolean;
 		
 		public var skills:Array;
@@ -184,8 +188,60 @@ package models.impl
 			return _skills.length;
 		}
 		
+		public function moveTo( row:int, col:int ) :void
+		{
+			this.row = row;
+			this.col = col;
+		}
+		
+		//待机
+		public function standby(  row:int, col:int ) :void
+		{
+			_row = row;
+			_col  = col;
+			
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
+				{ action : "standby", id:this.id, row:row, col:col }, null, null ) );
+		}
+		
+		//攻击
+		public function attack( to:UnitModel, row:int, col:int ) :void
+		{
+			_row = row;
+			_col  = col;
+			
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
+				{ action : "attack", id:this.id, row:row, col:col, to:to.id }, null, null ) );
+		}
+		
+		//使用技能
+		public function useSkill( n:uint, to:UnitModel, row:int, col:int ) :void
+		{
+			if ( n >= _skills.length )
+				return;
+			
+			_row = row;
+			_col  = col;
+			
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
+				{ action : "skill", id:this.id, row:row, col:col, to:to.id }, null, null ) );
+		}
+		
+		//使用物品
+		public function useStuff( n:uint, to:UnitModel, row:int, col:int ) :void
+		{
+			if ( n >= _stuffs.length )
+				return;
+			
+			_row = row;
+			_col  = col;
+			
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
+				{ action : "stuff", id:this.id, row:row, col:col, to:to.id }, null, null ) );
+		}
+		
 		private static const _mapper : Object =  {
-			r : "row", c : "col", cH : "currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
+			r : "_row", c : "_col", cH : "currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
 			cA : "currentHP", bA : "bodyHP", fA : "fixHP", oA : "offsetHP",　fa : "faction", tm : "team",
 			v : "visiable", na : "name", fg : "figure", lv : "level",  st : "step",  rt : "rangeType",
 			rg :"range", d : "direct", rs:"rows", cs:"cols"

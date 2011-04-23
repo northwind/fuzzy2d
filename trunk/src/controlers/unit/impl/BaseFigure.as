@@ -17,6 +17,7 @@ package controlers.unit.impl
 	import controlers.unit.IFigure;
 	import controlers.unit.Unit;
 	
+	import flash.display.MovieClip;
 	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
@@ -32,7 +33,7 @@ package controlers.unit.impl
 	
 	public class BaseFigure extends BaseComponent implements IFigure
 	{
-		public static const COUNT:uint = 15;
+		public static const COUNT:uint = 12;
 		public static const INTER:uint = 30;
 		public static const STEPX:Number = MyWorld.CELL_WIDTH / 2/ BaseFigure.COUNT;
 		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / BaseFigure.COUNT;
@@ -56,7 +57,6 @@ package controlers.unit.impl
 			super();
 			this.model = model;
 			this.unit = unit;
-//			this.currentNode = 
 			
 			this.timer = new Timer( BaseFigure.INTER, BaseFigure.COUNT ); 
 			this.timer.addEventListener(TimerEvent.TIMER, onTimer );
@@ -75,6 +75,8 @@ package controlers.unit.impl
 			}
 			
 			_mapItem = new SWFMapItem( model.figureModel.symbol );
+			(_mapItem.view as MovieClip ).mouseEnabled =false;
+			(_mapItem.view as MovieClip ).mouseChildren = false;
 			//				_mapItem = new UnitMapItem( model.figureModel.symbol );
 			//记录原始偏移量
 			this.offsetX = this._figureModel.offsetX;
@@ -184,8 +186,11 @@ package controlers.unit.impl
 					Logger.error( this.model.name + " has no function : " +  fn );
 				}
 				
-				calcX = direct % 3 - 1;
-				calcY = direct / 3 - 1;
+				//如果方向在九宫格的右上角则X=1 否则为-1或0
+				//如果在九宫格的上方则为-1否则为1或0
+				var r:uint = direct / 3, c:uint = direct % 3;
+				calcX = c > r ? 1 : ( c < r ? -1 : 0 );
+				calcY = r + c < 2 ? -1 : ( r+c > 2 ? 1 : 0  );
 			}
 			
 //			this.node = node;

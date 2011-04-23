@@ -2,13 +2,13 @@ package server
 {
 	import flash.events.IEventDispatcher;
 
-	[Event(name="server_connect", type="server.event.ServerEvent")]
+	[Event(name="connect", type="server.event.ServerEvent")]
 	
-	[Event(name="server_disconnect", type="server.event.ServerEvent")]
+	[Event(name="disconnect", type="server.event.ServerEvent")]
 	
-	[Event(name="server_error", type="server.event.ServerEvent")]
+	[Event(name="error", type="server.event.ServerEvent")]
 	
-	[Event(name="server_receive", type="server.event.ServerEvent")]
+	[Event(name="receive", type="server.event.ServerEvent")]
 	
 	/**
 	 * 组装成server端可理解的格式，完成与server的通信 

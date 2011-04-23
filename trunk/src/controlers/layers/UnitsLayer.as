@@ -34,12 +34,11 @@ package controlers.layers
 		public var tipsLayer:TipsLayer;
 		public var staticLayer:StaticLayer;
 		
-		private var _model:RecordModel;
+		private var _recordModel:RecordModel;
 		private var _units:Object;
 		private var _sortedItems:Array = [];
 		
 		private var _astar:Astar;
-		private var _moving:Boolean = false;
 		private var _lastMoveRow:int = 6;
 		private var _lastMoveCol:int = 20;
 		
@@ -49,22 +48,22 @@ package controlers.layers
 		{
 			super();
 			
-			this._model = model;
+			this._recordModel = model;
 		}
 		
 		override public function onSetup() :void
 		{
-			if ( this._model.data == null )
-				this._model.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
+			if ( this._recordModel.data == null )
+				this._recordModel.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
 			else 
 				onModelCompleted();
 		}
 		
 		private function onModelCompleted( event :ModelEvent = null ) :void
 		{
-			this._model.removeEventListener( ModelEvent.COMPLETED, onModelCompleted );
+			this._recordModel.removeEventListener( ModelEvent.COMPLETED, onModelCompleted );
 			
-			var models:Object = this._model.unitModels;
+			var models:Object = this._recordModel.unitModels;
 			
 			_units = {};
 			var coord:Coordinate, unit:Unit, mapItem:IMapItem;
@@ -89,7 +88,6 @@ package controlers.layers
 			
 			//使用unitsLayer做为Astar寻路的容器
 			_astar = new Astar( tileLayer );
-			_selectUnit = this.getUnit( "2" );
 			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
@@ -106,9 +104,23 @@ package controlers.layers
 			render();
 		}
 		
+		private function isActive() :Boolean
+		{
+			return true;
+		}
 		
 		private function onSelectTile( event:TileEvent ):void
 		{
+			if ( !isActive() )
+				return;
+			
+			if ( _selectUnit == null ){
+				_selectUnit = 
+				
+			}else{
+				_selectUnit.auto
+			}
+			
 			if ( _moving )
 				return;
 			
@@ -138,7 +150,7 @@ package controlers.layers
 		private var _lastMoveItem:IMapItem = null;
 		private function onMoveTile( event:TileEvent ):void
 		{
-			var item:IMapItem = this._model.mapModel.getItem( event.row, event.col );
+			var item:IMapItem = this._recordModel.mapModel.getItem( event.row, event.col );
 			if (  _lastMoveItem != item && _lastMoveItem != null )
 				_lastMoveItem.view.alpha = 1;
 			
@@ -153,7 +165,7 @@ package controlers.layers
 		private function isWalkable( row:int, col:int ) : Boolean
 		{
 			//TODO 友军敌军判断
-			return !_model.mapModel.isBlock( row, col );		
+			return !_recordModel.mapModel.isBlock( row, col );		
 		}
 		
 		private function walk( path:Path ) : void

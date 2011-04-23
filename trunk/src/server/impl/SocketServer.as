@@ -223,11 +223,10 @@ package server.impl
 		//接收数据
 		private function socketDataHandler(event:ProgressEvent):void {
 			var str:String = this._socket.readUTFBytes( this._socket.bytesAvailable );
-			
-			this.dispatchEvent( new ServerEvent( ServerEvent.Receive, this ) );
-			
+
 			this.handleResponse( str );
 			
+			this.dispatchEvent( new ServerEvent( ServerEvent.Receive, this ) );
 		}
 		
 		private function handleResponse( str:String ) :void
