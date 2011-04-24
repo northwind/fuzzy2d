@@ -39,6 +39,8 @@ package controlers.layers
 		
 		private var _showgrid:Boolean = false;
 		private var _coordable:Boolean = false;		//是否显示坐标
+		private var _mousedown:Boolean = false;	//记录是否移动
+		private var _mousemove:Boolean = false;	//记录是否移动
 		
 		private var _gridWrap:Sprite = new Sprite();
 		private var _paintCt:Sprite = new Sprite();
@@ -135,6 +137,7 @@ package controlers.layers
 			//MyWorld.instance.inputMgr.on( InputKey.MOUSE_MOVE, onMouseMove );
 			_parentView.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove );
 			MyWorld.instance.inputMgr.on( InputKey.MOUSE_UP, onMouseUp );
+			MyWorld.instance.inputMgr.on( InputKey.MOUSE_LEFT, onMouseDown );
 			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OUT, onMouseOut );
 			MyWorld.instance.inputMgr.on( InputKey.MOUSE_OVER, onMouseOver );
 			
@@ -153,12 +156,18 @@ package controlers.layers
 			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OUT, onMouseOut );
 			MyWorld.instance.inputMgr.un( InputKey.MOUSE_OVER, onMouseOver );
 			MyWorld.instance.inputMgr.un( InputKey.MOUSE_UP, onMouseUp );
+			MyWorld.instance.inputMgr.un( InputKey.MOUSE_LEFT, onMouseDown );
+//			MyWorld.instance.inputMgr.un( InputKey.CLICK, onClick );
 			
 			/* 添加调试信息 */
 			MyWorld.instance.debugMgr.unregisterCommand( "grid" );
 			MyWorld.instance.debugMgr.unregisterCommand( "coord" );
 		}
 		
+		protected function onMouseDown( event:MouseEvent ):void
+		{
+			_mousedown = true;
+		}
 		/**
 		 *  移动鼠标 
 		 * @param event
@@ -174,6 +183,9 @@ package controlers.layers
 			
 			if ( _lastRow == row && _lastCol == col )
 				return;
+			
+			if ( _mousedown )
+				_mousemove = true;
 			
 			_lastRow = row;
 			_lastCol   = col;
@@ -227,6 +239,21 @@ package controlers.layers
 		 * 
 		 */		
 		private function onMouseUp( event:MouseEvent ) : void
+		{
+			var coord:Coordinate = _iso.mapToIsoWorld( _parentView.mouseX - _gridX - _mouseMoveOffsetX, 
+				_parentView.mouseY - _gridY );
+			
+			var row:int = Math.floor(Math.abs(coord.x / _tileWidth)) ;
+			var col:int = Math.floor( Math.abs( coord.z ) / _tileHeight ) ;
+			//移动时不触发点击事件
+			if ( isValid( row, col ) && !_mousemove ){
+				this.dispatchEvent( new TileEvent( TileEvent.SELECT, row, col ) );				
+			}
+			_mousedown = false;
+			_mousemove = false;
+		}
+		
+		private function onClick( event:MouseEvent ):void
 		{
 			var coord:Coordinate = _iso.mapToIsoWorld( _parentView.mouseX - _gridX - _mouseMoveOffsetX, 
 				_parentView.mouseY - _gridY );

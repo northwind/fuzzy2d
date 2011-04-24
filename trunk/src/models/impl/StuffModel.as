@@ -14,7 +14,7 @@ package models.impl
 		public var id:String;					
 		public var name:String;					//名称
 		public var desc:String = "";			//描述
-		public var level:uint = 1;				//级别
+		public var count:uint;					//个数
 		public var effect:int;					//对谁起作用
 		public var iconUrl:String;				//icon地址
 		public var range:uint = 1;				//范围
@@ -31,7 +31,7 @@ package models.impl
 		{
 			super.loadData();
 			
-			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Skill, { id:this.id }, null, onResponse ) );
+			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Stuff, { id:this.id }, null, onResponse ) );
 		}
 		
 		private function onResponse( value:* ) :void
@@ -64,7 +64,7 @@ package models.impl
 		
 		private static const _mapper : Object =  {
 			na : "name", rt : "rangeType",	rg :"range", de : "desc", ef : "effect",
-			im : "iconUrl", an : "animation", ct : "cost", lv : "level"
+			im : "iconUrl", an : "animation", ct : "cost", n : "count"
 		}
 	}
 }

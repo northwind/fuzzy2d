@@ -1,6 +1,7 @@
 package server.impl
 {
 	import com.norris.fuzzy.map.item.MapItemType;
+	import models.impl.*;
 	
 	public class FakeResponse
 	{
@@ -127,6 +128,8 @@ package server.impl
 						sk : [ { id : 1, lv : 1 }, 
 							{ id : 2, lv : 2 } ],				//技能表
 						
+						sf : [ { id:1, n : 6 } ],			    //物品
+						
 						rg  : 6,					//range
 						rt  : 2,					//rangeType
 						st  : 7,					//step				
@@ -150,6 +153,8 @@ package server.impl
 						
 						sk : [ { id : 1, lv : 1 }, 
 							{ id : 2, lv : 2 } ],				//技能表
+						
+						sf : [ { id:1, n : 6 }, { id:2, n : 1 } ],			    //物品
 						
 						rg  : 7,					//range
 						rt  : 3,					//rangeType
@@ -231,7 +236,7 @@ package server.impl
 						id	: 1,
 						na	: "圣光",
 						de	: "恢复HP",
-						im	: "images/item/82-1.png",
+						im	: "assets/smile_grin_48.png",
 						an  : "redStar",
 						rg  : 1,
 						rt  : 1,
@@ -246,7 +251,7 @@ package server.impl
 						id		: 2,
 						na	: "风暴",
 						de	: "单体减伤",
-						im	   	: "images/item/1-1.png",
+						im	   	: "assets/smile_sad_48.png",
 						rg	: 4, 			
 						rt : 2,     
 						an : "storm",	
@@ -254,6 +259,46 @@ package server.impl
 						ln : {}
 					};
 					break;
+				default:
+					break;
+			}
+		}
+		
+		public static function createStuff( req:Object ) : void
+		{
+			req.rtype = 0;
+			var id :uint = parseInt( req.data.id );
+			switch( id )
+			{
+				case 1:
+					req.rvalue = {
+					id	: 1,
+					na	: "smallblood",
+					de	: "恢复HP",
+					im	: "assets/add_48.png",
+					an  : "redStar",
+					rg  : 1,
+					rt  : 1,
+					ef  : EffectType.SELF,
+					ct  : 1,
+					ln  : {}
+				};
+					break;
+				
+				case 2:
+				req.rvalue = {
+					id		: 2,
+					na	: "bigblood",
+					de	: "群体恢复HP",
+					im	   	: "assets/add_48.png",
+					rg	: 4, 			
+					rt : 2,     
+					an : "storm",	
+					ef	: EffectType.FRIEND,
+					ct : 3,
+					ln : {}
+				};
+				break;
 				default:
 					break;
 			}

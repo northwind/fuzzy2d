@@ -134,6 +134,10 @@ package server.impl
 					FakeResponse.createSkill( req );
 					break;
 				
+				case DataRequest.TYPE_Stuff:			//物品信息
+					FakeResponse.createStuff( req );
+					break;
+				
 				case DataRequest.TYPE_Figure:			//形象信息
 					FakeResponse.createFigure( req );
 					break;

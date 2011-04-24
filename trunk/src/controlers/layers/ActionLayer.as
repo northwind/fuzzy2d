@@ -7,14 +7,18 @@ package controlers.layers
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.astar.Node;
 	
-	import controlers.unit.Unit;
+	import controlers.unit.*;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	
+	import models.impl.SkillModel;
+	import models.impl.StuffModel;
+	
 	import views.IconButton;
+	import views.BlowIconButton;
 	import views.IconButtonMgr;
 
 	/**
@@ -34,6 +38,10 @@ package controlers.layers
 		private var lasttime:Number = 0.6;
 		private var _icons:Object;
 		
+		private var mBtn:IconButton;
+		private var aBtn:IconButton;
+		private var sBtn:IconButton;
+		
 		public var tileLayer:TileLayer;
 		
 		public function ActionLayer()
@@ -47,51 +55,101 @@ package controlers.layers
 		{
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
 			//资源加载好后再初始化
-			this.craeteAction();
+			//设置弹出菜单按钮
+			mBtn = new BlowIconButton( "移动" );
+			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
+			IconButtonMgr.reg( "move", mBtn );
+			
+			sBtn = new BlowIconButton( "待机" );
+			sBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_standby" );
+			IconButtonMgr.reg( "standby", sBtn );
+			
+			aBtn = new BlowIconButton( "攻击" );
+			aBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_attack" );
+			IconButtonMgr.reg( "attack", aBtn );			
+		}
+		
+		private function createIconButton( name:String, tips:String, url:String ) :IconButton
+		{
+			var ret:BlowIconButton = new BlowIconButton( tips );
+			ret.dataSource = MyWorld.instance.resourceMgr.add( name, url );
+			return ret;
 		}
 		
 		public function bind( unit:Unit ) :void
 		{
-			this._unit = unit;
-			
-			var mapItem:IMapItem = this._unit.figure.mapItem;
+			var mapItem:IMapItem = unit.figure.mapItem;
 			var node:Node = tileLayer.getNode( mapItem.row, mapItem.col );
 			
 			this.oX = node.x - 24;
 			this.oY = node.y - 48;
+			
+			//当更换对象时才重新创建
+			if ( unit != this._unit ){
+				this._unit = unit;
+				this.craeteAction();
+			}
 		}
 		
 		public function unbind() : void
 		{
 			this._unit = null;
+			
+			//删除
+			while( this.view.numChildren > 0 )
+				this.view.removeChildAt( 0 );
 		}
 		
 		private function craeteAction() : void
 		{
+			if ( this._unit  == null ) return;
+			
 			_icons = {};
+			_icons[ -135 ] = sBtn;		//待机
 			
-			//设置弹出菜单按钮
-			var mBtn:IconButton = new IconButton( "移动" );
-			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
-			IconButtonMgr.reg( "move", mBtn );
+			//移动
+			if ( this._unit.moveable != null )
+				_icons[ 90 ] = mBtn;
+			//攻击
+			if ( this._unit.attackable != null )
+				_icons[ 45 ] = aBtn;
+			//技能
+			var sm:SkillModel, btn:IconButton;
+			for (var j:int = 0; j < this._unit.skills.length; j++) 
+			{
+				sm = (this._unit.skills[ i ] as ISkillable).model;
+				if ( sm != null ){
+					btn = IconButtonMgr.get( sm.name );
+					if ( btn == null ){
+						//如果没有则延迟加载
+						btn =  createIconButton( sm.name, sm.desc, sm.iconUrl );
+					}
+					_icons[ 0 - j * 45 ] = btn;
+				}
+			}
+			//物品
+			var stuff:StuffModel;
+			for (var i:int = 0; i < this._unit.stuffs.length; i++) 
+			{
+				stuff = (this._unit.stuffs[ i ] as IStuffable ).model;
+				if ( stuff != null ){
+					btn = IconButtonMgr.get( stuff.name );
+					if ( btn == null ){
+						//如果没有则延迟加载
+						btn =  createIconButton( stuff.name, stuff.desc, stuff.iconUrl );
+					}
+					_icons[ -180 - i * 45 ] = btn;
+				}
+			}
 			
-			var sBtn:IconButton = new IconButton( "待机" );
-			sBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_standby" );
-			IconButtonMgr.reg( "standby", sBtn );
-			
-			var aBtn:IconButton = new IconButton( "攻击" );
-			aBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_attack" );
-			IconButtonMgr.reg( "attack", aBtn );
-			
-			_icons[ 90 ] = mBtn;
-			_icons[ 45 ] = aBtn;
-			_icons[ -90 ] = sBtn;
 		}
 		
 		public function showAction() : void
 		{
 			if ( this._unit == null )
 				return;
+			
+			this.view.visible = true;
 			
 			for( var angle:String in _icons ){
 				runTo( _icons[ angle ] as DisplayObject , parseFloat( angle ) * conversion );	
@@ -100,8 +158,7 @@ package controlers.layers
 		
 		public function hideAction() : void
 		{
-			while( this.view.numChildren > 0 )
-				this.view.removeChildAt( 0 );
+			this.view.visible = false;
 		}
 
 		private function runTo( target:DisplayObject, angle:Number ) : void

@@ -21,6 +21,7 @@ package com.norris.fuzzy.core.display.impl
 		protected var _totalWidth:Number;				//screen总宽度
 		
 		private var _mousedown:Boolean = false;
+		private var _mousemove:Boolean = false;
 		private var _lastX:Number;					//鼠标点击时X
 		private var _lastY:Number;					//鼠标点击时Y
 		private var _maxWidth:Number;				//可滚动的最大值
@@ -103,6 +104,7 @@ package com.norris.fuzzy.core.display.impl
 		private function onMouseDown( event:MouseEvent ) : void
 		{
 			_mousedown = true;
+			_mousemove = false;
 			
 			_lastX = event.stageX;
 			_lastY = event.stageY;
@@ -118,12 +120,14 @@ package com.norris.fuzzy.core.display.impl
 		{
 			var diffX:Number = _rect.x - ( event.stageX - _lastX );
 			if ( diffX >= _oriRect.x && diffX <= _maxWidth ){
+				_mousemove = true;
 				_rect.x = diffX;
 			}
 			_lastX = event.stageX;
 			
 			var diffY:Number = _rect.y - ( event.stageY - _lastY );
 			if ( diffY >= _oriRect.y && diffY <= _maxHeight ){
+				_mousemove = true;
 				_rect.y = diffY;
 			}
 			_lastY = event.stageY;
@@ -133,6 +137,9 @@ package com.norris.fuzzy.core.display.impl
 		
 		private function onMouseUp( event:MouseEvent ) : void
 		{
+			if ( _mousemove )
+				event.stopPropagation();
+				
 			_mousedown = false;
 			
 			//World.instance.inputMgr.un( InputKey.MOUSE_MOVE, onMouseMove );

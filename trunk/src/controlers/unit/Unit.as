@@ -25,7 +25,10 @@ package controlers.unit
 		public var figure:IFigure;
 		public var model:UnitModelComponent;
 		public var moveable:IMoveable;
-		public var skills:Array;
+		public var attackable:IAttackable;
+		
+		public var skills:Array = [];
+		public var stuffs:Array = [];
 		public var layer:UnitsLayer;
 		
 		public function Unit( model:UnitModelComponent = null )
@@ -67,6 +70,16 @@ package controlers.unit
 		{
 			if ( moveable != null )
 				moveable.moveTo.apply( null, arguments );
+		}
+		
+		public function set skillable( value:ISkillable ) : void
+		{
+			skills.push( value );
+		}
+		
+		public function set stuffable( value:IStuffable ) : void
+		{
+			stuffs.push( value );
 		}
 		
 	}
