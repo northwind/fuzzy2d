@@ -1,16 +1,16 @@
 package com.norris.fuzzy.core.display.impl
 {
+	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.display.ILayer;
 	import com.norris.fuzzy.core.display.IScreen;
 	import com.norris.fuzzy.core.display.IScreenManager;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
-	import com.norris.fuzzy.core.display.IScreen;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	
-	public class BaseScreenManager implements IScreenManager
+	public class BaseScreenManager extends BaseComponent implements IScreenManager
 	{
 		private var _container:Sprite = new Sprite();
 		private var _current:IScreen;
@@ -21,14 +21,6 @@ package com.norris.fuzzy.core.display.impl
 			super();
 			
 			ct.addChild( this._container );
-		}
-		
-		public function onSetup() : void
-		{
-		}
-		
-		public function destroy():void
-		{
 		}
 		
 		public function add( name:String, screen: IScreen ) : void

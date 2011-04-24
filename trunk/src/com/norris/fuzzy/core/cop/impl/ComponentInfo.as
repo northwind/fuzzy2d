@@ -129,6 +129,7 @@ package com.norris.fuzzy.core.cop.impl
 			n._accessors = this._accessors.slice(0, this._accessors.length ); 
 			n._interfaces = this._interfaces.slice(0, this._interfaces.length );
 			n._variables = this._variables.slice(0, this._variables.length );
+			n._done = n._variables.length == 0 && n._accessors.length == 0; 
 			
 			return n;
 		}

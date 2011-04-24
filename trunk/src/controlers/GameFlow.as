@@ -123,19 +123,6 @@ package controlers
 												}
 											}
 											
-											//设置弹出菜单按钮
-											var mBtn:IconButton = new IconButton( "移动" );
-											mBtn.dataSource = resourceMgr.getResource( "unit_move" );
-											IconButtonMgr.reg( "move", mBtn );
-											
-											var sBtn:IconButton = new IconButton( "待机" );
-											sBtn.dataSource = resourceMgr.getResource( "unit_standby" );
-											IconButtonMgr.reg( "standby", sBtn );
-											
-											var aBtn:IconButton = new IconButton( "攻击" );
-											aBtn.dataSource = resourceMgr.getResource( "unit_attack" );
-											IconButtonMgr.reg( "attack", aBtn );
-											
 											//---------------------------------------5-----------------------------
 											battle.mapLayer.dataSource = resourceMgr.getResource( map.background.src );
 											battle.menuLayer.dataSource = battleSwf;

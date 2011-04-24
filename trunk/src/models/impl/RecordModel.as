@@ -1,5 +1,7 @@
 package models.impl
 {
+	import controlers.unit.impl.UnitModelComponent;
+	
 	import models.IDataModel;
 	import models.event.ModelEvent;
 	
@@ -60,14 +62,15 @@ package models.impl
 				_script.loadData();
 				
 				//读取角色信息
-				var u:UnitModel, id:String;
+				var u:UnitModelComponent, id:String;
 				for( var i:uint=0; i <units.length; i++ ){
 					id = units[i]["id"];
 					if ( id == null || id == "" ){
 						this._relates--;	//减少下载数量
 						continue;
 					}
-					u = new UnitModel( id , units[i] );
+					//u = new UnitModel( id , units[i] );
+					u = new UnitModelComponent( id , units[i] );
 					u.addEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
 					u.addEventListener( ModelEvent.ERROR, onRelatedError );
 					u.loadData();

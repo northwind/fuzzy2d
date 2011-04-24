@@ -16,6 +16,7 @@ package controlers.layers
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.text.TextField;
 	
 	import models.impl.MapModel;
@@ -198,6 +199,11 @@ package controlers.layers
 
 		}
 		
+		/**
+		 * 调整mapItem显示位置 
+		 * @param item
+		 * 
+		 */		
 		public function adjustPosition( item:IMapItem ) : void
 		{
 			var row:int = item.row;
@@ -273,6 +279,8 @@ package controlers.layers
 					_gridWrap.addChild(t);
 					
 					var node:Node = new Node( i, j ) ;
+					node.x = coord.x + _gridX +  MyWorld.CELL_WIDTH / 2;
+					node.y = coord.y + _gridY + MyWorld.CELL_HEIGHT / 2;
 					
 					_grid[i][j] = node;
 				}

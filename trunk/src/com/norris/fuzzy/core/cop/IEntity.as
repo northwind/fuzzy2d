@@ -12,6 +12,7 @@ package com.norris.fuzzy.core.cop
 	{
 		function addComponent( c :IComponent ) : void;
 		
+		function hasComponent( c :IComponent ) : Boolean;
 		//function getComponent( c:IComponent ) : void;
 		
 		function setup() : void;

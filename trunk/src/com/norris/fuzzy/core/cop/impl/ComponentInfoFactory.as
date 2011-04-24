@@ -25,7 +25,8 @@ package com.norris.fuzzy.core.cop.impl
 			}
 			//new an instance
 			var info : ComponentInfo = new ComponentInfo( c );
-			items[ key ] = info;
+			//clone an info
+			items[ key ] = info.clone();
 			
 			return info;
 		}

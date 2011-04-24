@@ -15,6 +15,8 @@ package models.impl
 	
 	[Event(name="change_position", type="models.event.UnitModelEvent")]
 	
+	[Event(name="change_hp", type="models.event.UnitModelEvent")]
+	
 	public class UnitModel extends BaseModel implements IDataModel
 	{
 		public var id:String;
@@ -24,7 +26,7 @@ package models.impl
 		public var figureModel:FigureModel;
 		public var visiable:Boolean;		//是否可见
 		
-		public var currentHP:int;				//当前HP 各个效率累加计算后的
+		private var _currentHP:int;				//当前HP 各个效率累加计算后的
 		public var bodyHP:int;					//自身HP
 		public var fixHP:int;					//装备等固定增加的HP
 		public var offsetHP:int;				//使用技能等增加的会有变动的HP
@@ -34,8 +36,8 @@ package models.impl
 		public var fixAttack:int;				//装备等固定增加的HP
 		public var offsetAttack:int;			//使用技能等增加的会有变动的HP
 		
-		private var row:int;
-		private var col:int;
+		public var row:int;
+		public var col:int;
 		public var rows:uint;
 		public var cols:uint;
 		
@@ -68,6 +70,21 @@ package models.impl
 			}
 		}
 		
+		public function get currentHP():int
+		{
+			return _currentHP;
+		}
+
+		public function set currentHP(value:int):void
+		{
+			value = Math.max( 0, value );
+			if ( _currentHP == value )
+				return;
+
+			_currentHP = value;
+			this.dispatchEvent( new UnitModelEvent( UnitModelEvent.CHANGE_HP, this ) );
+		}
+
 		/**
 		 *  拷贝属性 
 		 * @param attr
@@ -197,8 +214,8 @@ package models.impl
 		//待机
 		public function standby(  row:int, col:int ) :void
 		{
-			_row = row;
-			_col  = col;
+			this.row = row;
+			this.col  = col;
 			
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "standby", id:this.id, row:row, col:col }, null, null ) );
@@ -207,11 +224,13 @@ package models.impl
 		//攻击
 		public function attack( to:UnitModel, row:int, col:int ) :void
 		{
-			_row = row;
-			_col  = col;
+			this.row = row;
+			this.col  = col;
 			
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "attack", id:this.id, row:row, col:col, to:to.id }, null, null ) );
+			
+			to.currentHP -= currentAttack;
 		}
 		
 		//使用技能
@@ -220,8 +239,8 @@ package models.impl
 			if ( n >= _skills.length )
 				return;
 			
-			_row = row;
-			_col  = col;
+			this.row = row;
+			this.col  = col;
 			
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "skill", id:this.id, row:row, col:col, to:to.id }, null, null ) );
@@ -233,15 +252,17 @@ package models.impl
 			if ( n >= _stuffs.length )
 				return;
 			
-			_row = row;
-			_col  = col;
+			this.row = row;
+			this.col  = col;
 			
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "stuff", id:this.id, row:row, col:col, to:to.id }, null, null ) );
 		}
 		
+		
+		
 		private static const _mapper : Object =  {
-			r : "_row", c : "_col", cH : "currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
+			r : "row", c : "col", cH : "_currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
 			cA : "currentHP", bA : "bodyHP", fA : "fixHP", oA : "offsetHP",　fa : "faction", tm : "team",
 			v : "visiable", na : "name", fg : "figure", lv : "level",  st : "step",  rt : "rangeType",
 			rg :"range", d : "direct", rs:"rows", cs:"cols"

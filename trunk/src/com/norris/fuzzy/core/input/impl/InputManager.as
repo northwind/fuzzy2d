@@ -1,5 +1,6 @@
 package com.norris.fuzzy.core.input.impl
 {
+	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.input.IInputManager;
 	import com.norris.fuzzy.core.input.impl.InputKey;
 	import com.norris.fuzzy.core.log.Logger;
@@ -12,7 +13,7 @@ package com.norris.fuzzy.core.input.impl
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
-	public class InputManager implements IInputManager
+	public class InputManager extends BaseComponent implements IInputManager
 	{
 		private var _enableKeyboard : Boolean = true;
 		private var _enableMouse :Boolean = true;
@@ -39,14 +40,6 @@ package com.norris.fuzzy.core.input.impl
 					//area.contextMenu.addEventListener(Event.ACTIVATE, onContext );
 					ct.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, onContext );
 			}			
-		}
-		
-		public function onSetup() : void
-		{
-		}
-		
-		public function destroy():void
-		{
 		}
 		
 		private function onKeyDown( event:KeyboardEvent ) : void

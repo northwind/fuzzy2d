@@ -1,5 +1,6 @@
 package com.norris.fuzzy.core.sound.impl
 {
+	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	import com.norris.fuzzy.core.resource.IResource;
@@ -11,7 +12,7 @@ package com.norris.fuzzy.core.sound.impl
 	import flash.utils.ByteArray;
 	
 	
-	public class SounderManager implements ISounderManager
+	public class SounderManager extends BaseComponent implements ISounderManager
 	{
 		private var _muted :Boolean = false;
 		private var _items:BaseManager = new BaseManager();
@@ -62,14 +63,6 @@ package com.norris.fuzzy.core.sound.impl
 			this.add( sounder );
 			
 			return sounder;
-		}
-		
-		public function onSetup() : void
-		{
-		}
-		
-		public function destroy():void
-		{
 		}
 		
 		public function add( sounder:ISounder):void

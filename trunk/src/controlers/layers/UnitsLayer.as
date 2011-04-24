@@ -13,6 +13,9 @@ package controlers.layers
 	import controlers.events.UnitEvent;
 	import controlers.unit.IFigure;
 	import controlers.unit.Unit;
+	import controlers.unit.impl.BaseFigure;
+	import controlers.unit.impl.BaseMoveable;
+	import controlers.unit.impl.UnitModelComponent;
 	
 	import flash.events.Event;
 	import flash.events.TimerEvent;
@@ -33,9 +36,11 @@ package controlers.layers
 		public var tileLayer:TileLayer;
 		public var tipsLayer:TipsLayer;
 		public var staticLayer:StaticLayer;
+		public var actionLayer:ActionLayer;
 		
 		private var _recordModel:RecordModel;
 		private var _units:Object;
+		private var _unitsPos:Object;
 		private var _sortedItems:Array = [];
 		
 		private var _astar:Astar;
@@ -49,6 +54,7 @@ package controlers.layers
 			super();
 			
 			this._recordModel = model;
+			this._unitsPos = {};
 		}
 		
 		override public function onSetup() :void
@@ -67,11 +73,16 @@ package controlers.layers
 			
 			_units = {};
 			var coord:Coordinate, unit:Unit, mapItem:IMapItem;
-			for ( var id:String in models ){
-				unit = new Unit( models[ id ] );
+			for each( var model:UnitModelComponent in models ){
+				unit = new Unit();
+				unit.layer = this;
+				unit.addComponent( model );
+				unit.addComponent( new BaseMoveable() );
+				unit.addComponent( new BaseFigure() );
 				unit.setup();
 				 
-				_units[ id ] = unit;
+				_units[ model.id ] = unit;
+				_unitsPos[ generateKey( model.row, model.col ) ] = unit;
 				 
 				if ( unit.figure != null && unit.figure.mapItem != null ){
 					mapItem = unit.figure.mapItem;
@@ -114,15 +125,36 @@ package controlers.layers
 			if ( !isActive() )
 				return;
 			
+			var unit:Unit = getUnitByPos( event.row, event.col );
 			if ( _selectUnit == null ){
-				_selectUnit = 
+				//当前没有操作对象且点在空地上时，什么都不做
+				if ( unit == null )
+					return;
+				
+				_selectUnit = unit;
+				_selectUnit.select();
+				
+				//显示移动、攻击范围
+				
+			  	//显示操作菜单
 				
 			}else{
-				_selectUnit.auto
+				if ( _selectUnit != unit ){
+					_selectUnit.unselect();
+				}
+				
+				if ( unit == null ){
+					return;
+				}else{
+					_selectUnit = unit;
+					_selectUnit.select();
+				}
+				
 			}
 			
-			if ( _moving )
-				return;
+			
+			
+			return;
 			
 			var row:int = event.row;
 			var col:int = event.col;
@@ -170,8 +202,6 @@ package controlers.layers
 		
 		private function walk( path:Path ) : void
 		{
-			_moving = true;
-			
 			var t:Timer =new Timer( 100, path.nodes.length );
 			var n:int = 0, current:Node, 
 				item:IMapItem = _selectUnit.figure.mapItem;
@@ -187,7 +217,6 @@ package controlers.layers
 				render();
 			});
 			t.addEventListener(TimerEvent.TIMER_COMPLETE, function( event:TimerEvent ): void{
-				_moving = false;
 				var lastNode:Node = path.nodes[ path.nodes.length - 1 ] as Node;
 				_lastMoveRow = lastNode.row;
 				_lastMoveCol = lastNode.col;
@@ -199,6 +228,21 @@ package controlers.layers
 		public function getUnit( id:String ) :Unit
 		{
 			return _units[ id ] as Unit;
+		}
+		
+		private function generateKey( row:int, col:int ) :String
+		{
+			return row + "_" + col;
+		}
+		
+		public function getUnitByPos( row:int, col:int ) :Unit
+		{
+			return _unitsPos[ generateKey( row, col) ] as Unit;
+		}
+		
+		public function getUnitByNode( node:Node ) :Unit
+		{
+			return _unitsPos[ generateKey( node.row, node.col) ] as Unit;
 		}
 		
 		/**

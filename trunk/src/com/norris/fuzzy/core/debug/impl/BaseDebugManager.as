@@ -1,5 +1,6 @@
 package com.norris.fuzzy.core.debug.impl
 {
+	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.debug.IConsole;
 	import com.norris.fuzzy.core.debug.IDebugManamger;
 	import com.norris.fuzzy.core.debug.Stats;
@@ -12,7 +13,7 @@ package com.norris.fuzzy.core.debug.impl
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	
-	public class BaseDebugManager implements IDebugManamger
+	public class BaseDebugManager extends BaseComponent implements IDebugManamger
 	{
 		protected var _enable :Boolean = true;
 		private var prefix:String = "";
@@ -36,19 +37,19 @@ package com.norris.fuzzy.core.debug.impl
 			this.container.addChild( console as Sprite );
 			
 			addInternalCommands();
+			
+			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
 		
-		public function onSetup() : void
+		private function onSetupCompleted( event:Event ):void
 		{
+			this.removeEventListener( Event.COMPLETE, onSetupCompleted );
+			
 			if ( inputMgr ){
 				inputMgr.on( InputKey.F12, function ( event:Event ): void{
 					toggle();
 				} );
 			}
-		}
-		
-		public function destroy():void
-		{
 		}
 		
 		public function toggle() : void
