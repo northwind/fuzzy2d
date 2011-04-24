@@ -13,6 +13,9 @@ package com.norris.fuzzy.map.astar {
 		public var type:String;
 		public var heuristic:Number;		
 		
+		public var x:Number;	//该结点映射到屏幕后的中心点
+		public var y:Number;	//该结点映射到屏幕后的中心点
+		
 		public function Node( row:int, col:int ) {
 			this.row = row;
 			this.col = col;

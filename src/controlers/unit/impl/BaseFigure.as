@@ -39,10 +39,9 @@ package controlers.unit.impl
 		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / BaseFigure.COUNT;
 		
 		private var _mapItem:SWFMapItem;
-		private var model:UnitModel;
 		private var _figureModel:FigureModel;
 		private var _resource:IResource;
-		private var unit:Unit;
+		
 		private var timer:Timer;
 		private var currentNode:Node;
 		private var nextNode:Node;
@@ -52,19 +51,24 @@ package controlers.unit.impl
 		private var calcX:int;		//判断X坐标加还是减
 		private var calcY:int;		//判断Y坐标加还是减
 		
-		public function BaseFigure( model:UnitModel, unit:Unit )
+		public var model:UnitModelComponent;
+		public var unit:Unit;
+		
+		public function BaseFigure()
 		{
 			super();
-			this.model = model;
-			this.unit = unit;
 			
 			this.timer = new Timer( BaseFigure.INTER, BaseFigure.COUNT ); 
 			this.timer.addEventListener(TimerEvent.TIMER, onTimer );
 			this.timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete );
+			
+			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
-		
-		override public function onSetup() :void
+
+		protected function onSetupCompleted(event:Event):void
 		{
+			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
+			
 			if ( model == null )
 				return;
 			
@@ -75,9 +79,7 @@ package controlers.unit.impl
 			}
 			
 			_mapItem = new SWFMapItem( model.figureModel.symbol );
-			(_mapItem.view as MovieClip ).mouseEnabled =false;
-			(_mapItem.view as MovieClip ).mouseChildren = false;
-			//				_mapItem = new UnitMapItem( model.figureModel.symbol );
+			
 			//记录原始偏移量
 			this.offsetX = this._figureModel.offsetX;
 			this.offsetY = this._figureModel.offsetY;
@@ -91,6 +93,8 @@ package controlers.unit.impl
 			if ( _resource.isFinish() ){
 				setMapItem( _figureModel );
 				_mapItem.dataSource = 	_resource;
+				
+				onResourceComplete();
 			}else{
 				setMapItem( FigureModelManager.defaultFigureModel );
 				_mapItem.dataSource	= MyWorld.instance.resourceMgr.getResource( "defaultFigure" );
@@ -98,6 +102,22 @@ package controlers.unit.impl
 				_resource.addEventListener( ResourceEvent.COMPLETE, onResourceComplete );
 				_resource.load();
 			}
+		}
+		
+		public function standby() : void
+		{
+			try
+			{
+				_mapItem.view[ "standby" ]();	
+			}
+			catch(error:Error) {
+				Logger.error( this.model.name + " has no function : standby." );
+			}
+		}
+		
+		//高亮  统一采用底部增加亮圈的方式
+		public function highlight() : void
+		{
 			
 		}
 		
@@ -118,12 +138,16 @@ package controlers.unit.impl
 			_mapItem.isOverlap = false;
 		}
 		
-		private function onResourceComplete( event:ResourceEvent ) : void
+		private function onResourceComplete( event:ResourceEvent = null ) : void
 		{
-			_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+			if ( event != null ){
+				_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
+				setMapItem( _figureModel );
+				_mapItem.dataSource = _resource;
+			}
 			
-			setMapItem( _figureModel );
-			_mapItem.dataSource = _resource;
+			(_mapItem.view as MovieClip ).mouseEnabled =false;
+			(_mapItem.view as MovieClip ).mouseChildren = false;
 			
 			this.dispatchEvent( new Event( Event.COMPLETE ) );
 		}
@@ -248,7 +272,5 @@ package controlers.unit.impl
 			if ( nodeCallback != null )
 				nodeCallback.call();
 		}
-		
-		
 	}
 }

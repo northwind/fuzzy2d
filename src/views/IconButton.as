@@ -37,21 +37,6 @@ package views
 			this.useHandCursor = true;
 		}
 		
-		public function drawIcon( bitmapData:BitmapData ) : void
-		{
-			if ( bitmapData == null )
-				return;
-				
-//			var g:Graphics = this.graphics;
-//			g.beginBitmapFill( bitmapData, new Matrix(), false, true );
-//			g.drawRect( 0, 0, bitmapData.width, bitmapData.height );
-//			g.endFill();
-			while( this.numChildren > 0 )
-				this.removeChildAt( 0 );
-			
-			this.addChild( new Bitmap( bitmapData ) );
-		}
-		
 		public function set available( value:Boolean ) :void
 		{
 			_available = value;
@@ -64,10 +49,6 @@ package views
 		
 		public function set dataSource( value:IResource ) : void
 		{
-			if ( _resource != null ){
-				_resource.removeEventListener( ResourceEvent.COMPLETE, this.onResourceComplete );
-			}
-			
 			_resource = value as ImageResource ;
 			if ( _resource == null )
 				return;
@@ -90,6 +71,21 @@ package views
 		protected function onImageReady() : void
 		{
 			drawIcon( _resource.getBitmapData() );
+		}
+		
+		public function drawIcon( bitmapData:BitmapData ) : void
+		{
+			if ( bitmapData == null )
+				return;
+			
+			//			var g:Graphics = this.graphics;
+			//			g.beginBitmapFill( bitmapData, new Matrix(), false, true );
+			//			g.drawRect( 0, 0, bitmapData.width, bitmapData.height );
+			//			g.endFill();
+			while( this.numChildren > 0 )
+				this.removeChildAt( 0 );
+			
+			this.addChild( new Bitmap( bitmapData ) );
 		}
 		
 		public function get dataSource() : IResource

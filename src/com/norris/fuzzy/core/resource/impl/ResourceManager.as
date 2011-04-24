@@ -1,5 +1,6 @@
 package com.norris.fuzzy.core.resource.impl
 {
+	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.core.manager.impl.BaseManager;
 	import com.norris.fuzzy.core.resource.IResource;
@@ -10,7 +11,7 @@ package com.norris.fuzzy.core.resource.impl
 	import flash.net.URLRequest;
 	import flash.utils.getTimer;
 	
-	public class ResourceManager implements IResourceManager
+	public class ResourceManager extends BaseComponent implements IResourceManager
 	{
 		private var _local:String = "zh";
 		private var _running :Boolean = false;
@@ -21,14 +22,6 @@ package com.norris.fuzzy.core.resource.impl
 		
 		
 		public function ResourceManager()
-		{
-		}
-		
-		public function onSetup() : void
-		{
-		}
-		
-		public function destroy():void
 		{
 		}
 		

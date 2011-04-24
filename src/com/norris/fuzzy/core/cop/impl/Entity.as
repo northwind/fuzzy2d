@@ -30,6 +30,17 @@ package com.norris.fuzzy.core.cop.impl
 			components.push( c );
 		}
 		
+		public function hasComponent( c :IComponent ) : Boolean
+		{
+			for (var i:int = 0; i < components.length; i++) 
+			{
+				if ( components[i] == c )
+					return true;
+			}
+			
+			return false;
+		}
+		
 		public function setup():void
 		{
 			if ( setuped )
@@ -70,7 +81,7 @@ package com.norris.fuzzy.core.cop.impl
 				info.component.destroy();
 			}
 			
-			componentInfos = [];
+			componentInfos = null;
 		}
 	}
 }

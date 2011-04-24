@@ -7,10 +7,11 @@ package models.event
 	public class UnitModelEvent extends ModelEvent
 	{
 		public static var CHANGE_POSITION:String = "change_position";
+		public static var CHANGE_HP:String = "change_hp";
 		
-		public var unit:UnitModelEvent;
+		public var unit:UnitModel;
 		
-		public function UnitModelEvent( type:String, unit:UnitModelEvent )
+		public function UnitModelEvent( type:String, unit:UnitModel )
 		{
 			super(type, unit);
 			

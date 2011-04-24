@@ -2,7 +2,7 @@ package controlers.unit
 {
 	import com.norris.fuzzy.core.cop.IComponent;
 	
-	public class IMoveable implements IComponent
+	public interface IMoveable extends IComponent
 	{
 		function moveTo( row:int, col:int ) : void;
 		

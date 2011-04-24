@@ -1,9 +1,13 @@
 package controlers.unit
 {
+	import com.norris.fuzzy.core.cop.IComponent;
+	import com.norris.fuzzy.core.cop.impl.ComponentEntity;
 	import com.norris.fuzzy.core.cop.impl.Entity;
 	import com.norris.fuzzy.map.astar.Path;
 	
+	import controlers.layers.UnitsLayer;
 	import controlers.unit.impl.BaseFigure;
+	import controlers.unit.impl.UnitModelComponent;
 	
 	import models.impl.UnitModel;
 	
@@ -16,19 +20,20 @@ package controlers.unit
 	 * @author norris
 	 * 
 	 */	
-	public class Unit extends Entity
+	public class Unit extends ComponentEntity
 	{
 		public var figure:IFigure;
-		public var model:UnitModel;
+		public var model:UnitModelComponent;
+		public var moveable:IMoveable;
+		public var skills:Array;
+		public var layer:UnitsLayer;
 		
-		public function Unit( model:UnitModel )
+		public function Unit( model:UnitModelComponent = null )
 		{
 			super();
 			
-			this.model = model;
-			this.figure = new BaseFigure( model, this ) ;
-			
-			this.addComponent( figure );
+			if ( model != null )
+				this.addComponent( model );
 		}
 		
 		public function walkPath( path:Path, callback:Function = null ) : void
@@ -36,7 +41,33 @@ package controlers.unit
 			this.figure.walkPath( path, callback );
 		}
 		
-		public function autoTo()
+		public function standby() : void
+		{
+			this.model.standby(0,0);
+			this.figure.standby();
+		}
+		
+		public function select() : void
+		{
+			figure.highlight();
+			
+			layer.actionLayer.bind( this );
+			layer.actionLayer.showAction();
+		}
+		
+		public function unselect() : void
+		{
+//			figure.normal();
+			
+			layer.actionLayer.unbind();
+			layer.actionLayer.hideAction();
+		}
+		
+		public function moveTo( row:int, col:int ) :void
+		{
+			if ( moveable != null )
+				moveable.moveTo.apply( null, arguments );
+		}
 		
 	}
 }
