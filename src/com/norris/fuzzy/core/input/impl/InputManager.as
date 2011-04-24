@@ -31,6 +31,7 @@ package com.norris.fuzzy.core.input.impl
 				stage.addEventListener(MouseEvent.MOUSE_WHEEL  , onMouseWheel );
 				stage.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
 				stage.addEventListener(MouseEvent.MOUSE_UP , onMouseUp );
+				stage.addEventListener(MouseEvent.CLICK , onClick );
 				
 				ct.addEventListener(MouseEvent.MOUSE_MOVE  , onMouseMove, true );
 				ct.addEventListener(MouseEvent.ROLL_OVER , onMouseOver );
@@ -160,6 +161,21 @@ package com.norris.fuzzy.core.input.impl
 			excuteCallbacks( this._items.find( key.toString() ), event );
 		}
 		
+		private function onClick(event:Event):void
+		{
+			if ( !_enableMouse ){
+				return;
+			}
+			
+			var key:uint = InputKey.CLICK;
+			
+			//屏蔽特定按键
+			if ( _dirtykeys.indexOf( key ) > -1  )
+				return;
+			
+			excuteCallbacks( this._items.find( key.toString() ), event );			
+		}
+		
 		private function onContext ( event:Event ) : void
 		{
 			if ( !_enableMouse ){
@@ -260,6 +276,5 @@ package com.norris.fuzzy.core.input.impl
 		{
 			return _items.count;
 		}
-		
 	}
 }

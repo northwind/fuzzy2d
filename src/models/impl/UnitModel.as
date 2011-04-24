@@ -54,6 +54,7 @@ package models.impl
 		private var _needLoad:Boolean;
 		
 		public var skills:Array;
+		public var stuffs:Array;
 		
 		public function UnitModel( id:String, attr:Object = null )
 		{
@@ -107,6 +108,11 @@ package models.impl
 			if ( _skills == null ){
 				_skills = [];
 			}
+			//物品
+			_stuffs = attr[ "sf" ] as Array;
+			if ( _stuffs == null ){
+				_stuffs = [];
+			}
 		}
 		
 		public function isNeedLoad() :Boolean
@@ -140,8 +146,8 @@ package models.impl
 		private var _related:uint;
 		private function beforeComplete() : void
 		{
-			//skills + figure
-			_related = _skills.length;
+			//skills + stuffs + figure
+			_related = _skills.length + _stuffs.length;
 			var hasFigure:Boolean = FigureModelManager.has( this.figure );
 			if ( !hasFigure ){
 				_related += 1;
@@ -181,6 +187,24 @@ package models.impl
 					skills.push( s );
 				}
 			}
+			
+			//load stuffs
+			stuffs = [];
+			var sm:StuffModel;
+			for each (var o2:Object in _stuffs) {
+				if ( StuffModelManager.has( o2.id ) ){
+					stuffs.push( StuffModelManager.get( o2.id ) );
+					//等同于已经加载完毕
+					onRelatedCompleted();
+				}else{
+					sm = new StuffModel( o2.id );
+					StuffModelManager.reg( o2.id, sm );
+					sm.addEventListener(ModelEvent.COMPLETED, onRelatedCompleted );
+					sm.loadData();
+					
+					stuffs.push( sm );
+				}
+			}
 		}
 		
 		private function onRelatedCompleted( event:ModelEvent = null ):void
@@ -195,11 +219,12 @@ package models.impl
 			}
 		}
 		
+		[Ignore]
 		public function getSkill( index:uint ) :SkillModel
 		{
 			return _skills[ index ] as SkillModel;	
 		}
-		
+		[Ignore]
 		public function get skillCount() :uint
 		{
 			return _skills.length;
@@ -263,7 +288,7 @@ package models.impl
 		
 		private static const _mapper : Object =  {
 			r : "row", c : "col", cH : "_currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
-			cA : "currentHP", bA : "bodyHP", fA : "fixHP", oA : "offsetHP",　fa : "faction", tm : "team",
+			cA : "currentAttack", bA : "bodyAttack", fA : "fixAttack", oA : "offsetAttack",　fa : "faction", tm : "team",
 			v : "visiable", na : "name", fg : "figure", lv : "level",  st : "step",  rt : "rangeType",
 			rg :"range", d : "direct", rs:"rows", cs:"cols"
 		}

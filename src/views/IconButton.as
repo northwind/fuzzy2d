@@ -10,6 +10,7 @@ package views
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
 	public class IconButton extends Sprite implements IDataSource 
@@ -35,6 +36,9 @@ package views
 			this.cacheAsBitmap = true;
 			this.buttonMode = true;
 			this.useHandCursor = true;
+			
+			this.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
+			this.addEventListener(MouseEvent.MOUSE_UP , onMouseUp );
 		}
 		
 		public function set available( value:Boolean ) :void
@@ -78,19 +82,30 @@ package views
 			if ( bitmapData == null )
 				return;
 			
-			//			var g:Graphics = this.graphics;
-			//			g.beginBitmapFill( bitmapData, new Matrix(), false, true );
-			//			g.drawRect( 0, 0, bitmapData.width, bitmapData.height );
-			//			g.endFill();
-			while( this.numChildren > 0 )
-				this.removeChildAt( 0 );
-			
-			this.addChild( new Bitmap( bitmapData ) );
+			var g:Graphics = this.graphics;
+			g.beginBitmapFill( bitmapData, new Matrix(), false, true );
+			g.drawRect( 0, 0, bitmapData.width, bitmapData.height );
+			g.endFill();
+						
+//			while( this.numChildren > 0 )
+//				this.removeChildAt( 0 );
+//			
+//			this.addChild( new Bitmap( bitmapData ) );
 		}
 		
 		public function get dataSource() : IResource
 		{
 			return _resource;
+		}
+		
+		protected function onMouseUp(event:MouseEvent):void
+		{
+			event.stopPropagation();
+		}
+		
+		protected function onMouseDown(event:MouseEvent):void
+		{
+			event.stopPropagation();
 		}
 		
 	}

@@ -13,9 +13,7 @@ package controlers.layers
 	import controlers.events.UnitEvent;
 	import controlers.unit.IFigure;
 	import controlers.unit.Unit;
-	import controlers.unit.impl.BaseFigure;
-	import controlers.unit.impl.BaseMoveable;
-	import controlers.unit.impl.UnitModelComponent;
+	import controlers.unit.impl.*;
 	
 	import flash.events.Event;
 	import flash.events.TimerEvent;
@@ -24,6 +22,8 @@ package controlers.layers
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
 	import models.impl.RecordModel;
+	import models.impl.SkillModel;
+	import models.impl.StuffModel;
 	import models.impl.UnitModel;
 	
 	/**
@@ -79,6 +79,15 @@ package controlers.layers
 				unit.addComponent( model );
 				unit.addComponent( new BaseMoveable() );
 				unit.addComponent( new BaseFigure() );
+				if ( model.bodyAttack != 0 )
+					unit.addComponent( new BaseAttack() );	
+				//技能和物品
+				for each (var sk:SkillModel in model.skills ) {
+					unit.addComponent( new BaseSkill( sk ) );					
+				}
+				for each (var sf:StuffModel in model.stuffs ) {
+					unit.addComponent( new BaseStuff( sf ) );					
+				}
 				unit.setup();
 				 
 				_units[ model.id ] = unit;
