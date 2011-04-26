@@ -13,12 +13,13 @@ package controlers.layers
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
 	import models.impl.SkillModel;
 	import models.impl.StuffModel;
 	
-	import views.IconButton;
 	import views.BlowIconButton;
+	import views.IconButton;
 	import views.IconButtonMgr;
 
 	/**
@@ -58,6 +59,8 @@ package controlers.layers
 			//设置弹出菜单按钮
 			mBtn = new BlowIconButton( "移动" );
 			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
+			mBtn.addEventListener(MouseEvent.ROLL_OVER, onMoveOver );
+			mBtn.addEventListener(MouseEvent.ROLL_OUT, onMoveOut );
 			IconButtonMgr.reg( "move", mBtn );
 			
 			sBtn = new BlowIconButton( "待机" );
@@ -81,8 +84,8 @@ package controlers.layers
 			var mapItem:IMapItem = unit.figure.mapItem;
 			var node:Node = tileLayer.getNode( mapItem.row, mapItem.col );
 			
-			this.oX = node.x - 24;
-			this.oY = node.y - 48;
+			this.oX = node.centerX - 24;
+			this.oY = node.centerY - 48;
 			
 			//当更换对象时才重新创建
 			if ( unit != this._unit ){
@@ -108,8 +111,9 @@ package controlers.layers
 			_icons[ -135 ] = sBtn;		//待机
 			
 			//移动
-			if ( this._unit.moveable != null )
+			if ( this._unit.moveable != null &&  this._unit.moveable.active ){
 				_icons[ 90 ] = mBtn;
+			}
 			//攻击
 			if ( this._unit.attackable != null )
 				_icons[ 45 ] = aBtn;
@@ -179,6 +183,16 @@ package controlers.layers
 		
 		private function onCansel() : void
 		{
+		}
+		
+		protected function onMoveOver(event:MouseEvent):void
+		{
+			this._unit.moveable.showMoveRange();
+		}
+		
+		protected function onMoveOut(event:MouseEvent):void
+		{
+			this._unit.moveable.hideMoveRange();
 		}
 		
 	}

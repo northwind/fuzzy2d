@@ -130,9 +130,9 @@ package server.impl
 						
 						sf : [ { id:1, n : 6 } ],			    //物品
 						
-						rg  : 6,					//range
-						rt  : 2,					//rangeType
-						st  : 7,					//step				
+						rg  : 6,					//attack range
+						rt  : 2,					//attack rangeType
+						st  : 5,					//move step				
 						
 						rs  : 1,					//rows
 						cs	: 1						//cols
@@ -330,10 +330,19 @@ package server.impl
 				units		    : [{
 					id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
 				},{
+					id: 2,  r :  20,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 200,   v : 1		
+				},{
 					id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
 					na : "杂兵1", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 				},{
-					id: 2,  r :  20,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 200,   v : 1		
+					id: 4,  r :  20,  c : 1,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					na : "杂兵2", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+				},{
+					id: 5,  r :  38,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					na : "杂兵3", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+				},{
+					id: 6,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
+					na : "杂兵4", fg: "1", lv:2, rg  : 7, rt : 1, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 				}],
 				
 				//脚本中已触发过的事件

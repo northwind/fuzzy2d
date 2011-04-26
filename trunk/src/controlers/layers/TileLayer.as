@@ -12,10 +12,14 @@ package controlers.layers
 	
 	import controlers.events.TileEvent;
 	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.text.TextField;
 	
@@ -306,8 +310,11 @@ package controlers.layers
 					_gridWrap.addChild(t);
 					
 					var node:Node = new Node( i, j ) ;
-					node.x = coord.x + _gridX +  MyWorld.CELL_WIDTH / 2;
-					node.y = coord.y + _gridY + MyWorld.CELL_HEIGHT / 2;
+					
+					node.originX = coord.x + _gridX;
+					node.originY = coord.y + _gridY;
+					node.centerX = coord.x + _gridX +  MyWorld.CELL_WIDTH / 2;
+					node.centerY = coord.y + _gridY + MyWorld.CELL_HEIGHT / 2;
 					
 					_grid[i][j] = node;
 				}
@@ -431,6 +438,30 @@ package controlers.layers
 		}
 		
 		/**
+		 * 采用bitmapData绘制单元格
+		 */		
+		public function paintNodes( nodes:Array, bitmapData:BitmapData ) : void
+		{
+			var bitmap:Bitmap;
+			for each ( var node:Node in nodes ){
+//				g.drawRect( node.originX, node.originY, w, h );			
+				bitmap = new Bitmap( bitmapData );
+				bitmap.x = node.originX;
+				bitmap.y = node.originY;
+				_paintCt.addChild( bitmap );
+			}
+		}
+		
+		/**
+		 * 清空已显示的node 
+		 */		
+		public function unpaintNodes() :void
+		{
+			while( _paintCt.numChildren > 0 )
+				_paintCt.removeChildAt( 0 );
+		}
+		
+		/**
 		 * 显示被选中单元格  [x,y] 
 		 * @param position
 		 * 
@@ -463,6 +494,27 @@ package controlers.layers
 				cost = 10000;
 			
 			return cost;
+		}
+		
+		/**
+		 * 给定一个位置，根据步长返回可移动范围  
+		 */		
+		public function getCrossRange( row:int, col:int, step:uint  ) :Array
+		{
+			var ret:Array = []; 
+			var diff:int;
+			
+			for (var i:int = - step ; i <= step; i++) 
+			{
+				diff = step - Math.abs( i );
+				for (var j:int = -diff ; j <= diff; j++) 
+				{
+					if ( (i != 0 || j != 0) && isValid( row + i, col + j ) )
+						ret.push( getNode( row + i, col + j ) );
+				}
+			}
+			
+			return ret;
 		}
 		
 	}

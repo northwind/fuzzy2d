@@ -8,6 +8,12 @@ package controlers.unit
 		
 		function getMoveRange():Array;
 		
+		function showMoveRange():void;
+		
+		function hideMoveRange():void;
+		
 		function canMove( row:int, col:int ) :Boolean;
+		
+		function get active():Boolean; 
 	}
 }
