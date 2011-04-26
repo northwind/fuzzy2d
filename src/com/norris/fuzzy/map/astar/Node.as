@@ -13,8 +13,11 @@ package com.norris.fuzzy.map.astar {
 		public var type:String;
 		public var heuristic:Number;		
 		
-		public var x:Number;	//该结点映射到屏幕后的中心点
-		public var y:Number;	//该结点映射到屏幕后的中心点
+		public var centerX:Number;	//该结点映射到屏幕后的中心点
+		public var centerY:Number;	//该结点映射到屏幕后的中心点
+		
+		public var originX:Number;  //左上角的顶点
+		public var originY:Number; //左上角的顶点
 		
 		public function Node( row:int, col:int ) {
 			this.row = row;

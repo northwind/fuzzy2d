@@ -15,6 +15,8 @@ package controlers.unit
 	
 	[Event(name="move_over", type="controlers.events.UnitEvent")]
 	
+	[Event(name="standby", type="controlers.events.UnitEvent")]
+	
 	/**
 	 *  TODO mapItem做为unit的view
 	 * @author norris

@@ -8,6 +8,7 @@ package controlers.events
 	{
 		public static const MOVE:String = "unit_move";
 		public static const MOVE_OVER:String = "unit_move_over";
+		public static const STANDBY:String = "unit_standby";
 		
 		public var unit:Unit;
 		
