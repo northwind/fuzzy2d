@@ -36,6 +36,7 @@ package controlers.unit.impl
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
 			
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
+			unit.addEventListener(UnitEvent.MOVE_OVER, onMoveOver );
 			_active = true;
 			_range = new AttackRange( unit );
 		}
@@ -80,6 +81,11 @@ package controlers.unit.impl
 			//待机后清空移动范围
 			_range.reset();
 			_active = true;
+		}
+		
+		protected function onMoveOver(event:Event):void
+		{
+			_range.reset();
 		}
 		
 	}

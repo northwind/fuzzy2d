@@ -9,6 +9,8 @@ package controlers.unit
 	{
 		function moveTo( node:Node, callback:Function = null ) : void;
 		
+		function reset() :void;
+		
 		function get range():IRange;
 		
 		function showRange():void;

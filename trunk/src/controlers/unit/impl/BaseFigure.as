@@ -139,6 +139,11 @@ package controlers.unit.impl
 		public function faceTo( node:Node ) : void
 		{
 			var direct:uint = BaseFigure.getDirect( unit.node , node );
+			turnTo( direct );
+		}
+		
+		public function turnTo( direct:uint ):void
+		{
 			if ( lastDirect != direct ){
 				lastDirect = direct;
 				

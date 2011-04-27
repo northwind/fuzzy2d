@@ -106,7 +106,7 @@ package controlers.layers
 				}
 			}
 			
-			render();
+			renderAll();
 			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
@@ -122,7 +122,7 @@ package controlers.layers
 			f.removeEventListener( Event.COMPLETE, onFigureCompleted );
 			
 			tileLayer.adjustPosition( f.mapItem );
-			render();
+			renderMapItem( f.mapItem );
 		}
 		
 		private function isActive() :Boolean
@@ -202,14 +202,28 @@ package controlers.layers
 		
 		public function getUnitByNode( node:Node ) :Unit
 		{
-			return _unitsPos[ generateKey( node.row, node.col) ] as Unit;
+			return _unitsPos[ node.id ] as Unit;
 		}
 		
+		public function delUnitByNode( node:Node ) :void
+		{
+			delete _unitsPos[ node.id ];
+		}
+		
+		public function addUnitByNode( node:Node, unit:Unit ) :void
+		{
+			_unitsPos[ node.id ] = unit;
+		}
 		/**
 		 * 每当有item更改位置时，需要调用该方法，重新排序 
-		 * 
 		 */		
-		public function render() : void
+		public function renderMapItem( item:IMapItem ) : void
+		{
+			this.tileLayer.adjustPosition( item );
+			renderAll();
+		}
+		
+		public function renderAll() :void
 		{
 			sortAllItems();
 		}
@@ -245,14 +259,6 @@ package controlers.layers
 				var disp:IMapItem = _sortedItems[i] as IMapItem;
 				this.view.addChildAt(disp.view, i);
 			}
-		}
-		
-		protected function onUnitMove(event:UnitEvent):void
-		{
-			var unit:Unit = event.unit;
-			
-			this.tileLayer.adjustPosition( unit.figure.mapItem );
-			this.render();
 		}
 		
 		public function getCols():int 

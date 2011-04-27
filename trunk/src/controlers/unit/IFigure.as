@@ -22,6 +22,8 @@ package controlers.unit
 		
 		function faceTo( node:Node ) : void;
 		
+		function turnTo( direct:uint ):void;
+		
 		function attackTo( node:Node = null, callback:Function = null ) : void;
 	}
 }
