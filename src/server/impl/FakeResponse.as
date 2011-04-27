@@ -155,7 +155,7 @@ package server.impl
 						sk : [ { id : 1, lv : 1 }, 
 							{ id : 2, lv : 2 } ],				//技能表
 						
-						sf : [ { id:1, n : 6 }, { id:2, n : 1 } ],			    //物品
+						sf : [ { id:1, n : 6 } ],			    //物品
 						
 						rg  : 2,					//range
 						rt  : RangeType.LINE,					//rangeType

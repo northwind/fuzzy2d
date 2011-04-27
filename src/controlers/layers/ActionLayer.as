@@ -45,6 +45,7 @@ package controlers.layers
 		private var mBtn:IconButton;
 		private var aBtn:IconButton;
 		private var sBtn:IconButton;
+		private var cBtn:IconButton;
 		
 		public var tileLayer:TileLayer;
 		
@@ -76,6 +77,11 @@ package controlers.layers
 			aBtn.addEventListener(MouseEvent.ROLL_OVER, onAttackOver );
 			aBtn.addEventListener(MouseEvent.ROLL_OUT, onAttackOut );
 			IconButtonMgr.reg( "attack", aBtn );			
+			
+			cBtn = new BlowIconButton( "取消" );
+			cBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_cancel" );
+			cBtn.addEventListener(MouseEvent.CLICK, onCancelClick );
+			IconButtonMgr.reg( "cancel", cBtn );	
 		}
 		
 		private function createIconButton( name:String, tips:String, url:String ) :IconButton
@@ -90,16 +96,21 @@ package controlers.layers
 			var mapItem:IMapItem = unit.figure.mapItem;
 			var node:Node = tileLayer.getNode( mapItem.row, mapItem.col );
 			
-			this.oX = node.centerX - 24;
-			this.oY = node.centerY - 48;
-			
 			//当更换对象时才重新创建
 			if ( unit != this._unit ){
 				this._unit = unit;
 				this.craeteAction();
 			}
 			
-			unit.addEventListener(UnitEvent.MOVE_OVER, onUnitMoveOver );
+			updateOriginXY();
+			
+//			unit.addEventListener(UnitEvent.MOVE_OVER, onUnitMoveOver );
+		}
+		
+		private function updateOriginXY() : void
+		{
+			this.oX = _unit.node.centerX - 24;
+			this.oY = _unit.node.centerY - 48;
 		}
 		
 		public function unbind() : void
@@ -156,6 +167,15 @@ package controlers.layers
 			
 		}
 		
+		private function addCancelBtn() :void
+		{
+			_icons[ 135 ] = cBtn;
+		}
+		private function removeCancelBtn() :void
+		{
+			delete _icons[ 135 ];
+		}
+		
 		public function showAction() : void
 		{
 			if ( this._unit == null )
@@ -171,6 +191,7 @@ package controlers.layers
 		public function hideAction() : void
 		{
 			this.view.visible = false;
+			
 		}
 
 		private function runTo( target:DisplayObject, angle:Number ) : void
@@ -214,7 +235,7 @@ package controlers.layers
 				this._unit.moveable.hideRange();
 		}
 		
-		protected function onMoveClick(event:MouseEvent):void
+		protected function onMoveClick(event:MouseEvent = null ):void
 		{
 			setClicked( "move", true );
 			hideAction();
@@ -224,8 +245,12 @@ package controlers.layers
 		
 		protected function onMoveSelectTile( event:TileEvent ):void
 		{
-			if ( this._unit.moveable.canMove( event.node ) )
-				this._unit.moveable.moveTo( event.node );
+			if ( this._unit.moveable.canMove( event.node ) ){
+				tileLayer.removeEventListener( TileEvent.SELECT, onMoveSelectTile );
+				
+				this._unit.moveable.hideRange();
+				this._unit.moveable.moveTo( event.node, onUnitMoveOver );
+			}
 			else{
 				//TIP
 			}
@@ -241,10 +266,28 @@ package controlers.layers
 			this._unit.attackable.hideRange();
 		}
 		
-		protected function onUnitMoveOver(event:UnitEvent):void
+		protected function onUnitMoveOver():void
 		{
-			Logger.debug( "move over" );
+			delete _icons[ 90 ];
+			this.view.removeChild( mBtn );
+			
+			addCancelBtn();
+			updateOriginXY();
+			
+			this.showAction();
 		}
+		
+		protected function onCancelClick(event:MouseEvent):void
+		{
+			removeCancelBtn();
+			updateOriginXY();
+			
+			this._unit.moveable.reset();
+			this._unit.moveable.showRange();
+			
+			onMoveClick();
+		}
+		
 		
 	}
 }

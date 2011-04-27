@@ -40,6 +40,8 @@ package controlers.unit.impl
 		private var onWalkPathCallback:Function;
 		private var currentNode:Node;
 		private var nextNode:Node;
+		private var oriNode:Node;
+		private var oriDirect:uint;
 		private var currentN:int;
 		private var nodes:Array;
 		
@@ -71,6 +73,9 @@ package controlers.unit.impl
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
 			_active = true;
 			_range = new MoveRange( unit );
+			
+			offsetX = model.figureModel.offsetX;
+			offsetY = model.figureModel.offsetY;
 		}
 
 		/**
@@ -110,15 +115,33 @@ package controlers.unit.impl
 			_active = true;
 		}
 		
+		public function reset() :void
+		{
+			unit.node = oriNode;
+			_range.reset();
+			
+			figure.turnTo( oriDirect );
+			
+			figure.mapItem.row = oriNode.row;
+			figure.mapItem.col = oriNode.col;
+			unit.layer.renderMapItem( figure.mapItem );
+		}
+		
 		public function moveTo( to:Node, callback:Function = null ):void
 		{
 			if ( moving || !canMove( to ) )
 				return;
 			
+			oriNode = unit.node;
+			oriDirect = figure.direct;
+			
 			_target = to;
 			var path:Path = unit.layer.astar.search( unit.node, to );
 			
 			moving = true;
+			//暂时从列表中移除
+			unit.layer.delUnitByNode( unit.node );
+			
 			walkPath( path, callback );
 		}
 		
@@ -151,11 +174,13 @@ package controlers.unit.impl
 				moving = false;
 				_active  = false;
 				unit.node = _target;
+				//添加到查询列表中
+				unit.layer.addUnitByNode( unit.node, unit );
 				
 				if ( onWalkPathCallback != null )
-					onWalkPathCallback.call();
+					onWalkPathCallback.call( null );
 				
-				unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE_OVER, this.unit ) );
+				unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE_OVER, unit ) );
 			}
 		}
 		
@@ -181,6 +206,8 @@ package controlers.unit.impl
 		{
 			figure.mapItem.offsetX += calcX * BaseMove.STEPX;
 			figure.mapItem.offsetY += calcY * BaseMove.STEPY;
+			
+			unit.layer.renderMapItem( figure.mapItem );
 			
 			//宿主分发事件
 			unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE, this.unit ) );

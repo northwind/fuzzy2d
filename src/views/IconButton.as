@@ -44,6 +44,11 @@ package views
 		public function set available( value:Boolean ) :void
 		{
 			_available = value;
+//			if ( _available ){
+//				this.visible= true;
+//			}else{
+//				this.visible= false;
+//			}
 		}
 		
 		public function get available() :Boolean
