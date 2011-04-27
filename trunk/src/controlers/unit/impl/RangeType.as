@@ -1,4 +1,4 @@
-package models.impl
+package controlers.unit.impl
 {
 	public class RangeType
 	{

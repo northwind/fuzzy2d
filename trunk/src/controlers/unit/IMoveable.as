@@ -1,16 +1,17 @@
 package controlers.unit
 {
 	import com.norris.fuzzy.core.cop.IComponent;
+	import controlers.unit.IRange;
 	
 	public interface IMoveable extends IComponent
 	{
 		function moveTo( row:int, col:int ) : void;
 		
-		function getMoveRange():Array;
+		function get range():IRange;
 		
-		function showMoveRange():void;
+		function showRange():void;
 		
-		function hideMoveRange():void;
+		function hideRange():void;
 		
 		function canMove( row:int, col:int ) :Boolean;
 		

@@ -77,7 +77,7 @@ package controlers.layers
 				unit = new Unit();
 				unit.layer = this;
 				unit.addComponent( model );
-				unit.addComponent( new BaseMoveable() );
+				unit.addComponent( new BaseMove() );
 				unit.addComponent( new BaseFigure() );
 				if ( model.bodyAttack != 0 )
 					unit.addComponent( new BaseAttack() );	
@@ -111,7 +111,9 @@ package controlers.layers
 			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
-			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);			
+			tileLayer.addEventListener(TileEvent.SELECT, onSelectTile);		
+			
+			Range.unitsLayer = this;
 		}
 		
 		//重新排序
