@@ -48,6 +48,7 @@ package models.impl
 		public var rangeType:int;
 		public var step:int;						//行动力
 		public var direct:int;						//朝向
+		public var overlay:Boolean;				//叠加
 		
 		private var _skills:Array;				//技能
 		private var _stuffs:Array;				//物品

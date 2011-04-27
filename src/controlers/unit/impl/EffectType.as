@@ -1,4 +1,4 @@
-package models.impl
+package controlers.unit.impl
 {
 	/**
 	 * 技能或物品可以影响到的对象
@@ -8,6 +8,7 @@ package models.impl
 	 */	
 	public class EffectType
 	{
+		public static const NONE:int = -1;				//自身
 		public static const SELF:int = 0;				//自身
 		public static const MYTEAM:int = 1;				//队友
 		public static const FRIEND:int = 2;				//盟军

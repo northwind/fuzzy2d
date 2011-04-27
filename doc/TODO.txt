@@ -47,8 +47,9 @@
 显示物品
 使用物品
 #IconButton
-TweenMax
-MenuLayer
+#TweenMax
+#ActionLayer
+UnitsLayer中增加Team
 
 #增加view概念，限制screen展示   使用ScrollLayerContainer替代view概念
 

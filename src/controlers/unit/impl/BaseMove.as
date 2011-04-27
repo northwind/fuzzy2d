@@ -4,26 +4,27 @@ package controlers.unit.impl
 	
 	import controlers.events.UnitEvent;
 	import controlers.unit.IMoveable;
+	import controlers.unit.IRange;
 	import controlers.unit.Unit;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
 	
-	public class BaseMoveable extends BaseComponent implements IMoveable
+	public class BaseMove extends BaseComponent implements IMoveable
 	{
 		//TODO 采用资源管理器统一加载
 		[Embed(source='assets/moveto.png')]
 		public static const gridClass:Class;
-		public static const bitmapData:BitmapData = (new BaseMoveable.gridClass() as Bitmap).bitmapData; 
+		public static const bitmapData:BitmapData = (new gridClass() as Bitmap).bitmapData; 
 		
 		private var _active:Boolean;
-		private var _range:Array;
+		private var _range:MoveRange;
 		
 		public var unit:Unit;
 		public var model:UnitModelComponent;
 		
-		public function BaseMoveable()
+		public function BaseMove()
 		{
 			super();
 			
@@ -36,6 +37,7 @@ package controlers.unit.impl
 			
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
 			_active = true;
+			_range = new MoveRange( unit );
 		}
 		
 		public function moveTo(row:int, col:int):void
@@ -44,26 +46,23 @@ package controlers.unit.impl
 		}
 		
 		/**
-		 * 返回node数组 
+		 * 移动范围 
 		 */		
-		public function getMoveRange():Array
+		public function get range():IRange
 		{
-			if ( _range == null ){
-				_range = unit.layer.tileLayer.getCrossRange( model.row, model.col, model.step );
-			}
+			_range.measure();
 			
 			return _range;
 		}
 		
-		public function showMoveRange():void
+		public function showRange():void
 		{
-			getMoveRange();
-			unit.layer.tileLayer.paintNodes( _range, BaseMoveable.bitmapData );
+			unit.layer.tileLayer.paintRange( range, BaseMove.bitmapData );
 		}
 		
-		public function hideMoveRange():void
+		public function hideRange():void
 		{
-			unit.layer.tileLayer.unpaintNodes();
+			unit.layer.tileLayer.clear();
 		}
 		
 		public function canMove(row:int, col:int):Boolean
@@ -79,7 +78,7 @@ package controlers.unit.impl
 		protected function onStandby(event:Event):void
 		{
 			//待机后清空移动范围
-			_range = null;
+			_range.reset();
 			_active = true;
 		}
 		

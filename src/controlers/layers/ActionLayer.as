@@ -69,6 +69,8 @@ package controlers.layers
 			
 			aBtn = new BlowIconButton( "攻击" );
 			aBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_attack" );
+			aBtn.addEventListener(MouseEvent.ROLL_OVER, onAttackOver );
+			aBtn.addEventListener(MouseEvent.ROLL_OUT, onAttackOut );
 			IconButtonMgr.reg( "attack", aBtn );			
 		}
 		
@@ -187,13 +189,24 @@ package controlers.layers
 		
 		protected function onMoveOver(event:MouseEvent):void
 		{
-			this._unit.moveable.showMoveRange();
+			this._unit.moveable.showRange();
 		}
 		
 		protected function onMoveOut(event:MouseEvent):void
 		{
-			this._unit.moveable.hideMoveRange();
+			this._unit.moveable.hideRange();
 		}
+		
+		protected function onAttackOver(event:MouseEvent):void
+		{
+			this._unit.attackable.showRange();
+		}
+		
+		protected function onAttackOut(event:MouseEvent):void
+		{
+			this._unit.attackable.hideRange();
+		}
+		
 		
 	}
 }

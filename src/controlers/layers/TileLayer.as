@@ -11,6 +11,8 @@ package controlers.layers
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
+	import controlers.unit.IRange;
+	import controlers.unit.impl.Range;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -131,6 +133,8 @@ package controlers.layers
 				onAddStage();
 			else	
 				this.view.addEventListener(Event.ADDED_TO_STAGE, onAddStage );
+			
+			Range.tileLayer = this;
 		}
 
 		protected function onAddStage( event:Event = null )  : void
@@ -389,51 +393,16 @@ package controlers.layers
 		}
 		
 		/**
-		 *  一个格子只能放置一种颜色标识 
-		 * @param x
-		 * @param y
-		 * @param tile
-		 * 
+		 * 采用bitmapData绘制单元格
 		 */		
-		public function paintTile( x:uint, y:uint, tile:DisplayObject  ) : void
+		public function paintRange( range:IRange, bitmapData:BitmapData ) : void
 		{
-			var a:DisplayObject = this._painted[ x * this._weight + y ] as DisplayObject;
-			if ( a != null )
-				try{
-					this._paintCt.removeChild( a );
-				}catch(e:Error){}
-			
-			var coord:Coordinate = MyWorld.mapToScreen( x, y );
-			
-			tile.x = coord.x;
-			tile.y = coord.y;
-			
-			this._painted[ x * this._weight + y ] = tile;
-			
-			this._paintCt.addChild( tile );
-		}
-		
-		/**
-		 * 显示可移动单元格 [ [x,y], [x,y], ... ] 
-		 * @param positions
-		 * 
-		 */		
-		public function showMoves( positions:Array ) : void
-		{
-			for each ( var position:Array in positions ){
-				this.paintTile( position[0], position[1], new MoveTile() );
-			}
-		}
-		
-		/**
-		 * 显示可攻击单元格 [ [x,y], [x,y], ... ] 
-		 * @param positions
-		 * 
-		 */		
-		public function showAttacks( positions:Array ) : void
-		{
-			for each ( var position:Array in positions ){
-				this.paintTile( position[0], position[1], new AttackTile() );
+			var bitmap:Bitmap;
+			for each ( var node:Node in range.nodes ){
+				bitmap = new Bitmap( bitmapData );
+				bitmap.x = node.originX;
+				bitmap.y = node.originY;
+				_paintCt.addChild( bitmap );
 			}
 		}
 		
@@ -444,7 +413,6 @@ package controlers.layers
 		{
 			var bitmap:Bitmap;
 			for each ( var node:Node in nodes ){
-//				g.drawRect( node.originX, node.originY, w, h );			
 				bitmap = new Bitmap( bitmapData );
 				bitmap.x = node.originX;
 				bitmap.y = node.originY;
@@ -455,7 +423,7 @@ package controlers.layers
 		/**
 		 * 清空已显示的node 
 		 */		
-		public function unpaintNodes() :void
+		public function clear() :void
 		{
 			while( _paintCt.numChildren > 0 )
 				_paintCt.removeChildAt( 0 );
@@ -494,27 +462,6 @@ package controlers.layers
 				cost = 10000;
 			
 			return cost;
-		}
-		
-		/**
-		 * 给定一个位置，根据步长返回可移动范围  
-		 */		
-		public function getCrossRange( row:int, col:int, step:uint  ) :Array
-		{
-			var ret:Array = []; 
-			var diff:int;
-			
-			for (var i:int = - step ; i <= step; i++) 
-			{
-				diff = step - Math.abs( i );
-				for (var j:int = -diff ; j <= diff; j++) 
-				{
-					if ( (i != 0 || j != 0) && isValid( row + i, col + j ) )
-						ret.push( getNode( row + i, col + j ) );
-				}
-			}
-			
-			return ret;
 		}
 		
 	}
