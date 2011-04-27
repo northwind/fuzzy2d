@@ -5,7 +5,6 @@ package controlers.unit.impl
 	
 	public class MoveRange extends Range implements IRange
 	{
-		public var block:Boolean;		//是否包含障碍单元
 		public var overlay:Boolean;		//是否显示已有移动单位的单元格
 		
 		public function MoveRange(unit:Unit )
@@ -15,14 +14,20 @@ package controlers.unit.impl
 		
 		override protected function onMeasure() : void
 		{
-			var diff:int;
+			var diff:int, px:int, py : int;
 			for (var i:int = - len ; i <= len; i++) 
 			{
 				diff = len - Math.abs( i );
 				for (var j:int = -diff ; j <= diff; j++) 
 				{
-					if ( (i != 0 || j != 0) && Range.tileLayer.isValid( row + i, col + j ) )
-						addNode( Range.tileLayer.getNode( row + i, col + j ) );
+					//不是自身所在位置,不是无效区域,不是障碍单元,不是有角色所在,才可以被添加
+					px = row + i; py = col + j;
+					if ( (i != 0 || j != 0) && 
+						Range.tileLayer.isValid( px, py ) &&
+						!Range.staticLayer.isBlock( px, py ) &&
+						!Range.unitsLayer.hasUnitByPos( px, py ) )
+						
+						addNode( Range.tileLayer.getNode( px, py ) );
 				}
 			}			
 		} 

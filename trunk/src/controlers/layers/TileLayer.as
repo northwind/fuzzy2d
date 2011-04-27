@@ -39,9 +39,11 @@ package controlers.layers
 	 * @author Administrator
 	 * 
 	 */	
-	public class TileLayer extends BaseLayer implements ISearchable 
+	public class TileLayer extends BaseLayer
 	{
 		public var coordLayer :DebugMsgLayer;
+		public var cols:int;								//2.5d世界中列数
+		public var rows:int;						    //2.5d世界中行数
 		
 		private var _showgrid:Boolean = false;
 		private var _coordable:Boolean = false;		//是否显示坐标
@@ -56,8 +58,6 @@ package controlers.layers
 		private var _model:MapModel;
 		private var _painted:Object = {};
 		
-		private var _weight:Number;
-		
 		private var w:Number;						//有效操作区域宽度
 		private var h:Number;						//有效操作区域高度
 		
@@ -68,8 +68,6 @@ package controlers.layers
 		private var maxSum:uint;                //单元格X和Z轴值相加最大值
 		private var maxMinus:uint;             //单元格X和Z轴值相减的绝对值的最大值
 		
-		private var _cols:int;								//2.5d世界中列数
-		private var _rows:int;						    //2.5d世界中行数
 		private var _grid:Array = [];						//存放单元格，用于搜索路径
 		
 		private var _lastRow:int = -999;							//移动单元格上次坐标
@@ -87,7 +85,6 @@ package controlers.layers
 			super();
 			
 			this._model = model;
-			this._weight = model.cellXNum;
 			
 			_iso = MyWorld.isometric;
 			
@@ -101,12 +98,12 @@ package controlers.layers
 			h =  model.cellXNum * MyWorld.CELL_HEIGHT;
 			
 			//菱形的数量等于宽高单元格的个数相加
-			_cols = model.cellXNum + model.cellYNum;
-			_rows =  _cols;
+			cols = model.cellXNum + model.cellYNum;
+			rows =  cols;
 			
 			//设置有效范围
-			minSum = _cols - model.cellXNum;
-			maxSum = (_cols - 1) * 2 - minSum ;
+			minSum = cols - model.cellXNum;
+			maxSum = (cols - 1) * 2 - minSum ;
 			maxMinus = model.cellYNum - 1;
 			
 			_movedTile.visible = false;
@@ -120,7 +117,7 @@ package controlers.layers
 			
 			//设置3d世界坐标偏移量
 			_gridWrap.x = w / 2 -  MyWorld.CELL_WIDTH / 2 + model.background.oL;
-			_gridWrap.y = -(_cols * MyWorld.CELL_HEIGHT - h) / 2 + model.background.oT;
+			_gridWrap.y = -(cols * MyWorld.CELL_HEIGHT - h) / 2 + model.background.oT;
 			
 			_gridX = _gridWrap.x;
 			_gridY = _gridWrap.y;
@@ -212,7 +209,7 @@ package controlers.layers
 				_movedTile.x  = coord.x + _gridX;
 				_movedTile.y  = coord.y + _gridY;
 				
-				this.dispatchEvent( new TileEvent( TileEvent.MOVE, row, col ) );
+				this.dispatchEvent( new TileEvent( TileEvent.MOVE, row, col, getNode( row, col ) ) );
 			}else{
 				_movedTile.visible = false;
 			}			
@@ -255,7 +252,7 @@ package controlers.layers
 			var col:int = Math.floor( Math.abs( coord.z ) / _tileHeight ) ;
 			//移动时不触发点击事件
 			if ( isValid( row, col ) && !_mousemove ){
-				this.dispatchEvent( new TileEvent( TileEvent.SELECT, row, col ) );				
+				this.dispatchEvent( new TileEvent( TileEvent.SELECT, row, col, getNode( row, col ) ) );				
 			}
 			_mousedown = false;
 			_mousemove = false;
@@ -292,9 +289,9 @@ package controlers.layers
 				return;
 			}
 			
-			for (var i:int = 0; i < _rows;++i) {
+			for (var i:int = 0; i < rows;++i) {
 				_grid[i] = [];
-				for (var j:int = 0; j < _cols;++j) {
+				for (var j:int = 0; j < cols;++j) {
 					//只绘制落在可操控区域中的表格
 					if ( !isValid( i, j ) )
 						continue;
@@ -443,25 +440,6 @@ package controlers.layers
 			
 			_select.x = coord.x;
 			_select.y = coord.y;
-		}
-		
-		public function getCols():int 
-		{
-			return _cols;
-		}
-		
-		public function getRows():int
-		{
-			return _rows;
-		}
-		
-		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
-		{
-			var cost:Number = 1;
-			if ( _model.isBlock( n1.row, n1.col ) || _model.isBlock( n2.row, n2.col )  )
-				cost = 10000;
-			
-			return cost;
 		}
 		
 	}

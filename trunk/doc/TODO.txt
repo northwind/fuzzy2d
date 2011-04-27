@@ -36,6 +36,8 @@
 #显示游戏角色的4个朝向
 #ComponentEntity
 #显示可移动区域
+抽象BattleModel
+BattleModelComponent
 移动角色
 设置多个角色，增加队伍属性
 角色移动时友军可以通过，敌军不能通过

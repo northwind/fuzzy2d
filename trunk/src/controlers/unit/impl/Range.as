@@ -2,6 +2,7 @@ package controlers.unit.impl
 {
 	import com.norris.fuzzy.map.astar.Node;
 	
+	import controlers.layers.StaticLayer;
 	import controlers.layers.TileLayer;
 	import controlers.layers.UnitsLayer;
 	import controlers.unit.IRange;
@@ -11,6 +12,7 @@ package controlers.unit.impl
 	{
 		public static var tileLayer:TileLayer;
 		public static var unitsLayer:UnitsLayer;
+		public static var staticLayer:StaticLayer;
 		
 		public var unit:Unit;
 		public var len:uint;
@@ -56,6 +58,14 @@ package controlers.unit.impl
 		{
 			if ( node != null )
 				_nodes[ node.id ] = node;
+		}
+		
+		public function contains( node:Node ):Boolean
+		{
+			if ( node == null )
+				return false;
+			
+			return _nodes[ node.id ] != undefined;
 		}
 		
 		protected function onMeasure() : void

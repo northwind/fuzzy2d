@@ -10,12 +10,13 @@ package controlers.layers
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
+	import controlers.unit.impl.Range;
 	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.TimerEvent;
-	import flash.utils.Timer;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	
 	import models.event.ModelEvent;
 	import models.impl.MapModel;
@@ -27,6 +28,7 @@ package controlers.layers
 		private var _model:MapModel;
 		private var _items:Object;
 		private var _sortedItems:Array = [];
+		private var _blocks:Object = {};
 		
 		public var tileLayer:TileLayer;
 		
@@ -37,12 +39,19 @@ package controlers.layers
 			this._model = model; 
 		}
 		
+		public function isBlock( row:int, col:int ):Boolean
+		{
+			return _model.isBlock( row, col ) || _blocks[ row + "_" + col ] != undefined;
+		}
+		
 		override public function onSetup() :void
 		{
 			if ( this._model.data == null )
 				this._model.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
 			else 
 				onModelCompleted();
+			
+			Range.staticLayer = this;
 		}
 		
 		private function onModelCompleted( event :ModelEvent = null ) :void
@@ -51,7 +60,7 @@ package controlers.layers
 			
 			_items = _model.items;
 			
-			var coord:Coordinate;
+			var coord:Coordinate, i:int, j:int;
 			for each( var item:IMapItem in _items ){
 				if ( item.view != null ){
 					tileLayer.adjustPosition( item );
@@ -59,6 +68,17 @@ package controlers.layers
 					this.view.addChild( item.view );
 					
 					_sortedItems.push( item );
+					
+					//设置障碍单元
+					if ( !item.isWalkable ){
+						for (i = 0; i < item.rows ; i++) 
+						{
+							for ( j = 0; j < item.cols; j++) 
+							{
+								_blocks[ (item.row - i) + "_" + (item.col - j ) ] = true;								
+							}
+						}
+					}
 				}
 			}
 			

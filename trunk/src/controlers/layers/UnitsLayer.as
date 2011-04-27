@@ -2,11 +2,10 @@ package controlers.layers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
 	import com.norris.fuzzy.core.log.Logger;
-	import com.norris.fuzzy.map.IMapItem;
-	import com.norris.fuzzy.map.ISortable;
+	import com.norris.fuzzy.map.*;
 	import com.norris.fuzzy.map.astar.Astar;
+	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.astar.Node;
-	import com.norris.fuzzy.map.astar.Path;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
@@ -31,19 +30,21 @@ package controlers.layers
 	 * @author norris
 	 * 
 	 */	
-	public class UnitsLayer extends BaseLayer
+	public class UnitsLayer extends BaseLayer implements ISearchable
 	{
 		public var tileLayer:TileLayer;
 		public var tipsLayer:TipsLayer;
 		public var staticLayer:StaticLayer;
 		public var actionLayer:ActionLayer;
 		
+		//使用unitsLayer做为Astar寻路的容器
+		public var astar:Astar;
+		
 		private var _recordModel:RecordModel;
 		private var _units:Object;
-		private var _unitsPos:Object;
+		private var _unitsPos:Object = {};
 		private var _sortedItems:Array = [];
 		
-		private var _astar:Astar;
 		private var _lastMoveRow:int = 6;
 		private var _lastMoveCol:int = 20;
 		
@@ -53,8 +54,8 @@ package controlers.layers
 		{
 			super();
 			
-			this._recordModel = model;
-			this._unitsPos = {};
+			_recordModel = model;
+			astar= new Astar( this );
 		}
 		
 		override public function onSetup() :void
@@ -88,10 +89,11 @@ package controlers.layers
 				for each (var sf:StuffModel in model.stuffs ) {
 					unit.addComponent( new BaseStuff( sf ) );					
 				}
+				unit.node = tileLayer.getNode( model.row, model.col );
 				unit.setup();
 				 
 				_units[ model.id ] = unit;
-				_unitsPos[ generateKey( model.row, model.col ) ] = unit;
+				_unitsPos[ unit.node.id ] = unit;
 				 
 				if ( unit.figure != null && unit.figure.mapItem != null ){
 					mapItem = unit.figure.mapItem;
@@ -100,14 +102,11 @@ package controlers.layers
 					_sortedItems.push( mapItem );
 					
 					//延迟加载，加载好后调用onFigureComplete
-					unit.figure.addEventListener( Event.COMPLETE, onFigureComplete );
+					unit.figure.addEventListener( Event.COMPLETE, onFigureCompleted );
 				}
 			}
 			
 			render();
-			
-			//使用unitsLayer做为Astar寻路的容器
-			_astar = new Astar( tileLayer );
 			
 			//监听单元格事件
 			tileLayer.addEventListener(TileEvent.MOVE, onMoveTile);
@@ -117,10 +116,10 @@ package controlers.layers
 		}
 		
 		//重新排序
-		private function onFigureComplete( event:Event ):void
+		private function onFigureCompleted( event:Event ):void
 		{
 			var f:IFigure =event.target as IFigure; 
-			f.removeEventListener( Event.COMPLETE, onFigureComplete );
+			f.removeEventListener( Event.COMPLETE, onFigureCompleted );
 			
 			tileLayer.adjustPosition( f.mapItem );
 			render();
@@ -144,15 +143,10 @@ package controlers.layers
 				
 				_selectUnit = unit;
 				_selectUnit.select();
-				
-				//显示移动、攻击范围
-				
-			  	//显示操作菜单
-				
 			}else{
-				if ( _selectUnit != unit ){
-					_selectUnit.unselect();
-				}
+//				if ( _selectUnit != unit ){
+//					_selectUnit.unselect();
+//				}
 				
 				if ( unit == null ){
 					return;
@@ -162,32 +156,7 @@ package controlers.layers
 				}
 				
 			}
-			
-			
-			
 			return;
-			
-			var row:int = event.row;
-			var col:int = event.col;
-			
-			if ( !this.isWalkable(row, col ) )
-				return;
-			
-			var goalNode:Node = tileLayer.getNode( row, col );
-			if ( goalNode == null )
-				return;
-			
-			var startNode:Node = tileLayer.getNode( _lastMoveRow, _lastMoveCol );
-			if ( startNode == null )
-				return;
-			
-			var results:Path = _astar.search(startNode, goalNode);
-			if ( results ) {
-				//监听移动事件
-				this._selectUnit.addEventListener(UnitEvent.MOVE, onUnitMove, false, 0, true );
-				this._selectUnit.walkPath( results );
-			}
-			
 		}
 		
 		private var _lastMoveItem:IMapItem = null;
@@ -211,31 +180,6 @@ package controlers.layers
 			return !_recordModel.mapModel.isBlock( row, col );		
 		}
 		
-		private function walk( path:Path ) : void
-		{
-			var t:Timer =new Timer( 100, path.nodes.length );
-			var n:int = 0, current:Node, 
-				item:IMapItem = _selectUnit.figure.mapItem;
-			
-			t.addEventListener(TimerEvent.TIMER, function( event:TimerEvent ) : void {
-				current = path.nodes[ n++ ] as Node;
-				
-				item.row = current.row;
-				item.col = current.col;
-				
-				tileLayer.adjustPosition( item );
-				
-				render();
-			});
-			t.addEventListener(TimerEvent.TIMER_COMPLETE, function( event:TimerEvent ): void{
-				var lastNode:Node = path.nodes[ path.nodes.length - 1 ] as Node;
-				_lastMoveRow = lastNode.row;
-				_lastMoveCol = lastNode.col;
-			});
-			
-			t.start();
-		}
-		
 		public function getUnit( id:String ) :Unit
 		{
 			return _units[ id ] as Unit;
@@ -249,6 +193,11 @@ package controlers.layers
 		public function getUnitByPos( row:int, col:int ) :Unit
 		{
 			return _unitsPos[ generateKey( row, col) ] as Unit;
+		}
+		
+		public function hasUnitByPos( row:int, col:int ) :Boolean
+		{
+			return _unitsPos[ generateKey( row, col) ] != undefined;
 		}
 		
 		public function getUnitByNode( node:Node ) :Unit
@@ -306,5 +255,28 @@ package controlers.layers
 			this.render();
 		}
 		
+		public function getCols():int 
+		{
+			return tileLayer.cols;
+		}
+		
+		public function getRows():int
+		{
+			return tileLayer.rows;
+		}
+		
+		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
+		{
+			var cost:Number = 1;
+			if ( staticLayer.isBlock( n1.row, n1.col ) || staticLayer.isBlock( n2.row, n2.col )  )
+				cost = 10000;
+			
+			return cost;
+		}
+		
+		public function getNode( row:int, col:int ):Node
+		{
+			return tileLayer.getNode( row, col );
+		}
 	}
 }

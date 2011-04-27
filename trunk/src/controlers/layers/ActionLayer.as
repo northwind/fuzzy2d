@@ -4,9 +4,11 @@ package controlers.layers
 	import com.greensock.easing.*;
 	import com.greensock.motionPaths.*;
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.astar.Node;
 	
+	import controlers.events.*;
 	import controlers.unit.*;
 	
 	import flash.display.Bitmap;
@@ -38,6 +40,7 @@ package controlers.layers
 		private var conversion:Number = Math.PI/180;
 		private var lasttime:Number = 0.6;
 		private var _icons:Object;
+		private var _clicked:Object = {};
 		
 		private var mBtn:IconButton;
 		private var aBtn:IconButton;
@@ -61,6 +64,7 @@ package controlers.layers
 			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
 			mBtn.addEventListener(MouseEvent.ROLL_OVER, onMoveOver );
 			mBtn.addEventListener(MouseEvent.ROLL_OUT, onMoveOut );
+			mBtn.addEventListener(MouseEvent.CLICK, onMoveClick );
 			IconButtonMgr.reg( "move", mBtn );
 			
 			sBtn = new BlowIconButton( "待机" );
@@ -94,6 +98,8 @@ package controlers.layers
 				this._unit = unit;
 				this.craeteAction();
 			}
+			
+			unit.addEventListener(UnitEvent.MOVE_OVER, onUnitMoveOver );
 		}
 		
 		public function unbind() : void
@@ -185,6 +191,16 @@ package controlers.layers
 		
 		private function onCansel() : void
 		{
+//			setClicked
+		}
+		
+		private function setClicked( name:String, value:Boolean ) : void
+		{
+			_clicked[ name ] = value;
+		}
+		private function isClicked( name:String ) : Boolean
+		{
+			return _clicked[ name ] === true;
 		}
 		
 		protected function onMoveOver(event:MouseEvent):void
@@ -194,7 +210,25 @@ package controlers.layers
 		
 		protected function onMoveOut(event:MouseEvent):void
 		{
-			this._unit.moveable.hideRange();
+			if ( !isClicked( "move" ) )
+				this._unit.moveable.hideRange();
+		}
+		
+		protected function onMoveClick(event:MouseEvent):void
+		{
+			setClicked( "move", true );
+			hideAction();
+			
+			tileLayer.addEventListener( TileEvent.SELECT, onMoveSelectTile );
+		}
+		
+		protected function onMoveSelectTile( event:TileEvent ):void
+		{
+			if ( this._unit.moveable.canMove( event.node ) )
+				this._unit.moveable.moveTo( event.node );
+			else{
+				//TIP
+			}
 		}
 		
 		protected function onAttackOver(event:MouseEvent):void
@@ -207,6 +241,10 @@ package controlers.layers
 			this._unit.attackable.hideRange();
 		}
 		
+		protected function onUnitMoveOver(event:UnitEvent):void
+		{
+			Logger.debug( "move over" );
+		}
 		
 	}
 }

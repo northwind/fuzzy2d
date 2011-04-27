@@ -51,8 +51,6 @@ package com.norris.fuzzy.map.astar {
 				} else if (lastNode == goalNode) {
 					results = p;
 					
-					trace("f: "+p.getF());
-					
 					break;
 				} else {
 					closed[lastNode.id] = true;
