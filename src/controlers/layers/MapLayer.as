@@ -21,9 +21,6 @@ package controlers.layers
 			super();
 			
 			this.model = model;
-			
-//			this.view.x = model.background.oX || 0;
-//			this.view.y = model.background.oY || 0;
 
 			//添加背景色
 			if ( model.background.color != undefined ){

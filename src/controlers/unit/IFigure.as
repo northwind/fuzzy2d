@@ -2,6 +2,7 @@ package controlers.unit
 {
 	import com.norris.fuzzy.core.cop.IComponent;
 	import com.norris.fuzzy.map.IMapItem;
+	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.astar.Path;
 	
 	public interface IFigure extends IComponent
@@ -13,10 +14,14 @@ package controlers.unit
 		 */		
 		function get mapItem () :IMapItem;
 		
-		function walkPath( path:Path, callback:Function = null ) :  void;
+		function get direct():uint;
 		
-		function standby() : void;
+		function gray() : void;
 		
 		function highlight() : void;
+		
+		function faceTo( node:Node ) : void;
+		
+		function attackTo( node:Node = null, callback:Function = null ) : void;
 	}
 }

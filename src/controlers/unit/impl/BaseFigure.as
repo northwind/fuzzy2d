@@ -1,6 +1,5 @@
 package controlers.unit.impl
 {
-	import com.hurlant.eval.ast.Void;
 	import com.norris.fuzzy.core.cop.impl.BaseComponent;
 	import com.norris.fuzzy.core.display.IDataSource;
 	import com.norris.fuzzy.core.log.Logger;
@@ -8,8 +7,8 @@ package controlers.unit.impl
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.astar.Node;
-	import com.norris.fuzzy.map.astar.Path;
-	import com.norris.fuzzy.map.item.*;
+	import com.norris.fuzzy.map.item.SWFMapItem;
+	import com.norris.fuzzy.map.item.MapItemType;
 	
 	import controlers.events.UnitEvent;
 	import controlers.layers.TileLayer;
@@ -18,38 +17,21 @@ package controlers.unit.impl
 	import controlers.unit.Unit;
 	
 	import flash.display.MovieClip;
-	import flash.display.Shape;
 	import flash.events.Event;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
 	
 	import models.impl.FigureModel;
 	import models.impl.FigureModelManager;
 	import models.impl.UnitModel;
 	
-	import server.IDataServer;
-	
 	[Event(name="complete", type="flash.events.event")]
 	
 	public class BaseFigure extends BaseComponent implements IFigure
 	{
-		public static const COUNT:uint = 12;
-		public static const INTER:uint = 30;
-		public static const STEPX:Number = MyWorld.CELL_WIDTH / 2/ BaseFigure.COUNT;
-		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / BaseFigure.COUNT;
-		
-		private var _mapItem:SWFMapItem;
+		private var _mapItem:SWFMapItem
 		private var _figureModel:FigureModel;
 		private var _resource:IResource;
 		
-		private var timer:Timer;
-		private var currentNode:Node;
-		private var nextNode:Node;
-		
-		private var offsetX:Number;		
-		private var offsetY:Number;
-		private var calcX:int;		//判断X坐标加还是减
-		private var calcY:int;		//判断Y坐标加还是减
+		private var lastDirect:uint;
 		
 		public var model:UnitModelComponent;
 		public var unit:Unit;
@@ -57,10 +39,6 @@ package controlers.unit.impl
 		public function BaseFigure()
 		{
 			super();
-			
-			this.timer = new Timer( BaseFigure.INTER, BaseFigure.COUNT ); 
-			this.timer.addEventListener(TimerEvent.TIMER, onTimer );
-			this.timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete );
 			
 			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
@@ -80,10 +58,6 @@ package controlers.unit.impl
 			
 			_mapItem = new SWFMapItem( model.figureModel.symbol );
 			
-			//记录原始偏移量
-			this.offsetX = this._figureModel.offsetX;
-			this.offsetY = this._figureModel.offsetY;
-			
 			//加载资源
 			_resource = MyWorld.instance.resourceMgr.getResource( _figureModel.url );
 			if ( _resource == null ){
@@ -102,23 +76,6 @@ package controlers.unit.impl
 				_resource.addEventListener( ResourceEvent.COMPLETE, onResourceComplete );
 				_resource.load();
 			}
-		}
-		
-		public function standby() : void
-		{
-			try
-			{
-				_mapItem.view[ "standby" ]();	
-			}
-			catch(error:Error) {
-				Logger.error( this.model.name + " has no function : standby." );
-			}
-		}
-		
-		//高亮  统一采用底部增加亮圈的方式
-		public function highlight() : void
-		{
-			
 		}
 		
 		private function setMapItem( f:FigureModel ) :void
@@ -157,47 +114,31 @@ package controlers.unit.impl
 			return _mapItem;
 		}
 		
-		private var onWalkPathCallback:Function;
-		public function walkPath( path:Path, callback:Function = null ) : void
+		public function get direct():uint
 		{
-			nodes = path.nodes;
-			//无路径或者只有自己所在的单元格直接返回
-			if ( nodes.length <= 1 ){
-				if ( callback != null )
-					callback.call();
-				return;
-			}
-			
-			onWalkPathCallback = callback;
-			currentN = 1;
-			currentNode = nodes[0] as Node;
-//			nextNode      = nodes[1] as Node;
-			
-			this.walkTo( nodes[1], onNodeCallback );
+			return this.lastDirect;
 		}
 		
-		private var currentN:int;
-		private var nodes:Array;
-		private function onNodeCallback() : void 
+		public function gray() : void
 		{
-			currentNode = nextNode;
-			
-			if ( currentN++ < nodes.length -1 ){
-				this.walkTo( nodes[ currentN ], onNodeCallback );
-			}else{
-				if ( onWalkPathCallback != null )
-					onWalkPathCallback.call();
-				
-				unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE_OVER, this.unit ) );
+			try
+			{
+				_mapItem.view[ "gray" ]();	
+			}
+			catch(error:Error) {
+				Logger.error( this.model.name + " has no function : gray." );
 			}
 		}
 		
-		private var nodeCallback:Function;
-		private var node:Node;
-		private var lastDirect:uint;
-		private function walkTo( node:Node, callback:Function = null ) : void
+		//高亮  统一采用底部增加亮圈的方式
+		public function highlight() : void
 		{
-			var direct:uint = BaseFigure.getDirect(  currentNode, node );
+			
+		}
+		
+		public function faceTo( node:Node ) : void
+		{
+			var direct:uint = BaseFigure.getDirect( unit.node , node );
 			if ( lastDirect != direct ){
 				lastDirect = direct;
 				
@@ -209,24 +150,13 @@ package controlers.unit.impl
 				catch(error:Error) {
 					Logger.error( this.model.name + " has no function : " +  fn );
 				}
-				
-				//如果方向在九宫格的右上角则X=1 否则为-1或0
-				//如果在九宫格的上方则为-1否则为1或0
-				var r:uint = direct / 3, c:uint = direct % 3;
-				calcX = c > r ? 1 : ( c < r ? -1 : 0 );
-				calcY = r + c < 2 ? -1 : ( r+c > 2 ? 1 : 0  );
 			}
-			
-//			this.node = node;
-			this.nextNode = node;
-			this.nodeCallback = callback;
-			this._mapItem.row = this.currentNode.row;
-			this._mapItem.col  = this.currentNode.col;
-			
-			this.timer.reset();
-			this.timer.start();
 		}
 		
+		public function attackTo( node:Node = null, callback:Function = null ) : void
+		{
+			
+		}		
 		/**
 		 * 计算9宫格方向 
 		 * [0,1,2,
@@ -237,11 +167,6 @@ package controlers.unit.impl
 		  6    4   2
 		     7   5
 			   8
-			 
-		 * @param from
-		 * @param to
-		 * @return 
-		 * 
 		 */		
 		public static function getDirect( from:Node, to:Node ) :uint
 		{
@@ -251,26 +176,6 @@ package controlers.unit.impl
 			return (diffX > 0 ? 0 : diffX< 0 ? 2 : 1 ) + 
 					(diffY > 0 ? 0 : diffY< 0 ? 6 : 3 );
 		}
-		
-		protected function onTimer(event:Event):void
-		{
-			this._mapItem.offsetX += calcX * BaseFigure.STEPX;
-			this._mapItem.offsetY += calcY * BaseFigure.STEPY;
-			
-			//宿主分发事件
-			unit.dispatchEvent( new UnitEvent( UnitEvent.MOVE, this.unit ) );
-		}
-		
-		protected function onTimerComplete(event:Event):void
-		{
-			this._mapItem.row = nextNode.row;
-			this._mapItem.col = nextNode.col;
-			//还原offset
-			this._mapItem.offsetX = this.offsetX;
-			this._mapItem.offsetY = this.offsetY;
-			
-			if ( nodeCallback != null )
-				nodeCallback.call();
-		}
+
 	}
 }
