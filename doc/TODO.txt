@@ -38,6 +38,7 @@
 #显示可移动区域
 抽象BattleModel
 BattleModelComponent
+#抽象出ActionState 控制角色的状态
 移动角色
 设置多个角色，增加队伍属性
 角色移动时友军可以通过，敌军不能通过

@@ -159,6 +159,14 @@ package controlers.layers
 			return;
 		}
 		
+		public function unselect() : void
+		{
+			if ( _selectUnit == null )
+				return;
+			_selectUnit.unselect();
+			_selectUnit = null;
+		}
+		
 		private var _lastMoveItem:IMapItem = null;
 		private function onMoveTile( event:TileEvent ):void
 		{

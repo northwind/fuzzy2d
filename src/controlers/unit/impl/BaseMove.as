@@ -98,7 +98,7 @@ package controlers.unit.impl
 			unit.layer.tileLayer.clear();
 		}
 		
-		public function canMove( node:Node ):Boolean
+		public function canApply( node:Node ):Boolean
 		{
 			return _range.contains( node );
 		}
@@ -127,9 +127,9 @@ package controlers.unit.impl
 			unit.layer.renderMapItem( figure.mapItem );
 		}
 		
-		public function moveTo( to:Node, callback:Function = null ):void
+		public function applyTo( to:Node, callback:Function = null ):void
 		{
-			if ( moving || !canMove( to ) )
+			if ( moving || !canApply( to ) )
 				return;
 			
 			oriNode = unit.node;

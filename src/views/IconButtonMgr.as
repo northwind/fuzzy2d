@@ -6,6 +6,13 @@ package views
 	{
 		private static var _items:BaseManager = new BaseManager();
 		
+		public static function create( name:String, tips:String, url:String, type:Class ) : IconButton
+		{
+			var ret:IconButton = new type( tips );
+			ret.dataSource = MyWorld.instance.resourceMgr.add( name, url );
+			return ret;
+		}
+		
 		public static function reg( name:String, iconButton:IconButton ) : void
 		{
 			if ( name == null || iconButton == null )
