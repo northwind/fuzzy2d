@@ -56,15 +56,13 @@ package controlers.unit
 			figure.highlight();
 			
 			layer.actionLayer.bind( this );
-			layer.actionLayer.showAction();
+			layer.actionLayer.beginAction();
 		}
 		
 		public function unselect() : void
 		{
-//			figure.normal();
-			
 			layer.actionLayer.unbind();
-			layer.actionLayer.hideAction();
+			layer.actionLayer.endAction();
 		}
 		
 		public function set skillable( value:ISkillable ) : void
