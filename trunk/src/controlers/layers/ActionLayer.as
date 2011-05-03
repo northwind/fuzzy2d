@@ -3,19 +3,24 @@ package controlers.layers
 	import com.greensock.*;
 	import com.greensock.easing.*;
 	import com.greensock.motionPaths.*;
+	import com.hurlant.eval.ast.Func;
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.core.display.impl.ScrollLayerContainer;
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.astar.Node;
 	
 	import controlers.events.*;
 	import controlers.unit.*;
+	import controlers.unit.impl.Range;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	import models.impl.SkillModel;
 	import models.impl.StuffModel;
@@ -49,22 +54,26 @@ package controlers.layers
 		private var lasttime:Number = 0.6;
 		private var icons:Array = [];
 		private var clicked:Object = {};
+		public var cancelPoint:Point;
 		
-		private var mBtn:IconButton;
+		private var mBtn:RangeIconButton;
 		private var aBtn:RangeIconButton;
 		private var sBtn:IconButton;
 		private var cBtn:IconButton;
-		private var stack:StateStack;
 		
 		public var tileLayer:TileLayer;
 		public var unitsLayer:UnitsLayer;
+		public var cancelLayer:CancelLayer;
 		
 		//六种状态
 		private var initState:ActionState;
-		private var movingState:ActionState;
-		private var movedState:ActionState;
-		private var attackingState:ActionState;
+		private var movingState:RangeActionState;
+		public var movedState:ActionState;
+		private var attackingState:RangeActionState;
 		private var attackedState:ActionState;
+		private var standbyState:ActionState;
+		
+		public var stack:StateStack;
 		
 		public function ActionLayer()
 		{
@@ -77,32 +86,12 @@ package controlers.layers
 		{
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
 			//资源加载好后再初始化
-			//设置弹出菜单按钮
-			mBtn = new IconButton( "移动" );
-			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
-			mBtn.addEventListener(MouseEvent.ROLL_OVER, onMoveOver );
-			mBtn.addEventListener(MouseEvent.ROLL_OUT, onMoveOut );
-			mBtn.addEventListener(MouseEvent.CLICK, onMoveClick );
-			IconButtonMgr.reg( "move", mBtn );
-			
-			aBtn = new RangeIconButton( "攻击" );
-			aBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_attack" );
-			aBtn.addEventListener(MouseEvent.ROLL_OVER, onAttackOver );
-			aBtn.addEventListener(MouseEvent.ROLL_OUT, onAttackOut );
-//			aBtn.addEventListener(MouseEvent.CLICK, onAttackClick );
-			IconButtonMgr.reg( "attack", aBtn );		
-			
-			sBtn = new BlowIconButton( "待机" );
-			sBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_standby" );
-			IconButtonMgr.reg( "standby", sBtn );
-			
-			cBtn = new BlowIconButton( "取消" );
-			cBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_cancel" );
-			cBtn.addEventListener(MouseEvent.CLICK, onCancelClick );
-			IconButtonMgr.reg( "cancel", cBtn );	
-			
 			//------------------------- 角色状态 ---------------------
 			stack = new StateStack();
+			stack.onEmpty = function():void{
+				_unit.unselect();
+			};
+			//初始化
 			initState = new ActionState( function():void{
 				icons = [];
 				addMoveBtn();
@@ -111,22 +100,10 @@ package controlers.layers
 				addStandbyBtn();
 				addStuffBtns();
 				addCancelBtn();
+				updateOriginXY();
 				showAction();
+				resetRange();
 			},  function():void{
-				clearAction();
-				unitsLayer.unselect();
-			} );
-			//准备移动
-			movingState = new ActionState( function( preStatus:ActionState ):void{
-				if ( preStatus == movedState ){
-					_unit.moveable.reset();
-					updateOriginXY();
-				}
-				_unit.moveable.showRange();
-				tileLayer.addEventListener( TileEvent.SELECT, onMoveSelectTile );
-			},  function():void{
-				tileLayer.removeEventListener( TileEvent.SELECT, onMoveSelectTile );
-				_unit.moveable.hideRange();
 				clearAction();
 			} );
 			//移动后
@@ -139,18 +116,57 @@ package controlers.layers
 				addCancelBtn();
 				updateOriginXY();
 				showAction();
+				resetRange();
 			},  function():void{
 				clearAction();
+				updateOriginXY();
 			} );
+			//准备移动
+			movingState = new RangeActionState();
+			movingState.actionLayer = this;
+			movingState.nextState = movedState;
+			
+			//攻击后
+			movedState = new ActionState( function():void{
+				stack.push( standbyState );
+			});
+			
 			//准备攻击
-//			attackingState = new RangeActionState( function():void{
-//				_unit.attackable.showRange();
-//				tileLayer.addEventListener( TileEvent.SELECT, onAttackSelectTile );
-//			},  function():void{
-//				tileLayer.removeEventListener( TileEvent.SELECT, onAttackSelectTile );
-//				_unit.attackable.hideRange();
-//				clearAction();
-//			} );
+			attackingState = new RangeActionState();
+			attackingState.actionLayer = this;
+			attackingState.nextState = movedState;
+			
+			//待机
+			standbyState = new ActionState( function():void{
+				stack.clear();
+				_unit.standby();
+			});
+			
+			//--------------------------设置弹出菜单按钮----------------------
+			mBtn = new RangeIconButton( "移动" );
+			mBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_move" );
+			mBtn.addEventListener(MouseEvent.ROLL_OVER, onRangeBtnOver );
+			mBtn.addEventListener(MouseEvent.ROLL_OUT, onRangeBtnOut );
+			mBtn.addEventListener(MouseEvent.CLICK, onRangeBtnClick );
+			mBtn.state = this.movingState;
+			IconButtonMgr.reg( "move", mBtn );
+			
+			aBtn = new RangeIconButton( "攻击" );
+			aBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_attack" );
+			aBtn.addEventListener(MouseEvent.ROLL_OVER, onRangeBtnOver );
+			aBtn.addEventListener(MouseEvent.ROLL_OUT, onRangeBtnOut );
+			aBtn.addEventListener(MouseEvent.CLICK, onRangeBtnClick );
+			aBtn.state = this.attackingState;
+			IconButtonMgr.reg( "attack", aBtn );		
+			
+			sBtn = new BlowIconButton( "待机" );
+			sBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_standby" );
+			IconButtonMgr.reg( "standby", sBtn );
+			
+			cBtn = new BlowIconButton( "取消" );
+			cBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_cancel" );
+			cBtn.addEventListener(MouseEvent.CLICK, onCancelClick );
+			IconButtonMgr.reg( "cancel", cBtn );	
 		}
 		
 		public function bind( unit:Unit ) :void
@@ -159,14 +175,26 @@ package controlers.layers
 			var node:Node = tileLayer.getNode( mapItem.row, mapItem.col );
 			
 			this._unit = unit;
-				
-			this.aBtn.able = unit.attackable as IActionable;
-//			this.mBtn.able = unit.moveable   as IMoveable;
+			
+			mBtn.able = unit.moveable;
+			aBtn.able = unit.attackable;
 			
 			updateOriginXY();
 		}
 		
-		private function updateOriginXY() : void
+		private function resetRange() : void
+		{
+			var rb:RangeIconButton;
+			for each (var btn:IconButton in icons) {
+				if ( btn is RangeIconButton ){
+					rb = btn as RangeIconButton;
+					if ( rb != null && rb.able != null  )
+						rb.able.reset();
+				}
+			}
+		}
+		
+		public function updateOriginXY() : void
 		{
 			this.oX = _unit.node.centerX - 24;
 			this.oY = _unit.node.centerY - 48;
@@ -180,16 +208,17 @@ package controlers.layers
 		//技能
 		private function addSkillBtns() :void
 		{
-			var sm:SkillModel, btn:IconButton;
+			var sm:SkillModel, btn:RangeIconButton;
 			for (var j:int = 0; j < this._unit.skills.length; j++) 
 			{
 				sm = (this._unit.skills[ j ] as ISkillable).model;
 				if ( sm != null ){
-					btn = IconButtonMgr.get( sm.name );
+					btn = IconButtonMgr.get( sm.name ) as RangeIconButton;
 					if ( btn == null ){
 						//如果没有则延迟加载
-						btn = IconButtonMgr.create( sm.name, sm.desc, sm.iconUrl, RangeIconButton  );
-						(btn as RangeIconButton).able = this._unit.skills[ j ] as IActionable;
+						btn = IconButtonMgr.create( sm.name, sm.desc, sm.iconUrl, RangeIconButton  ) as RangeIconButton;
+						btn.able = this._unit.skills[ j ] as IActionable;
+						btn.state = this.attackingState;
 					}
 					icons.push( btn );
 				}
@@ -199,16 +228,17 @@ package controlers.layers
 		//物品
 		private function addStuffBtns() :void
 		{
-			var stuff:StuffModel, btn:IconButton;
+			var stuff:StuffModel, btn:RangeIconButton;
 			for (var i:int = 0; i < this._unit.stuffs.length; i++) 
 			{
 				stuff = (this._unit.stuffs[ i ] as IStuffable ).model;
 				if ( stuff != null ){
-					btn = IconButtonMgr.get( stuff.name );
+					btn = IconButtonMgr.get( stuff.name ) as RangeIconButton;
 					if ( btn == null ){
 						//如果没有则延迟加载
-						btn = IconButtonMgr.create( stuff.name, stuff.desc, stuff.iconUrl, RangeIconButton );
-						(btn as RangeIconButton).able = this._unit.stuffs[ i ] as IActionable;
+						btn = IconButtonMgr.create( stuff.name, stuff.desc, stuff.iconUrl, RangeIconButton ) as RangeIconButton;
+						btn.able = this._unit.stuffs[ i ] as IActionable;
+						btn.state = this.attackingState;
 					}
 					icons.push( btn );
 				}
@@ -247,14 +277,30 @@ package controlers.layers
 			for each (var btn:IconButton in icons) {
 				try
 				{
-					this.view.removeChild( btn );		
-				} 
-				catch(error:Error) 
-				{
+					if ( btn.parent )
+						btn.parent.removeChild( btn );
 				}
+				catch(error:Error) 
+				{}
 			}
 			
 			icons = [];
+		}
+		
+		public function showCancel( point:Point ) : void
+		{
+			if ( point == null ) return;
+			
+			cBtn.x = point.x;
+			cBtn.y = point.y;
+			
+			this.cancelLayer.view.addChild( cBtn ); 
+		}
+		
+		public function hideCancel() : void
+		{
+			if ( cBtn.parent )
+				cBtn.parent.removeChild( cBtn );
 		}
 		
 		public function beginAction() :void
@@ -267,91 +313,78 @@ package controlers.layers
 			//删除
 			while( this.view.numChildren > 0 )
 				this.view.removeChildAt( 0 );
+			
+			while( this.cancelLayer.view.numChildren > 0 )
+				this.cancelLayer.view.removeChildAt( 0 );
 		}
 		
-		public function showAction() : void
+		public function showAction( animation:Boolean = true ) : void
 		{
 			var a:Number = 360 / icons.length; 
 			
+			var ct:DisplayObjectContainer = this.view, btn:DisplayObject;
 			for (var i:int = 0; i < icons.length; i++) 
 			{
-				runTo( icons[ i ] as DisplayObject , (90 - i * a) * conversion );	
+				//将取消按钮添加到静止层
+				btn = icons[ i ] as DisplayObject;
+				runTo( btn , (90 - i * a) * conversion, ct, animation );
 			}
 		}
 		
-		private function runTo( target:DisplayObject, angle:Number ) : void
+		private function runTo( target:DisplayObject, angle:Number, ct:DisplayObjectContainer, animation:Boolean = true ) : void
 		{
-			target.x = oX;
-			target.y = oY;
-			target.scaleX = oScale;
-			target.scaleY = oScale;
-//			target.alpha = oAlpha;
+			var x:Number = oX + r * Math.cos( angle  );
+			var y:Number = oY - r * Math.sin( angle );
 			
-			this.view.addChild( target );
+			if ( target == cBtn ){
+				cancelPoint = new Point( x, y );
+			}
 			
-			var x:int = oX + r * Math.cos( angle  );
-			var y:int = oY - r * Math.sin( angle );
-			
-			TweenLite.to(target, lasttime, { x:x, y : y, scaleX : 1, scaleY : 1 } );
-		}
-		
-		private function onCansel() : void
-		{
-//			setClicked
-		}
-		
-		protected function onMoveOver(event:MouseEvent):void
-		{
-			this._unit.moveable.showRange();
-		}
-		
-		protected function onMoveOut(event:MouseEvent):void
-		{
-			if ( clicked[ "move" ] != true )
-				this._unit.moveable.hideRange();
-			
-			clicked[ "move" ] = false;
-		}
-		
-		protected function onMoveClick(event:MouseEvent = null ):void
-		{
-			clicked[ "move" ] = true;
-			//切换为准备移动状态
-			stack.push( movingState );
-		}
-		
-		protected function onMoveSelectTile( event:TileEvent ):void
-		{
-			if ( this._unit.moveable.canApply( event.node ) ){
-				tileLayer.removeEventListener( TileEvent.SELECT, onMoveSelectTile );
-				this._unit.moveable.hideRange();
+			if ( animation ){			
+				target.x = oX;
+				target.y = oY;
+				target.scaleX = oScale;
+				target.scaleY = oScale;
 				
-				this._unit.moveable.applyTo( event.node, function() : void{
-					//切换为移动后状态
-					stack.push( movedState );
-				} );
+				ct.addChild( target );
+				
+				TweenLite.to(target, lasttime, { x:x, y : y, scaleX : 1, scaleY : 1 } );
+			}else{
+				target.x = x;
+				target.y = y;
+				ct.addChild( target );
 			}
-			else{
-				//TIP
-			}
 		}
 		
-		protected function onAttackOver(event:MouseEvent):void
+		protected function onRangeBtnOver(event:MouseEvent):void
 		{
-			this._unit.attackable.showRange();
+			var btn:RangeIconButton = event.target as RangeIconButton;
+			btn.able.showRange();
 		}
 		
-		protected function onAttackOut(event:MouseEvent):void
+		protected function onRangeBtnOut(event:MouseEvent = null):void
 		{
-			this._unit.attackable.hideRange();
+			var btn:RangeIconButton = event.target as RangeIconButton;
+			if ( clicked[ btn.dataSource.name ] != true )
+				btn.able.hideRange();
+			
+			clicked[ btn.dataSource.name ] = false;
 		}
 		
+		protected function onRangeBtnClick(event:MouseEvent = null ):void
+		{
+			var btn:RangeIconButton = event.target as RangeIconButton;
+			btn.able.hideRange();
+			clicked[ btn.dataSource.name ] = true;
+			//切换为准备移动状态
+			btn.state.bind( btn.able );
+			stack.push( btn.state );
+		}
 		
 		protected function onCancelClick(event:MouseEvent):void
 		{
 			this.stack.pop();
 		}
-		
 	}
 }
 import controlers.events.TileEvent;
@@ -361,12 +394,14 @@ import controlers.unit.IActionable;
 
 import flash.display.BitmapData;
 import flash.events.Event;
+import flash.geom.Point;
 
-import views.IconButton;
+import views.BlowIconButton;
 
-internal class RangeIconButton extends IconButton
+internal class RangeIconButton extends BlowIconButton
 {
 	public var able:IActionable;
+	public var state:RangeActionState;
 	
 	public function RangeIconButton( tips:String=null, bitmapData:BitmapData=null ) : void
 	{
@@ -407,46 +442,63 @@ internal class RangeActionState extends ActionState
 {
 	private var able:IActionable;
 	public var actionLayer:ActionLayer;
-	public var tileLayer:TileLayer;
+	public var cancelPoint:Point;
+	public var nextState:ActionState;
 	
 	public function RangeActionState()
 	{
-		super( onRangeEnter, onRangeExit );
+		super( onStateEnter, onStateExit );
 	}
 	
 	public function bind( able:IActionable ) :void
 	{
-		able = able;
+		this.able = able;
+		this.cancelPoint = null;
 	}
 	
-	private function onRangeEnter() :  void
+	private function onStateEnter( preStatus:ActionState = null ) :  void
 	{
-		if ( able == null )
-			return;
+		if ( able == null )  return;
 		
+//		if( preStatus == actionLayer.movedState ){
+//			able.reset();
+//			actionLayer.updateOriginXY();
+//		}
+		able.reset();
 		able.showRange();
-		tileLayer.addEventListener( TileEvent.SELECT, onSelectTile );
+		//保存取消按钮所在位置,并映射为屏幕坐标
+		if ( this.cancelPoint == null ){
+			this.cancelPoint = actionLayer.cancelPoint.clone();
+			actionLayer.tileLayer.toScreen( cancelPoint );
+		}
+		actionLayer.showCancel( this.cancelPoint );
+		actionLayer.unitsLayer.active = false;
+		
+		actionLayer.tileLayer.addEventListener( TileEvent.SELECT, onSelectTile );
 	}
 	
-	private function onRangeExit() :  void
+	private function onStateExit( nextStatus:ActionState = null ) :  void
 	{
 		if ( able == null )
 			return;
 		
-		tileLayer.removeEventListener( TileEvent.SELECT, onSelectTile );
+		actionLayer.tileLayer.removeEventListener( TileEvent.SELECT, onSelectTile );
 		able.hideRange();
-		actionLayer.clearAction();
+		
+		actionLayer.hideCancel();
+		actionLayer.unitsLayer.active = true;
 	}
 	
 	protected function onSelectTile(event:TileEvent):void
 	{
 		if ( able.canApply( event.node ) ){
-			tileLayer.removeEventListener( TileEvent.SELECT, onSelectTile );
+			actionLayer.tileLayer.removeEventListener( TileEvent.SELECT, onSelectTile );
 			
 			able.hideRange();
+			actionLayer.hideCancel();
 			able.applyTo( event.node, function() : void{
 				//切换为移动后状态
-//				stack.push( movedState );
+				actionLayer.stack.push( nextState );
 			} );
 		}
 		else{
@@ -463,6 +515,7 @@ internal class RangeActionState extends ActionState
  */	
 internal class StateStack
 {
+	public var onEmpty:Function;
 	private var _items:Array;
 	
 	public function StateStack()
@@ -474,7 +527,7 @@ internal class StateStack
 	{
 		if ( _items.length > 0 ){
 			var top:ActionState = _items[ _items.length - 1 ] as ActionState;
-			status.exit( status );
+			top.exit( status );
 		}
 		
 		_items.push( status );
@@ -497,6 +550,13 @@ internal class StateStack
 		//进入下个状态开启
 		if ( next ){
 			next.enter( top );
+		}else{
+			onEmpty();
 		}
+	}
+	
+	public function clear() : void
+	{
+		_items = [];
 	}
 }

@@ -30,6 +30,7 @@ package controlers.unit.impl
 		public static const STEPY:Number = MyWorld.CELL_HEIGHT / 2 / COUNT;
 		
 		private var _active:Boolean;
+		private var _dirty:Boolean;
 		private var _range:MoveRange;
 		
 		private var _lastRow:int;
@@ -73,6 +74,8 @@ package controlers.unit.impl
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
 			_active = true;
 			_range = new MoveRange( unit );
+			oriDirect = this.figure.direct;
+			oriNode  = unit.node;
 			
 			offsetX = model.figureModel.offsetX;
 			offsetY = model.figureModel.offsetY;
@@ -83,6 +86,7 @@ package controlers.unit.impl
 		 */		
 		public function get range():IRange
 		{
+			_dirty = true;
 			_range.measure();
 			
 			return _range;
@@ -113,11 +117,21 @@ package controlers.unit.impl
 			//待机后清空移动范围
 			_range.reset();
 			_active = true;
+			_dirty = false;
 		}
 		
 		public function reset() :void
 		{
+			if ( !_dirty ) return;
+			_dirty = false;
+			
+			//更新查询列表
+			unit.layer.delUnitByNode( unit.node );
 			unit.node = oriNode;
+			unit.layer.addUnitByNode( oriNode, unit );
+			
+			moving = false;
+			_active = true;
 			_range.reset();
 			
 			figure.turnTo( oriDirect );
@@ -132,6 +146,7 @@ package controlers.unit.impl
 			if ( moving || !canApply( to ) )
 				return;
 			
+			_dirty = true;
 			oriNode = unit.node;
 			oriDirect = figure.direct;
 			
@@ -173,8 +188,9 @@ package controlers.unit.impl
 				//已经完成移动
 				moving = false;
 				_active  = false;
+				//更新查询列表
+				unit.layer.delUnitByNode( oriNode );
 				unit.node = _target;
-				//添加到查询列表中
 				unit.layer.addUnitByNode( unit.node, unit );
 				
 				if ( onWalkPathCallback != null )
@@ -186,7 +202,7 @@ package controlers.unit.impl
 		
 		private function walkTo( node:Node ) : void
 		{
-			figure.faceTo( node );
+			figure.faceTo( node, currentNode );
 
 			//如果方向在九宫格的右上角则X=1 否则为-1或0
 			//如果在九宫格的上方则为-1否则为1或0

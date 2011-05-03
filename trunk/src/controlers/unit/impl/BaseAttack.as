@@ -1,6 +1,7 @@
 package controlers.unit.impl
 {
 	import com.norris.fuzzy.core.cop.impl.BaseComponent;
+	import com.norris.fuzzy.map.astar.Node;
 	
 	import controlers.events.UnitEvent;
 	import controlers.unit.IAttackable;
@@ -41,7 +42,7 @@ package controlers.unit.impl
 			_range = new AttackRange( unit );
 		}
 		
-		public function attackTo( to:Unit ):void
+		public function applyTo( node:Node, callback:Function = null ):void
 		{
 			
 		}
@@ -66,7 +67,7 @@ package controlers.unit.impl
 			unit.layer.tileLayer.clear();
 		}
 		
-		public function canAttack( to:Unit ):Boolean
+		public function canApply( node:Node ):Boolean
 		{
 			return false;
 		}
@@ -75,12 +76,18 @@ package controlers.unit.impl
 		{
 			return _active;
 		}
+
+		public function reset() :void
+		{
+			_active = true;
+			_range.reset();
+		}
 		
 		protected function onStandby(event:Event):void
 		{
 			//待机后清空移动范围
 			_range.reset();
-			_active = true;
+			_active = false;
 		}
 		
 		protected function onMoveOver(event:Event):void
