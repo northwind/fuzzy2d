@@ -2,21 +2,13 @@ package controlers.unit
 {
 	import com.norris.fuzzy.core.cop.IComponent;
 	
-	import controlers.unit.IRange;
-	
-	public interface IAttackable extends IComponent
+	/**
+	 *  攻击 
+	 * @author norris
+	 * 
+	 */	
+	public interface IAttackable extends IComponent, IActionable
 	{
-		function attackTo( to:Unit ) : void;
-		
-		function get range():IRange;
-		
-		function showRange():void;
-		
-		function hideRange():void;
-		
-		function canAttack( to:Unit ) :Boolean;
-		
-		function get active():Boolean; 
 		
 	}
 }

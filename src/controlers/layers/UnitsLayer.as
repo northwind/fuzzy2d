@@ -39,6 +39,7 @@ package controlers.layers
 		
 		//使用unitsLayer做为Astar寻路的容器
 		public var astar:Astar;
+		public var active:Boolean = true;		//是否接受鼠标点击事件
 		
 		private var _recordModel:RecordModel;
 		private var _units:Object;
@@ -125,14 +126,9 @@ package controlers.layers
 			renderMapItem( f.mapItem );
 		}
 		
-		private function isActive() :Boolean
-		{
-			return true;
-		}
-		
 		private function onSelectTile( event:TileEvent ):void
 		{
-			if ( !isActive() )
+			if ( !active )
 				return;
 			
 			var unit:Unit = getUnitByPos( event.row, event.col );

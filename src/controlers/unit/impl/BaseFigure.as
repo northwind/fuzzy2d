@@ -7,8 +7,8 @@ package controlers.unit.impl
 	import com.norris.fuzzy.core.resource.event.ResourceEvent;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.astar.Node;
-	import com.norris.fuzzy.map.item.SWFMapItem;
 	import com.norris.fuzzy.map.item.MapItemType;
+	import com.norris.fuzzy.map.item.SWFMapItem;
 	
 	import controlers.events.UnitEvent;
 	import controlers.layers.TileLayer;
@@ -31,7 +31,7 @@ package controlers.unit.impl
 		private var _figureModel:FigureModel;
 		private var _resource:IResource;
 		
-		private var lastDirect:uint;
+		private var lastDirect:uint = 7;		//默认都是左下
 		
 		public var model:UnitModelComponent;
 		public var unit:Unit;
@@ -105,6 +105,10 @@ package controlers.unit.impl
 			
 			(_mapItem.view as MovieClip ).mouseEnabled =false;
 			(_mapItem.view as MovieClip ).mouseChildren = false;
+			//展示正确朝向
+			var temp:uint = lastDirect;
+			lastDirect = 9999;
+			turnTo( temp );
 			
 			this.dispatchEvent( new Event( Event.COMPLETE ) );
 		}
@@ -136,9 +140,9 @@ package controlers.unit.impl
 			
 		}
 		
-		public function faceTo( node:Node ) : void
+		public function faceTo( node:Node, from:Node = null ) : void
 		{
-			var direct:uint = BaseFigure.getDirect( unit.node , node );
+			var direct:uint = BaseFigure.getDirect( from || unit.node , node );
 			turnTo( direct );
 		}
 		

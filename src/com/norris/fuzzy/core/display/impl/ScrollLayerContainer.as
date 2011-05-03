@@ -11,6 +11,7 @@ package com.norris.fuzzy.core.display.impl
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	public class ScrollLayerContainer extends BaseLayerContainer implements ILayerContainer
@@ -164,6 +165,17 @@ package com.norris.fuzzy.core.display.impl
 				
 				this._view.scrollRect = _rect;
 			}
+		}
+		
+		/**
+		 * 转化为屏幕中的位置 
+		 * @param point
+		 * 
+		 */		
+		public function toScreen( point:Point ) : void
+		{
+			point.x = point.x - _rect.x + this.view.x;
+			point.y = point.y - _rect.y + this.view.y;
 		}
 		
 	}

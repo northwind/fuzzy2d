@@ -20,7 +20,7 @@ package controlers.unit
 		
 		function highlight() : void;
 		
-		function faceTo( node:Node ) : void;
+		function faceTo( node:Node, from:Node = null ) : void;
 		
 		function turnTo( direct:uint ):void;
 		

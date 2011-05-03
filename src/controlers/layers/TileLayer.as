@@ -1,6 +1,7 @@
 package controlers.layers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
+	import com.norris.fuzzy.core.display.impl.ScrollLayerContainer;
 	import com.norris.fuzzy.core.input.impl.InputKey;
 	import com.norris.fuzzy.core.input.impl.InputManager;
 	import com.norris.fuzzy.core.log.Logger;
@@ -42,6 +43,8 @@ package controlers.layers
 	public class TileLayer extends BaseLayer
 	{
 		public var coordLayer :DebugMsgLayer;
+		public var scrollLayer:ScrollLayerContainer;
+		
 		public var cols:int;								//2.5d世界中列数
 		public var rows:int;						    //2.5d世界中行数
 		
@@ -236,6 +239,18 @@ package controlers.layers
 			
 			view.x = coord.x + _gridX - (item.rows - 1)* MyWorld.CELL_WIDTH / 2 + item.offsetX;
 			view.y = coord.y + _gridY - (view.height - MyWorld.CELL_HEIGHT )  + item.offsetY ;
+		}
+		
+		/**
+		 * 转化为屏幕中的位置 
+		 * @param point
+		 * 
+		 */		
+		public function toScreen( point:Point ) : void
+		{
+			point.x = point.x + this.view.x;
+			point.y = point.y + this.view.y;
+			this.scrollLayer.toScreen( point );
 		}
 		
 		/**

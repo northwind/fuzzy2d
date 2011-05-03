@@ -37,6 +37,7 @@ package controlers.screens
 			var tileLayer:TileLayer = new TileLayer( model.mapModel );
 			var unitsLayer:UnitsLayer = new UnitsLayer( model );
 			var actionLayer:ActionLayer = new ActionLayer();
+			var cancelLayer:CancelLayer = new CancelLayer();
 			
 			this.mapLayer  = new MapLayer( model.mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
@@ -59,6 +60,7 @@ package controlers.screens
 			
 			//按深度添加
 			this.push( scrollLayer );
+			this.push( cancelLayer );
 			this.push( tipsLayer );
 			this.push( menuLayer );
 			this.push( debugLayer );
