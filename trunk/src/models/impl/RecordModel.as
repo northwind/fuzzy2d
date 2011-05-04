@@ -10,6 +10,7 @@ package models.impl
 	public class RecordModel extends BaseModel implements IDataModel
 	{
 		public var id:String = "";
+		public var teams:Array = [];
 		
 		private var _map:MapModel;
 		private var _script:ScriptModel;
@@ -39,13 +40,13 @@ package models.impl
 				this.onError();
 			else{
 				this._data = value;
-				var units:Array = value["units"] as Array;
-				if ( units == null ){
+				var teams:Array = value["teams"] as Array;
+				if ( teams == null ){
 					this.onError();
 					return;
 				}
 				
-				this._relates = 2 + units.length;			//需要下载的资源数
+				this._relates = 2;			//需要下载的资源数
 				this._downloads = 0;
 				this._units = {};
 				
@@ -62,21 +63,35 @@ package models.impl
 				_script.loadData();
 				
 				//读取角色信息
-				var u:UnitModelComponent, id:String;
-				for( var i:uint=0; i <units.length; i++ ){
-					id = units[i]["id"];
-					if ( id == null || id == "" ){
-						this._relates--;	//减少下载数量
-						continue;
-					}
-					//u = new UnitModel( id , units[i] );
-					u = new UnitModelComponent( id , units[i] );
-					u.addEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
-					u.addEventListener( ModelEvent.ERROR, onRelatedError );
-					u.loadData();
+				var u:UnitModelComponent, id:String, team:TeamModel, obj:Object, i :int, m :Array;
+				for( var j:uint=0; j <teams.length; j++ ){
+					obj = teams[ j ];
+					//new a team
+					team = new TeamModel( obj.na, obj.fa, obj.tm );
+					m = obj.m is Array ? obj.m as Array : [];
+					//add related download count
+					_relates += m.length;
 					
-					_units[ id ] = u;
+					for( i=0; i < m.length; i++ ){
+						id = m[i]["id"];
+						if ( id == null || id == "" ){
+							this._relates--;	//减少下载数量
+							continue;
+						}
+						//u = new UnitModel( id , units[i] );
+						u = new UnitModelComponent( id , m[i] );
+						u.addEventListener( ModelEvent.COMPLETED, onRelatedCompleted );
+						u.addEventListener( ModelEvent.ERROR, onRelatedError );
+						u.loadData();
+						
+						_units[ id ] = u;
+						u.teamModel = team;
+						team.addUnitModel( u );
+					}
+					
+					this.teams.push( team );
 				}
+
 			}
 		}
 		

@@ -8,6 +8,7 @@ package controlers.layers
 	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
+	import controlers.Team;
 	import controlers.events.TileEvent;
 	import controlers.events.UnitEvent;
 	import controlers.unit.IFigure;
@@ -23,8 +24,12 @@ package controlers.layers
 	import models.impl.RecordModel;
 	import models.impl.SkillModel;
 	import models.impl.StuffModel;
+	import models.impl.TeamModel;
 	import models.impl.UnitModel;
 	
+	[Event(name="start", type="controlers.events.RoundEvent")]
+	
+	[Event(name="end", type="controlers.events.RoundEvent")]
 	/**
 	 * 统筹管理unit，并分配用户的操作，不直接响应用户的操作 
 	 * @author norris
@@ -40,9 +45,10 @@ package controlers.layers
 		//使用unitsLayer做为Astar寻路的容器
 		public var astar:Astar;
 		public var active:Boolean = true;		//是否接受鼠标点击事件
+		public var teams:Array = [];
 		
 		private var _recordModel:RecordModel;
-		private var _units:Object;
+		private var _units:Object = {};
 		private var _unitsPos:Object = {};
 		private var _sortedItems:Array = [];
 		
@@ -71,40 +77,45 @@ package controlers.layers
 		{
 			this._recordModel.removeEventListener( ModelEvent.COMPLETED, onModelCompleted );
 			
-			var models:Object = this._recordModel.unitModels;
-			
-			_units = {};
-			var coord:Coordinate, unit:Unit, mapItem:IMapItem;
-			for each( var model:UnitModelComponent in models ){
-				unit = new Unit();
-				unit.layer = this;
-				unit.addComponent( model );
-				unit.addComponent( new BaseMove() );
-				unit.addComponent( new BaseFigure() );
-				if ( model.bodyAttack != 0 )
-					unit.addComponent( new BaseAttack() );	
-				//技能和物品
-				for each (var sk:SkillModel in model.skills ) {
-					unit.addComponent( new BaseSkill( sk ) );					
-				}
-				for each (var sf:StuffModel in model.stuffs ) {
-					unit.addComponent( new BaseStuff( sf ) );					
-				}
-				unit.node = tileLayer.getNode( model.row, model.col );
-				unit.setup();
-				 
-				_units[ model.id ] = unit;
-				_unitsPos[ unit.node.id ] = unit;
-				 
-				if ( unit.figure != null && unit.figure.mapItem != null ){
-					mapItem = unit.figure.mapItem;
-					tileLayer.adjustPosition( mapItem );
+			var coord:Coordinate, unit:Unit, mapItem:IMapItem, team:Team;
+			for each (var teamModel:TeamModel in this._recordModel.teams) {
+				team = new Team( teamModel );
+				
+				for each( var model:UnitModelComponent in teamModel.members.getAll() ){
+					unit = new Unit();
+					unit.layer = this;
+					unit.addComponent( model );
+					unit.addComponent( new BaseMove() );
+					unit.addComponent( new BaseFigure() );
+					if ( model.bodyAttack != 0 )
+						unit.addComponent( new BaseAttack() );	
+					//技能和物品
+					for each (var sk:SkillModel in model.skills ) {
+						unit.addComponent( new BaseSkill( sk ) );					
+					}
+					for each (var sf:StuffModel in model.stuffs ) {
+						unit.addComponent( new BaseStuff( sf ) );					
+					}
+					unit.node = tileLayer.getNode( model.row, model.col );
+					unit.setup();
 					
-					_sortedItems.push( mapItem );
+					_units[ model.id ] = unit;
+					_unitsPos[ unit.node.id ] = unit;
 					
-					//延迟加载，加载好后调用onFigureComplete
-					unit.figure.addEventListener( Event.COMPLETE, onFigureCompleted );
+					if ( unit.figure != null && unit.figure.mapItem != null ){
+						mapItem = unit.figure.mapItem;
+						tileLayer.adjustPosition( mapItem );
+						
+						_sortedItems.push( mapItem );
+						
+						//延迟加载，加载好后调用onFigureComplete
+						unit.figure.addEventListener( Event.COMPLETE, onFigureCompleted );
+					}
+					
+					team.addUnit( unit );
 				}
+				
+				teams.push( team );				
 			}
 			
 			renderAll();
