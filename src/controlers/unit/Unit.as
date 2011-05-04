@@ -6,6 +6,7 @@ package controlers.unit
 	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.astar.Path;
 	
+	import controlers.events.UnitEvent;
 	import controlers.layers.UnitsLayer;
 	import controlers.unit.impl.BaseFigure;
 	import controlers.unit.impl.UnitModelComponent;
@@ -20,6 +21,13 @@ package controlers.unit
 	
 	[Event(name="standby", type="controlers.events.UnitEvent")]
 	
+	[Event(name="dead", type="controlers.events.UnitEvent")]
+	
+	[Event(name="start", type="controlers.events.UnitEvent")]
+	
+	[Event(name="speak", type="controlers.events.UnitEvent")]
+	
+	[Event(name="appear", type="controlers.events.UnitEvent")]
 	/**
 	 *  TODO mapItem做为unit的view
 	 * @author norris
@@ -36,6 +44,7 @@ package controlers.unit
 		public var stuffs:Array = [];
 		public var layer:UnitsLayer;
 		public var node:Node;
+		public var isStandby:Boolean;
 		
 		public function Unit( model:UnitModelComponent = null )
 		{
@@ -45,10 +54,18 @@ package controlers.unit
 				this.addComponent( model );
 		}
 		
+		public function restore() : void
+		{
+			isStandby = false;
+		}
+		
 		public function standby() : void
 		{
 			this.model.standby(0,0);
 			this.figure.gray();
+			isStandby = true;
+			
+			this.dispatchEvent( new UnitEvent( UnitEvent.STANDBY, this ) );
 		}
 		
 		public function select() : void
@@ -75,6 +92,27 @@ package controlers.unit
 			stuffs.push( value );
 		}
 		
-		
+		//同一阵营 不同队伍
+		public static function isFriend ( a:Unit, b:Unit ) :Boolean
+		{
+			return a.model.teamModel.faction == b.model.teamModel.faction &&
+						a.model.teamModel.team != b.model.teamModel.team;
+		}
+		//同一阵营 同一队伍	
+		public static function isSibling ( a:Unit, b:Unit ) :Boolean
+		{
+			return a.model.teamModel.faction == b.model.teamModel.faction &&
+				a.model.teamModel.team == b.model.teamModel.team;
+		}
+		//不同阵营
+		public static function isEnemy ( a:Unit, b:Unit ) :Boolean
+		{
+			return a.model.teamModel.faction != b.model.teamModel.faction;
+		}
+		//同一阵营
+		public static function isBrother ( a:Unit, b:Unit ) :Boolean
+		{
+			return a.model.teamModel.faction == b.model.teamModel.faction;
+		}
 	}
 }

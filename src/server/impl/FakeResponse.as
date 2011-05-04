@@ -314,37 +314,41 @@ package server.impl
 				mapID		: "2222",
 				scriptID   : "9999",
 				
+				//r = row, c = col d= direct
+				//fa = faction 势力	tm = team 队伍  v = visiable 是否可见  1可见 0不可见 oH : 50,					
+				//cH = currentHP 当前血量  oH = offsetHP 技能加成   
 				teams		:  [{
-					fa : 1, tm : 100, na : "我军"
+					fa : 1, tm : 100, na : "我军",
+					m	: [{
+						id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1		
+					},{
+						id: 2,  r :  20,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1		
+					}]
 				},{
-					fa : 1, tm : 200, na : "友军"
+					fa : 1, tm : 200, na : "友军",
+					m : [{
+						id: 4,  r :  20,  c : 1,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+						na : "杂兵2", fg: "1", lv:2, rg  : 3, rt : 4, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					},{
+						id: 5,  r :  38,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+						na : "杂兵3", fg: "1", lv:2, rg  : 3, rt : 5, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					},{
+						id: 6,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,    v : 1,
+						na : "杂兵4", fg: "1", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					}]
 				},{
-					fa : 0, tm : 1, na : "敌军"
+					fa : 0, tm : 1, na : "敌军",
+					m : [{
+						id: 7,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+						na : "杂兵4", fg: "1", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					},{
+						id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  v : 1,
+						na : "杂兵1", fg: "1", lv:2, rg  : 3, rt : 6 , st:4, bH : 100, fH : 50, bA : 50, fA : 25
+					}]
 				}],
 				
 				victoryN 	: 0, 		//已达到的胜利条件数
 				failedN		: 0,      //已达到的失败条件数
-				
-				//r = row, c = col d= direct
-				//fa = faction 势力	tm = team 队伍  v = visiable 是否可见  1可见 0不可见 oH : 50,					
-				//cH = currentHP 当前血量  oH = offsetHP 技能加成   
-				units		    : [{
-					id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1		
-				},{
-					id: 2,  r :  20,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 200,   v : 1		
-				},{
-					id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵1", fg: "1", lv:2, rg  : 3, rt : 6 , st:4, bH : 100, fH : 50, bA : 50, fA : 25
-				},{
-					id: 4,  r :  20,  c : 1,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵2", fg: "1", lv:2, rg  : 3, rt : 4, st:4, bH : 100, fH : 50, bA : 50, fA : 25
-				},{
-					id: 5,  r :  38,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵3", fg: "1", lv:2, rg  : 3, rt : 5, st:4, bH : 100, fH : 50, bA : 50, fA : 25
-				},{
-					id: 6,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  fa : 0, tm : 1,   v : 1,
-					na : "杂兵4", fg: "1", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
-				}],
 				
 				//脚本中已触发过的事件
 				misfiring	: [ "start", "open", "move" ]			 

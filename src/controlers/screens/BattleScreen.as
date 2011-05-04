@@ -66,6 +66,11 @@ package controlers.screens
 			this.push( debugLayer );
 		}
 		
+		public function start() : void
+		{
+			
+		}
+		
 		public function loadData() :void
 		{
 			model.loadData();

@@ -41,8 +41,7 @@ package models.impl
 		public var rows:uint;
 		public var cols:uint;
 		
-		public var faction:int;
-		public var team:int;
+		public var teamModel:TeamModel;	//从属的队伍
 		
 		public var range:int;
 		public var rangeType:int;
@@ -289,7 +288,7 @@ package models.impl
 		
 		private static const _mapper : Object =  {
 			r : "row", c : "col", cH : "_currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",
-			cA : "currentAttack", bA : "bodyAttack", fA : "fixAttack", oA : "offsetAttack",　fa : "faction", tm : "team",
+			cA : "currentAttack", bA : "bodyAttack", fA : "fixAttack", oA : "offsetAttack",　
 			v : "visiable", na : "name", fg : "figure", lv : "level",  st : "step",  rt : "rangeType",
 			rg :"range", d : "direct", rs:"rows", cs:"cols"
 		}

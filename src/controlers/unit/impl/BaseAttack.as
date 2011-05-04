@@ -5,6 +5,7 @@ package controlers.unit.impl
 	
 	import controlers.events.UnitEvent;
 	import controlers.unit.IAttackable;
+	import controlers.unit.IFigure;
 	import controlers.unit.IRange;
 	import controlers.unit.Unit;
 	
@@ -20,9 +21,12 @@ package controlers.unit.impl
 		public static const bitmapData:BitmapData = (new gridClass() as Bitmap).bitmapData; 
 		
 		private var _active:Boolean;
+		private var _dirty:Boolean;
+		private var _attacking:Boolean;
 		private var _range:AttackRange;
 		
 		public var unit:Unit;
+		public var figure:IFigure;
 		public var model:UnitModelComponent;
 		
 		public function BaseAttack()
@@ -37,14 +41,19 @@ package controlers.unit.impl
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
 			
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
-			unit.addEventListener(UnitEvent.MOVE_OVER, onMoveOver );
 			_active = true;
 			_range = new AttackRange( unit );
 		}
 		
 		public function applyTo( node:Node, callback:Function = null ):void
 		{
+			if ( _attacking || !this.canApply(node) )	
+				return;
 			
+			_attacking = true;
+			_dirty = true;
+			
+			figure.attackTo( node, callback );
 		}
 		
 		/**
@@ -52,6 +61,7 @@ package controlers.unit.impl
 		 */		
 		public function get range():IRange
 		{
+			_dirty = true;
 			_range.measure();
 			
 			return _range;
@@ -69,7 +79,8 @@ package controlers.unit.impl
 		
 		public function canApply( node:Node ):Boolean
 		{
-			return false;
+			var target:Unit = unit.layer.getUnitByNode( node );
+			return _range.contains( node ) && Unit.isEnemy( target, this.unit );
 		}
 		
 		public function get active() :Boolean
@@ -79,20 +90,20 @@ package controlers.unit.impl
 
 		public function reset() :void
 		{
+			if ( !_dirty ) return;
+			_dirty = false;
+			
 			_active = true;
 			_range.reset();
+			_attacking = false;
 		}
 		
 		protected function onStandby(event:Event):void
 		{
 			//待机后清空移动范围
 			_range.reset();
-			_active = false;
-		}
-		
-		protected function onMoveOver(event:Event):void
-		{
-			_range.reset();
+			_active = true;
+			_dirty = false;
 		}
 		
 	}
