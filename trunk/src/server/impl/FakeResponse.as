@@ -239,6 +239,7 @@ package server.impl
 						de	: "恢复HP",
 						im	: "assets/smile_grin_48.png",
 						an  : "redStar",
+						sr	: "assets/lighting.swf",
 						rg  : 1,
 						rt  : 1,
 						ef  : 3,
@@ -256,6 +257,7 @@ package server.impl
 						rg	: 4, 			
 						rt : 2,     
 						an : "storm",	
+						sr	: "assets/lighting.swf",
 						ef	: 7,
 						ln : {}
 					};

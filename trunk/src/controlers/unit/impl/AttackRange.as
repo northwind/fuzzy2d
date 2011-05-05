@@ -8,9 +8,10 @@ package controlers.unit.impl
 		public var block:Boolean;		//是否包含障碍单元
 		public var overlay:Boolean;		//是否显示已有移动单位的单元格
 		
-		public function AttackRange(unit:Unit )
+		public function AttackRange( unit:Unit, len:uint, type:int )
 		{
-			super(unit, unit.model.range, unit.model.rangeType );
+//			super(unit, unit.model.range, unit.model.rangeType );
+			super(unit, len, type );
 		}
 		
 		override protected function onMeasure() : void

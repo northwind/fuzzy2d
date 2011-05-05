@@ -41,6 +41,7 @@ package controlers.layers
 		public var tipsLayer:TipsLayer;
 		public var staticLayer:StaticLayer;
 		public var actionLayer:ActionLayer;
+		public var animationLayer:AnimationLayer;
 		
 		//使用unitsLayer做为Astar寻路的容器
 		public var astar:Astar;

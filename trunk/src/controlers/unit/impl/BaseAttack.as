@@ -42,7 +42,7 @@ package controlers.unit.impl
 			
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
 			_active = true;
-			_range = new AttackRange( unit );
+			_range = new AttackRange( unit, model.range, model.rangeType );
 		}
 		
 		public function applyTo( node:Node, callback:Function = null ):void
@@ -101,7 +101,6 @@ package controlers.unit.impl
 		protected function onStandby(event:Event):void
 		{
 			//待机后清空移动范围
-			_range.reset();
 			_active = true;
 			_dirty = false;
 		}
