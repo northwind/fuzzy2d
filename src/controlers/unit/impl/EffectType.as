@@ -8,12 +8,12 @@ package controlers.unit.impl
 	 */	
 	public class EffectType
 	{
-		public static const NONE:int = -1;				//自身
-		public static const SELF:int = 0;				//自身
-		public static const MYTEAM:int = 1;				//队友
-		public static const FRIEND:int = 2;				//盟军
-		public static const ENEMY:int = 4;				//敌军
-		public static const NPC:int = 8;				//NPC
-		public static const Construction:int = 16;		//建筑物
+		public static const NONE:int = -1;				//无
+		public static const SELF:int = 1;				//自身
+		public static const BROTHER:int = 2;				//队友
+		public static const FRIEND:int = 4;				//盟军
+		public static const ENEMY:int = 8;				//敌军
+		public static const NPC:int = 16;				//NPC
+		public static const Construction:int = 32;		//建筑物
 	}
 }

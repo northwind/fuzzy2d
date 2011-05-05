@@ -47,8 +47,8 @@ package controlers.unit.impl
 				return;
 			
 			dirty = false;
-			row = unit.model.row;
-			col = unit.model.col;
+			row = unit.node.row;
+			col = unit.node.col;
 			_nodes = {};
 			
 			onMeasure();

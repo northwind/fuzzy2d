@@ -211,7 +211,7 @@ package controlers.layers
 			var sm:SkillModel, btn:RangeIconButton;
 			for (var j:int = 0; j < this._unit.skills.length; j++) 
 			{
-				sm = (this._unit.skills[ j ] as ISkillable).model;
+				sm = (this._unit.skills[ j ] as ISkillable).skillModel;
 				if ( sm != null ){
 					btn = IconButtonMgr.get( sm.name ) as RangeIconButton;
 					if ( btn == null ){
@@ -219,6 +219,9 @@ package controlers.layers
 						btn = IconButtonMgr.create( sm.name, sm.desc, sm.iconUrl, RangeIconButton  ) as RangeIconButton;
 						btn.able = this._unit.skills[ j ] as IActionable;
 						btn.state = this.attackingState;
+						btn.addEventListener(MouseEvent.ROLL_OVER, onRangeBtnOver );
+						btn.addEventListener(MouseEvent.ROLL_OUT, onRangeBtnOut );
+						btn.addEventListener(MouseEvent.CLICK, onRangeBtnClick );
 					}
 					icons.push( btn );
 				}
@@ -376,7 +379,7 @@ package controlers.layers
 			var btn:RangeIconButton = event.target as RangeIconButton;
 			btn.able.hideRange();
 			clicked[ btn.dataSource.name ] = true;
-			//切换为准备移动状态
+			//切换为选择单元格状态
 			btn.state.bind( btn.able );
 			stack.push( btn.state );
 		}

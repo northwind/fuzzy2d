@@ -4,15 +4,8 @@ package controlers.unit
 	
 	import models.impl.SkillModel;
 	
-	public interface ISkillable extends IComponent
+	public interface ISkillable extends IComponent, IActionable
 	{
-		function get model() :SkillModel;
-		
-		function applyTo( row:int, col:int ) : void;
-		
-		function getSkillRange():Array;
-		
-		function canApply( row:int, col:int ) :Boolean;
-		
+		function get skillModel():SkillModel;
 	}
 }
