@@ -10,6 +10,7 @@ package controlers.layers
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
+	import flash.text.TextFormat;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
 	import flash.text.engine.FontPosture;
@@ -22,7 +23,8 @@ package controlers.layers
 	import flash.utils.Timer;
 	
 	/**
-	 *  
+	 * 显示角色间的对话
+	 * textLine.scrollRect有错误 
 	 * @author norris
 	 * 
 	 */	
@@ -39,8 +41,12 @@ package controlers.layers
 		private var step:int = 14;
 		private var typing:Boolean;			//打字中
 		private var waiting:Boolean;		//等待用户输入
+		private var margin:int = 5;
 		
 		private var font_description:FontDescription;
+		private var text_block:TextBlock;
+		private var text_element:TextElement;
+		private var text_format:ElementFormat;
 		
 		public function TalkLayer()
 		{
@@ -50,6 +56,9 @@ package controlers.layers
 			timer = new Timer( 60 );
 			timer.addEventListener(TimerEvent.TIMER, onTimer );
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete );
+
+			font_description = new FontDescription( "_serif", FontWeight.BOLD );
+			text_format = new ElementFormat(font_description, fontSize, fontColor );
 			
 			this._view.addEventListener(Event.ADDED_TO_STAGE, onAdded );
 		}
@@ -61,7 +70,7 @@ package controlers.layers
 			MyWorld.instance.inputMgr.on( InputKey.ENTER, onKeyDown );
 			MyWorld.instance.inputMgr.on( InputKey.SPACE, onKeyDown );
 			MyWorld.instance.inputMgr.on( InputKey.ESCAPE, onKeyDown );
-			MyWorld.instance.inputMgr.on( InputKey.LEFT, onKeyDown );
+			MyWorld.instance.inputMgr.on( InputKey.MOUSE_LEFT, onKeyDown );
 		}
 		
 		/**
@@ -74,7 +83,7 @@ package controlers.layers
 		public function speak( unit:Unit, words:String, callback:Function = null ):void
 		{
 			var mc:MovieClip = unit.figure.avatar;
-			mc.x = 5;
+			mc.x = margin;
 			mc.y = this._view.stage.stageHeight - mc.height;
 			this._view.addChild( mc );
 			left = mc;
@@ -91,18 +100,13 @@ package controlers.layers
 		private var index:int;		//第几页
 		private function showWords( content:String ):void
 		{
-			var element_format:ElementFormat;
-			element_format = new ElementFormat(font_description);
-			element_format.fontSize= fontSize;
-			element_format.kerning= Kerning.ON;
-			element_format.color = fontColor;
+			while( board.numChildren > 0 )
+				board.removeChildAt( 0 );
 			
-			var text_element:TextElement=new TextElement( content , element_format );
-			text_block = new TextBlock();
-			text_block.content=text_element;
+			text_element = new TextElement( content , text_format );
+			text_block = new TextBlock( text_element );
 			
 			var textLine:TextLine = text_block.createTextLine (null, board.width - 20 );
-			
 			totalH = 0;
 			typing = true;	//打字中
 			waiting = false;
@@ -110,23 +114,23 @@ package controlers.layers
 			animateTextLine( textLine );
 		}
 		
-		private var text_block:TextBlock;
 		private var currentLine:TextLine;
 		private var cursor:int;
 		private var totalH:int = 0;
 		
 		private function animateTextLine( textLine:TextLine ) :void
 		{
-			//设置显示位置
-			textLine.x = 10;
-			textLine.y = -5 + totalH;
-			textLine.height = 16;
-			
-			totalH += textLine.height + 6;
-			
 			currentLine = textLine;
 			currentLine.scrollRect = new Rectangle( 0, 0, 0, 0 );
 			board.addChild(textLine);
+			
+			//设置显示位置
+			textLine.x = 10;
+			
+			totalH += -margin + textLine.ascent;
+			textLine.y = totalH;
+			totalH += 13;
+			
 			cursor = 0;
 			
 			//设置循环次数
@@ -137,12 +141,12 @@ package controlers.layers
 		
 		protected function onTimer(event:Event):void
 		{
-			currentLine.scrollRect = new Rectangle( 0, -20, cursor += step , 30 );
+			currentLine.scrollRect = new Rectangle( 0, -15, cursor += step , 30 );
 		}
 		
 		protected function onTimerComplete(event:Event):void
 		{
-			currentLine = currentLine.textBlock.createTextLine( currentLine, currentLine.specifiedWidth );
+			currentLine = text_block.createTextLine( currentLine,  board.width - 20 );
 			if ( currentLine )
 				animateTextLine( currentLine ); 
 			else{
@@ -156,6 +160,8 @@ package controlers.layers
 		private function onKeyDown( event:Event ):void
 		{
 			if ( waiting ){
+				waiting = false;
+				
 				if ( ++index == wordGroup.length ){
 					//清除显示
 					clear();
@@ -166,29 +172,35 @@ package controlers.layers
 				}else{
 					//继续下一页
 					showWords( wordGroup[ index ] );
+					return;		//don't run the typing case!
 				}
 			}
 			
 			//用户等不及了，想一下子都展示出来
 			if ( typing ){
+				typing = false;
+				
+				timer.stop();
 				
 				while( board.numChildren > 0 )
 					board.removeChildAt( 0 );
-				
-				var textLine:TextLine = text_block.createTextLine (null, board.width - 20 );
+					
+				currentLine = text_block.createTextLine( null, board.width - 20 );
 				totalH = 0;
 				
-				while( textLine ){
-					textLine.x = 10;
-					textLine.y = -5 + totalH;
-					textLine.height = 16;
-					totalH += textLine.height + 6;
-					board.addChild(textLine);
+				while( currentLine ){
+					currentLine.x = 10;
+					board.addChild(currentLine);
 					
-					textLine = textLine.textBlock.createTextLine( textLine, textLine.specifiedWidth );
+					totalH += -margin + currentLine.ascent;
+					currentLine.y = totalH;
+					totalH += 13;
+					
+					currentLine.scrollRect = new Rectangle( 0, -15, currentLine.width , 30 ); 
+					
+					currentLine = text_block.createTextLine( currentLine, currentLine.specifiedWidth );
 				}
 				
-				typing = false;
 				waiting = true;
 			}
 		}
@@ -201,25 +213,24 @@ package controlers.layers
 		
 		private function createBoard( words:String ):void
 		{
-			var w:int =  this._view.stage.stageWidth;
+			var w:int =  this._view.stage.stageWidth - 10;
 			
+			board.x = margin;
 			if ( left != null ){
-				w -= left.width;
-				board.x = left.width;
+				w = w - left.width - margin;
+				board.x += left.width + margin;
 			}
 			if ( right != null )
-				w -= right.width;
+				w = w - right.width - margin;
 			
-			while( board.numChildren > 0 )
-				board.removeChildAt( 0 );
-			
-			board.graphics.beginFill( 0x000000, 0.6 );
-			board.graphics.drawRect(0,0, w, boardHeight );
+			board.graphics.clear();
+			board.graphics.beginFill( 0x000000, 0.5 );
+			board.graphics.drawRoundRect( 0,0, w, boardHeight, 10, 10 );
 			board.graphics.endFill();
 			
-			board.y = this._view.stage.stageHeight - boardHeight; 
-			
 			this._view.addChild( board );
+			board.y = this._view.stage.stageHeight - boardHeight; 
+			board.height = boardHeight;
 			
 			//切割字符串
 			wordGroup = [];
@@ -232,8 +243,6 @@ package controlers.layers
 					wordGroup.push( str.substr( i, count ) );
 				}
 			}
-
-			trace( "wordGroup.length = " + wordGroup.length );
 		}
 		
 		
