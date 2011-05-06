@@ -13,7 +13,7 @@ package server.impl
 				name : "汜水关之战",
 				cellXNum : 20,
 				cellYNum : 20,
-				oX		: 	50,		oY	:   50,
+				oX		: 	500,		oY	:   450,
 //				oX : 0, oY: 0,
 				
 					bg		: {

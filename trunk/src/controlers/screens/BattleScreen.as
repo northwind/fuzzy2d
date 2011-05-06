@@ -38,6 +38,7 @@ package controlers.screens
 			var unitsLayer:UnitsLayer = new UnitsLayer( model );
 			var actionLayer:ActionLayer = new ActionLayer();
 			var cancelLayer:CancelLayer = new CancelLayer();
+			var talkLayer:TalkLayer = new TalkLayer();
 			
 			this.mapLayer  = new MapLayer( model.mapModel );
 			var tipsLayer:TipsLayer = new TipsLayer();
@@ -62,6 +63,7 @@ package controlers.screens
 			this.push( scrollLayer );
 			this.push( cancelLayer );
 			this.push( tipsLayer );
+			this.push( talkLayer );
 			this.push( menuLayer );
 			this.push( debugLayer );
 		}

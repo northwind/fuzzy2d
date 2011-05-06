@@ -18,30 +18,19 @@ package controlers.layers
 			super();
 		}
 		
-		public function playMovie( mc:MovieClip, x:Number, y:Number, callback:Function ) :void
+		public function playMovie( mc:MovieClip, x:Number, y:Number, callback:Function = null ) :void
 		{
-			mc.addEventListener(Event.EXIT_FRAME, onExitFrame );			
-				
+			//播放结束后移除
+			mc.addFrameScript( mc.totalFrames-1, function() :void {
+				mc.stop();
+				_view.removeChild( mc );
+				if ( callback != null )
+					callback();
+			});
+			
 			mc.x = x;
 			mc.y = y;
 			this._view.addChild( mc );
 		}
-		
-		protected function onExitFrame(event:Event):void
-		{
-			if ( this._view.numChildren == 0 )
-				return;
-			trace(  "onExitFrame" );
-			try
-			{
-				this._view.removeChild( event.target as DisplayObject );	
-			} 
-			catch(error:Error) 
-			{
-				
-			}
-			
-		}
-		
 	}
 }

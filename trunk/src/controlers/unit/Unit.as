@@ -12,6 +12,8 @@ package controlers.unit
 	import controlers.unit.impl.UnitModelComponent;
 	
 	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	
 	import models.impl.UnitModel;
 	
@@ -46,12 +48,17 @@ package controlers.unit
 		public var node:Node;
 		public var isStandby:Boolean;
 		
+		private var timer:Timer = new Timer( 200, 1 );
+		private var callback:Function;
+		
 		public function Unit( model:UnitModelComponent = null )
 		{
 			super();
 			
 			if ( model != null )
 				this.addComponent( model );
+			
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerCompleted );
 		}
 		
 		public function restore() : void
@@ -59,11 +66,24 @@ package controlers.unit
 			isStandby = false;
 		}
 		
-		public function standby() : void
+		public function standby( callback:Function = null ) : void
 		{
 			this.model.standby(0,0);
 			this.figure.gray();
 			isStandby = true;
+			
+			this.callback = callback;
+			
+			timer.reset();
+			timer.start();
+		}
+		
+		private function onTimerCompleted(event:Event):void
+		{
+			if ( callback != null ){
+				callback();
+				callback = null;
+			}
 			
 			this.dispatchEvent( new UnitEvent( UnitEvent.STANDBY, this ) );
 		}
@@ -74,6 +94,10 @@ package controlers.unit
 			
 			layer.actionLayer.bind( this );
 			layer.actionLayer.beginAction();
+			
+			layer.talkLayer.speak( this, "哦耶，我被选中了.童话：从前有只没有名字的兔子，总是喜欢跟小动物们说各种冷笑话，并把别人的冷笑话当成自己的，还宣称它讲的冷笑话是全世界最独一无二的。有一天，当老虎发现兔子在私下里说，兔子才是森林里说话最有价值的群体，还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。{p}还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。", function():void{
+				trace( "speak done." );
+			} );
 		}
 		
 		public function unselect() : void
@@ -114,5 +138,6 @@ package controlers.unit
 		{
 			return a.model.teamModel.faction == b.model.teamModel.faction;
 		}
+
 	}
 }

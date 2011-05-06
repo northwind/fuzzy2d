@@ -123,6 +123,18 @@ package controlers.unit.impl
 			return this.lastDirect;
 		}
 		
+		public function get avatar():MovieClip
+		{
+			try
+			{
+				return _mapItem.view[ "getAvatar" ]() as MovieClip;	
+			}
+			catch(error:Error) {
+				Logger.error( this.model.name + " has no function : avatar." );
+			}
+			return new MovieClip();
+		}
+		
 		public function gray() : void
 		{
 			try
