@@ -64,7 +64,7 @@ package com.norris.fuzzy.core
 				
 			this.initManagers();
 			
-			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );
+//			this.stage.addEventListener(Event.ENTER_FRAME, onFrame );
 		}
 		
 		protected function initManagers() :void
