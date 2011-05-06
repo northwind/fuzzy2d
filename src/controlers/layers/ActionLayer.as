@@ -138,8 +138,8 @@ package controlers.layers
 			
 			//待机
 			standbyState = new ActionState( function():void{
-				stack.clear();
 				_unit.standby();
+				stack.clear();
 			});
 			
 			//--------------------------设置弹出菜单按钮----------------------
@@ -561,5 +561,7 @@ internal class StateStack
 	public function clear() : void
 	{
 		_items = [];
+		
+		onEmpty();
 	}
 }

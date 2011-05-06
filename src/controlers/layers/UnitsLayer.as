@@ -42,6 +42,7 @@ package controlers.layers
 		public var staticLayer:StaticLayer;
 		public var actionLayer:ActionLayer;
 		public var animationLayer:AnimationLayer;
+		public var talkLayer:TalkLayer;
 		
 		//使用unitsLayer做为Astar寻路的容器
 		public var astar:Astar;
