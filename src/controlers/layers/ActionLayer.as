@@ -3,7 +3,6 @@ package controlers.layers
 	import com.greensock.*;
 	import com.greensock.easing.*;
 	import com.greensock.motionPaths.*;
-	import com.hurlant.eval.ast.Func;
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
 	import com.norris.fuzzy.core.display.impl.ScrollLayerContainer;
 	import com.norris.fuzzy.core.log.Logger;
@@ -64,6 +63,7 @@ package controlers.layers
 		public var tileLayer:TileLayer;
 		public var unitsLayer:UnitsLayer;
 		public var cancelLayer:CancelLayer;
+		public var tipsLayer:TipsLayer;
 		
 		//六种状态
 		private var initState:ActionState;
@@ -363,6 +363,8 @@ package controlers.layers
 		{
 			var btn:RangeIconButton = event.target as RangeIconButton;
 			btn.able.showRange();
+			
+			tipsLayer.showBottomTip( btn.tips ); 
 		}
 		
 		protected function onRangeBtnOut(event:MouseEvent = null):void
@@ -372,6 +374,8 @@ package controlers.layers
 				btn.able.hideRange();
 			
 			clicked[ btn.dataSource.name ] = false;
+			
+			tipsLayer.hideBottomTip();
 		}
 		
 		protected function onRangeBtnClick(event:MouseEvent = null ):void
