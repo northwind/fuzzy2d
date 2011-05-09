@@ -52,7 +52,9 @@ BattleModelComponent
 #IconButton
 #TweenMax
 #ActionLayer
-UnitsLayer中增加Team
+#UnitsLayer中增加Team
+RoundEvent
+增加文本引擎
 
 #增加view概念，限制screen展示   使用ScrollLayerContainer替代view概念
 

@@ -6,6 +6,11 @@ package controlers.layers
 	
 	import flash.events.Event;
 	
+	/**
+	 * 系统操作菜单 
+	 * @author norris
+	 * 
+	 */	
 	public class MenuLayer extends SWFLayer
 	{
 		public var height:int = 30;
