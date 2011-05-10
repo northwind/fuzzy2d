@@ -151,7 +151,7 @@ package controlers.unit.impl
 			oriDirect = figure.direct;
 			
 			_target = to;
-			var path:Path = unit.layer.astar.search( unit.node, to );
+			var path:Path = unit.layer.findPath( unit, to );
 			
 			moving = true;
 			//暂时从列表中移除
@@ -181,6 +181,11 @@ package controlers.unit.impl
 		{
 			currentNode = nextNode;
 			
+			//更新查询列表
+			unit.layer.delUnitByNode( unit.node );
+			unit.node = currentNode;
+			unit.layer.addUnitByNode( unit.node, unit );
+			
 			if ( currentN++ < nodes.length -1 ){
 				//继续移动
 				walkTo( nodes[ currentN ] );
@@ -188,10 +193,10 @@ package controlers.unit.impl
 				//已经完成移动
 				moving = false;
 				_active  = false;
-				//更新查询列表
-				unit.layer.delUnitByNode( oriNode );
-				unit.node = _target;
-				unit.layer.addUnitByNode( unit.node, unit );
+//				//更新查询列表
+//				unit.layer.delUnitByNode( oriNode );
+//				unit.node = _target;
+//				unit.layer.addUnitByNode( unit.node, unit );
 				
 				if ( onWalkPathCallback != null )
 					onWalkPathCallback.call( null );

@@ -39,6 +39,8 @@ package views
 			
 			this.addEventListener(MouseEvent.MOUSE_DOWN , onMouseDown );
 			this.addEventListener(MouseEvent.MOUSE_UP , onMouseUp );
+			this.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver );
+			this.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove );
 		}
 		
 		public function set available( value:Boolean ) :void
@@ -109,6 +111,16 @@ package views
 		}
 		
 		protected function onMouseDown(event:MouseEvent):void
+		{
+			event.stopPropagation();
+		}
+		
+		protected function onMouseOver(event:MouseEvent):void
+		{
+//			event.stopPropagation();
+		}
+		
+		protected function onMouseMove(event:MouseEvent):void
 		{
 			event.stopPropagation();
 		}
