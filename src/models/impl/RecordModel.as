@@ -11,6 +11,7 @@ package models.impl
 	{
 		public var id:String = "";
 		public var teams:Array = [];
+		public var myTeamModel:TeamModel;
 		
 		private var _map:MapModel;
 		private var _script:ScriptModel;
@@ -68,6 +69,9 @@ package models.impl
 					obj = teams[ j ];
 					//new a team
 					team = new TeamModel( obj.na, obj.fa, obj.tm );
+					if ( obj.my === true )
+						myTeamModel = team;
+						
 					m = obj.m is Array ? obj.m as Array : [];
 					//add related download count
 					_relates += m.length;
