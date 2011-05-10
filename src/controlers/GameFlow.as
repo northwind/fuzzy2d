@@ -105,11 +105,13 @@ package controlers
 									resourceMgr.add( "unit_standby", "assets/accepted_48.png" );
 									resourceMgr.add( "unit_attack", "assets/circle_red.png" );
 									resourceMgr.add( "unit_cancel", "assets/Cancel__Red.png" );
+									resourceMgr.add( "unit_tipbg", "assets/systemResource.swf" );
 									resource.push( battleSwf );
 									resource.push( "unit_move" );
 									resource.push( "unit_standby" );
 									resource.push( "unit_attack" );
 									resource.push( "unit_cancel" );
+									resource.push( "unit_tipbg" );
 									
 									world.addLoadingText( "0/" + resource.length +"下载场景资源" );
 									resourceMgr.load( resource, function( event:ResourceEvent ):void{

@@ -7,6 +7,7 @@ package controlers.layers
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.utils.Timer;
@@ -19,8 +20,6 @@ package controlers.layers
 	public class TipsLayer extends BaseLayer
 	{
 		public var menuLayer:MenuLayer;
-		public var tileLayer:TileLayer;
-		public var unitsLayer:UnitsLayer;
 		
 		private var top:TextField = new TextField();
 		private var topWrap:Sprite = new Sprite();
@@ -32,8 +31,6 @@ package controlers.layers
 		private var bottomTween:TweenLite;
 		private var bottomTimer:Timer = new Timer( 1000, 1 );		//延迟显示
 		private var bottomContent:String;											//保存起来
-		
-		private var unitTipWrap:Sprite = new Sprite();
 		
 		public function TipsLayer()
 		{
@@ -68,7 +65,7 @@ package controlers.layers
 				topTimer.stop();
 			
 			top.text = content;
-//			topWrap.visible = true;
+			topWrap.visible = true;
 			
 			var textWidth:Number = top.textWidth + 10; 
 			var wrapWidth:Number = Math.max( 200, textWidth + 30 );
@@ -77,19 +74,16 @@ package controlers.layers
 			top.y = 5;
 			topWrap.alpha = 0;
 			topWrap.y = 20;
-			topWrap.width = wrapWidth;
 			
 			topWrap.graphics.clear();
 			topWrap.graphics.beginFill( 0x0000ff, 0.5 );
 			topWrap.graphics.drawRoundRect( 0, 0, wrapWidth, 30, 8, 8 );
 			topWrap.graphics.endFill();
-
+			
 			top.x = (wrapWidth - textWidth ) /2 ;
 			topWrap.x = ( this._view.stage.stageWidth - wrapWidth ) / 2;
 			
 			topTween = TweenLite.to( topWrap, 0.7, { y : 33, alpha : 1 } );
-			
-			trace( "textWidth = " + textWidth, "topWrap.x = " + topWrap.x );
 			
 			topTimer.reset();
 			topTimer.start();
@@ -141,12 +135,10 @@ package controlers.layers
 			var textWidth:Number = bottom.textWidth + 10; 
 			var wrapWidth:Number = Math.max( 200, textWidth );
 			
-			bottom.width = textWidth;
 			bottom.y = 5;
 			bottom.x = 20;
 			
 			bottomWrap.alpha = 0.3;
-			bottomWrap.width = wrapWidth;
 			bottomWrap.x = -8;
 			bottomWrap.y = this._view.stage.stageHeight - 30;
 			
@@ -157,6 +149,5 @@ package controlers.layers
 			
 			bottomTween = TweenLite.to( bottomWrap, 0.5, { alpha : 1 } );			
 		}
-		
 	}
 }
