@@ -44,6 +44,7 @@ package controlers.layers
 	{
 		public var coordLayer :DebugMsgLayer;
 		public var scrollLayer:ScrollLayerContainer;
+		public var currentNode:Node;					//当前单元格
 		
 		public var cols:int;								//2.5d世界中列数
 		public var rows:int;						    //2.5d世界中行数
@@ -212,7 +213,9 @@ package controlers.layers
 				_movedTile.x  = coord.x + _gridX;
 				_movedTile.y  = coord.y + _gridY;
 				
-				this.dispatchEvent( new TileEvent( TileEvent.MOVE, row, col, getNode( row, col ) ) );
+				currentNode = getNode( row, col );
+				
+				this.dispatchEvent( new TileEvent( TileEvent.MOVE, row, col, currentNode ) );
 			}else{
 				_movedTile.visible = false;
 			}			

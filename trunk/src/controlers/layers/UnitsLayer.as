@@ -2,6 +2,8 @@ package controlers.layers
 {
 	import com.norris.fuzzy.core.display.impl.BaseLayer;
 	import com.norris.fuzzy.core.log.Logger;
+	import com.norris.fuzzy.core.resource.event.ResourceEvent;
+	import com.norris.fuzzy.core.resource.impl.SWFResource;
 	import com.norris.fuzzy.map.*;
 	import com.norris.fuzzy.map.astar.Astar;
 	import com.norris.fuzzy.map.astar.ISearchable;
@@ -15,7 +17,10 @@ package controlers.layers
 	import controlers.unit.Unit;
 	import controlers.unit.impl.*;
 	
+	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
@@ -58,6 +63,14 @@ package controlers.layers
 		private var _lastMoveCol:int = 20;
 		
 		private var _selectUnit:Unit;
+
+		private var unitTipWrap:Sprite = new Sprite();	//显示角色信息
+		private var unitTipShowing:Boolean;			//是否在显示信息
+		private var currentTipUnit:Unit;				//当前显示角色
+		private var mouseOnTip:Boolean;				//鼠标是否停留在提示信息栏上
+		private var unitTipTimer:Timer = new Timer( 600, 1 );	//延迟隐藏
+//		private var tipBg:MovieClip;
+		private var tipBg:Sprite;
 		
 		public function UnitsLayer( model:RecordModel )
 		{
@@ -65,14 +78,43 @@ package controlers.layers
 			
 			_recordModel = model;
 			astar= new Astar( this );
+			
+			unitTipTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTipTimerCompleted );
+			
+			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
 		
-		override public function onSetup() :void
+		private var resource:SWFResource;
+		private function onSetupCompleted(event:Event):void
 		{
+			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
+			
 			if ( this._recordModel.data == null )
 				this._recordModel.addEventListener( ModelEvent.COMPLETED, onModelCompleted );
 			else 
 				onModelCompleted();
+			
+//			var resource:SWFResource = (MyWorld.instance.resourceMgr.getResource( "unit_tipbg" ) as SWFResource);
+			resource = MyWorld.instance.resourceMgr.getResource( "unit_tipbg" ) as SWFResource;
+			if ( resource != null ){
+				if ( resource.isFinish() )
+					onResourceCompleted()
+				else
+					resource.addEventListener(ResourceEvent.COMPLETE, onResourceCompleted );
+			}	
+		}
+		
+		private function onResourceCompleted(event:ResourceEvent = null ):void
+		{
+			resource.removeEventListener(ResourceEvent.COMPLETE, onResourceCompleted );
+			
+//			tipBg = new (resource.getSymbol( "UnitTip" ));
+			tipBg = new (resource.getSymbol( "XXXXX" ));
+			
+			unitTipWrap.addChild( tipBg );
+			//				unitTipWrap.addChild( (new (resource.getSymbol("unittip" ))) as Sprite );
+			unitTipWrap.addEventListener(MouseEvent.ROLL_OVER, onUnitTipOver );
+			unitTipWrap.addEventListener(MouseEvent.ROLL_OUT, onUnitTipOut );
 		}
 		
 		private function onModelCompleted( event :ModelEvent = null ) :void
@@ -176,19 +218,76 @@ package controlers.layers
 			_selectUnit = null;
 		}
 		
-		private var _lastMoveItem:IMapItem = null;
 		private function onMoveTile( event:TileEvent ):void
 		{
-			var item:IMapItem = this._recordModel.mapModel.getItem( event.row, event.col );
-			if (  _lastMoveItem != item && _lastMoveItem != null )
-				_lastMoveItem.view.alpha = 1;
-			
-			if ( item == null )
+			//如果停留在信息栏上忽略
+			if ( mouseOnTip )
 				return;
 			
-			_lastMoveItem = item;
+			//显示角色基本信息
+			var temp:Unit = this.getUnitByNode( event.node );
+			if ( temp == null ){
+				if ( unitTipShowing )
+					hideUnit();
+			}else{
+				if ( currentTipUnit != temp )
+					showUnit( temp );
+			}
+		}
+		
+		public function showUnit(unit:Unit):void
+		{
+			currentTipUnit = unit;
+			unitTipShowing = true;
 			
-			//TODO 显示角色基本信息
+			unitTipWrap.x = unit.node.originX - unitTipWrap.width + 20;
+			unitTipWrap.y = unit.node.originY - 40;
+			
+			try
+			{
+//				tipBg[ "showUnit" ]( 1, unit.model.name, 2, 3, 3, 3, 3, 3, 3 );
+				tipBg[ "showU" ]( unit.model.name );
+			}
+			catch(error:Error) 
+			{
+				trace( error.toString() );
+			}
+			
+			this._view.addChild( unitTipWrap );
+		}
+		
+		public function hideUnit() : void
+		{
+			if ( !unitTipShowing )
+				return;
+			 
+			unitTipTimer.reset();
+			unitTipTimer.start();
+		}
+		
+		protected function onTipTimerCompleted(event:Event):void
+		{
+			currentTipUnit = null;
+			unitTipShowing = false;
+			
+			
+			this._view.removeChild( unitTipWrap );
+		}
+		
+		protected function onUnitTipOver(event:Event):void
+		{
+			mouseOnTip = true;
+			if ( unitTipTimer.running )
+				unitTipTimer.stop();
+		}
+		
+		protected function onUnitTipOut(event:Event):void
+		{
+			mouseOnTip = false;
+			
+			//移动显示框同时移动到了别的单元格则取消显示
+			if ( this.getUnitByNode( this.tileLayer.currentNode ) != currentTipUnit )
+				hideUnit();
 		}
 		
 		private function isWalkable( row:int, col:int ) : Boolean
@@ -219,6 +318,9 @@ package controlers.layers
 		
 		public function getUnitByNode( node:Node ) :Unit
 		{
+			if ( node == null )
+				return null;
+			
 			return _unitsPos[ node.id ] as Unit;
 		}
 		
@@ -301,5 +403,6 @@ package controlers.layers
 		{
 			return tileLayer.getNode( row, col );
 		}
+		
 	}
 }
