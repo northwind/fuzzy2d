@@ -8,6 +8,7 @@ package controlers.layers
 	import com.norris.fuzzy.map.astar.Astar;
 	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.astar.Node;
+	import com.norris.fuzzy.map.astar.Path;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.Team;
@@ -49,12 +50,13 @@ package controlers.layers
 		public var animationLayer:AnimationLayer;
 		public var talkLayer:TalkLayer;
 		
-		//使用unitsLayer做为Astar寻路的容器
-		public var astar:Astar;
 		public var active:Boolean = true;		//是否接受鼠标点击事件
 		public var teams:Array = [];
 		public var myTeam:Team;
 		
+		//使用unitsLayer做为Astar寻路的容器
+		private var astar:Astar;
+		private var walker:Unit;
 		private var _recordModel:RecordModel;
 		private var _units:Object = {};
 		private var _unitsPos:Object = {};
@@ -186,6 +188,10 @@ package controlers.layers
 				
 				_selectUnit = unit;
 				_selectUnit.select();
+				
+				//隐藏提示框
+				unitTipDelayTimer.reset();
+				hideUnitInfo();
 			}else{
 //				if ( _selectUnit != unit ){
 //					_selectUnit.unselect();
@@ -219,8 +225,10 @@ package controlers.layers
 			//显示角色基本信息
 			var temp:Unit = this.getUnitByNode( event.node );
 			if ( temp == null ){
+				unitTipDelayTimer.reset();
+				
 				if ( unitTipShowing )
-					hideUnit();
+					hideUnitInfo();
 			}else{
 				if ( currentTipUnit != temp ){
 					preShow = temp;
@@ -233,13 +241,15 @@ package controlers.layers
 		private var preShow:Unit;
 		protected function onDelayTimerCompleted(event:Event):void
 		{
-			showUnit( preShow );
+			showUnitInfo( preShow );
 		}
 		
-		public function showUnit(unit:Unit):void
+		public function showUnitInfo(unit:Unit):void
 		{
-			if ( unitTipShowing )
-				hideUnit();
+			if ( unitTipTimer.running )
+				unitTipTimer.reset();
+			if ( preShow == null )
+				return;
 			
 			currentTipUnit = unit;
 			unitTipShowing = true;
@@ -267,8 +277,11 @@ package controlers.layers
 			this._view.addChild( unitTipWrap );
 		}
 		
-		public function hideUnit() : void
+		public function hideUnitInfo() : void
 		{
+			if ( unitTipDelayTimer.running )
+				unitTipDelayTimer.reset();
+			 
 			if ( !unitTipShowing )
 				return;
 			 
@@ -279,8 +292,8 @@ package controlers.layers
 		protected function onTipTimerCompleted(event:Event):void
 		{
 			currentTipUnit = null;
+			preShow = null;
 			unitTipShowing = false;
-			
 			
 			this._view.removeChild( unitTipWrap );
 		}
@@ -298,7 +311,7 @@ package controlers.layers
 			
 			//移动显示框同时移动到了别的单元格则取消显示
 			if ( this.getUnitByNode( this.tileLayer.currentNode ) != currentTipUnit )
-				hideUnit();
+				hideUnitInfo();
 		}
 		
 		private function isWalkable( row:int, col:int ) : Boolean
@@ -404,10 +417,25 @@ package controlers.layers
 		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
 		{
 			var cost:Number = 1;
-			if ( staticLayer.isBlock( n1.row, n1.col ) || staticLayer.isBlock( n2.row, n2.col )  )
+			if ( staticLayer.isBlock( n1.row, n1.col ) || staticLayer.isBlock( n2.row, n2.col ) )
 				cost = 10000;
-			
+			else {
+				//如果是寻路者的敌人则不让通过
+				var u1:Unit = this.getUnitByNode( n1 ), u2:Unit = this.getUnitByNode( n2 );
+				if ( u1 && Unit.isEnemy( walker, u1 ) ||
+					  u2 && Unit.isEnemy( walker, u2 ) )
+					cost = 10000;
+			}
 			return cost;
+		}
+		
+		public function findPath( walker:Unit, target:Node ):Path
+		{
+			if ( walker == null || target == null )
+				return null;
+			
+			this.walker = walker;
+			return astar.search( walker.node, target );
 		}
 		
 		public function getNode( row:int, col:int ):Node

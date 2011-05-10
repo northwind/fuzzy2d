@@ -365,6 +365,8 @@ package controlers.layers
 			btn.able.showRange();
 			
 			tipsLayer.showBottomTip( btn.tips ); 
+			//隐藏角色信息提示框
+			unitsLayer.hideUnitInfo();
 		}
 		
 		protected function onRangeBtnOut(event:MouseEvent = null):void
