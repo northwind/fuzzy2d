@@ -318,9 +318,9 @@ package server.impl
 				
 				//r = row, c = col d= direct
 				//fa = faction 势力	tm = team 队伍  v = visiable 是否可见  1可见 0不可见 oH : 50,					
-				//cH = currentHP 当前血量  oH = offsetHP 技能加成   
+				//cH = currentHP 当前血量  oH = offsetHP 技能加成    my 是否玩家控制
 				teams		:  [{
-					fa : 1, tm : 100, na : "我军",
+					fa : 1, tm : 100, na : "我军", my: true,
 					m	: [{
 						id: 1,  r :  16,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1		
 					},{

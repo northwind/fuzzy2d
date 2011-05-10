@@ -53,6 +53,7 @@ package controlers.layers
 		public var astar:Astar;
 		public var active:Boolean = true;		//是否接受鼠标点击事件
 		public var teams:Array = [];
+		public var myTeam:Team;
 		
 		private var _recordModel:RecordModel;
 		private var _units:Object = {};
@@ -68,9 +69,9 @@ package controlers.layers
 		private var unitTipShowing:Boolean;			//是否在显示信息
 		private var currentTipUnit:Unit;				//当前显示角色
 		private var mouseOnTip:Boolean;				//鼠标是否停留在提示信息栏上
-		private var unitTipTimer:Timer = new Timer( 600, 1 );	//延迟隐藏
-//		private var tipBg:MovieClip;
-		private var tipBg:Sprite;
+		private var unitTipTimer:Timer = new Timer( 200, 1 );	//延迟隐藏
+		private var unitTipDelayTimer:Timer = new Timer( 1000, 1 );		//延迟显示
+		private var tipClass:Sprite;
 		
 		public function UnitsLayer( model:RecordModel )
 		{
@@ -80,11 +81,11 @@ package controlers.layers
 			astar= new Astar( this );
 			
 			unitTipTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTipTimerCompleted );
+			unitTipDelayTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onDelayTimerCompleted ); 
 			
 			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
 		
-		private var resource:SWFResource;
 		private function onSetupCompleted(event:Event):void
 		{
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
@@ -94,27 +95,14 @@ package controlers.layers
 			else 
 				onModelCompleted();
 			
-//			var resource:SWFResource = (MyWorld.instance.resourceMgr.getResource( "unit_tipbg" ) as SWFResource);
-			resource = MyWorld.instance.resourceMgr.getResource( "unit_tipbg" ) as SWFResource;
+			var resource:SWFResource = (MyWorld.instance.resourceMgr.getResource( "unit_tipbg" ) as SWFResource);
 			if ( resource != null ){
-				if ( resource.isFinish() )
-					onResourceCompleted()
-				else
-					resource.addEventListener(ResourceEvent.COMPLETE, onResourceCompleted );
+				tipClass = new (resource.getSymbol( "showUnit" ));
+				
+				unitTipWrap.addChild( tipClass );
+				unitTipWrap.addEventListener(MouseEvent.ROLL_OVER, onUnitTipOver );
+				unitTipWrap.addEventListener(MouseEvent.ROLL_OUT, onUnitTipOut );
 			}	
-		}
-		
-		private function onResourceCompleted(event:ResourceEvent = null ):void
-		{
-			resource.removeEventListener(ResourceEvent.COMPLETE, onResourceCompleted );
-			
-//			tipBg = new (resource.getSymbol( "UnitTip" ));
-			tipBg = new (resource.getSymbol( "XXXXX" ));
-			
-			unitTipWrap.addChild( tipBg );
-			//				unitTipWrap.addChild( (new (resource.getSymbol("unittip" ))) as Sprite );
-			unitTipWrap.addEventListener(MouseEvent.ROLL_OVER, onUnitTipOver );
-			unitTipWrap.addEventListener(MouseEvent.ROLL_OUT, onUnitTipOut );
 		}
 		
 		private function onModelCompleted( event :ModelEvent = null ) :void
@@ -123,8 +111,12 @@ package controlers.layers
 			
 			var coord:Coordinate, unit:Unit, mapItem:IMapItem, team:Team;
 			for each (var teamModel:TeamModel in this._recordModel.teams) {
+				//初始化team
 				team = new Team( teamModel );
+				if ( teamModel == _recordModel.myTeamModel )
+					myTeam = team;
 				
+				//初始化角色
 				for each( var model:UnitModelComponent in teamModel.members.getAll() ){
 					unit = new Unit();
 					unit.layer = this;
@@ -230,27 +222,46 @@ package controlers.layers
 				if ( unitTipShowing )
 					hideUnit();
 			}else{
-				if ( currentTipUnit != temp )
-					showUnit( temp );
+				if ( currentTipUnit != temp ){
+					preShow = temp;
+					unitTipDelayTimer.reset();
+					unitTipDelayTimer.start();
+				}
 			}
+		}
+		
+		private var preShow:Unit;
+		protected function onDelayTimerCompleted(event:Event):void
+		{
+			showUnit( preShow );
 		}
 		
 		public function showUnit(unit:Unit):void
 		{
+			if ( unitTipShowing )
+				hideUnit();
+			
 			currentTipUnit = unit;
 			unitTipShowing = true;
 			
-			unitTipWrap.x = unit.node.originX - unitTipWrap.width + 20;
-			unitTipWrap.y = unit.node.originY - 40;
+			unitTipWrap.x = Math.max( 10, unit.node.originX - unitTipWrap.width + 20 );
+			unitTipWrap.y = Math.max( 10,  unit.node.originY - 40 );
 			
 			try
 			{
-//				tipBg[ "showUnit" ]( 1, unit.model.name, 2, 3, 3, 3, 3, 3, 3 );
-				tipBg[ "showU" ]( unit.model.name );
+				var type:int = 3;		//自己人
+				if ( this.isEnemy( unit ) )	//敌人
+					type = 1;
+				else if ( this.isFriend( unit ) )		//盟军
+					type = 2;
+					
+				tipClass[ "showTip" ]( type, unit.model.name, unit.model.level , 
+					unit.model.bodyHP + unit.model.fixHP, unit.model.currentHP, unit.model.offsetHP,  
+					unit.model.bodyAttack + unit.model.fixAttack, unit.model.currentAttack, unit.model.offsetAttack );
 			}
 			catch(error:Error) 
 			{
-				trace( error.toString() );
+				Logger.error( "UnitsLayer showUnit error. " + error.toString()  );
 			}
 			
 			this._view.addChild( unitTipWrap );
@@ -402,6 +413,29 @@ package controlers.layers
 		public function getNode( row:int, col:int ):Node
 		{
 			return tileLayer.getNode( row, col );
+		}
+		
+		//同一阵营 不同队伍
+		public function isFriend ( b:Unit ) :Boolean
+		{
+			return myTeam.model.faction == b.model.teamModel.faction &&
+				myTeam.model.team != b.model.teamModel.team;
+		}
+		//同一阵营 同一队伍	
+		public function isSibling ( b:Unit ) :Boolean
+		{
+			return myTeam.model.faction == b.model.teamModel.faction &&
+				myTeam.model.team == b.model.teamModel.team;
+		}
+		//不同阵营
+		public function isEnemy ( b:Unit ) :Boolean
+		{
+			return myTeam.model.faction != b.model.teamModel.faction;
+		}
+		//同一阵营
+		public function isBrother ( b:Unit ) :Boolean
+		{
+			return myTeam.model.faction == b.model.teamModel.faction;
 		}
 		
 	}
