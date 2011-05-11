@@ -5,6 +5,7 @@ package com.norris.fuzzy.map.astar {
 	public class Node{
 		
 		public var neighbors:Array = null;
+		public var parent:Node;
 		
 		public var col:int;
 		public var row:int;

@@ -7,6 +7,7 @@ package controlers.layers
 	import com.norris.fuzzy.core.log.Logger;
 	import com.norris.fuzzy.map.IMapItem;
 	import com.norris.fuzzy.map.Isometric;
+	import com.norris.fuzzy.map.astar.Astar;
 	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.astar.Node;
 	import com.norris.fuzzy.map.geom.Coordinate;
@@ -44,7 +45,9 @@ package controlers.layers
 	{
 		public var coordLayer :DebugMsgLayer;
 		public var scrollLayer:ScrollLayerContainer;
+		public var unitsLayer:UnitsLayer;
 		public var currentNode:Node;					//当前单元格
+		public var astar:Astar;
 		
 		public var cols:int;								//2.5d世界中列数
 		public var rows:int;						    //2.5d世界中行数
@@ -135,9 +138,17 @@ package controlers.layers
 			else	
 				this.view.addEventListener(Event.ADDED_TO_STAGE, onAddStage );
 			
-			Range.tileLayer = this;
+			this.addEventListener(Event.COMPLETE, onSetupCompleted );
 		}
 
+		protected function onSetupCompleted(event:Event):void
+		{
+			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
+			
+			astar= new Astar( unitsLayer );
+			Range.tileLayer = this;			
+		}
+		
 		protected function onAddStage( event:Event = null )  : void
 		{
 			this.view.removeEventListener(Event.ADDED_TO_STAGE, onAddStage );
@@ -337,7 +348,7 @@ package controlers.layers
 					
 					_grid[i][j] = node;
 				}
-			}	
+			}
 		}
 		
 		/**
