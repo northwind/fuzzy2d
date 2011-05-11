@@ -314,10 +314,18 @@ package controlers.layers
 				hideUnitInfo();
 		}
 		
-		private function isWalkable( row:int, col:int ) : Boolean
+		/**
+		 * 敌军位置不可通过 
+		 * @param node
+		 * @param walker
+		 * @return 
+		 * 
+		 */		
+		public function isWalkable( node:Node, walker:Unit ) : Boolean
 		{
-			//TODO 友军敌军判断
-			return !_recordModel.mapModel.isBlock( row, col );		
+			var holder:Unit = getUnitByNode( node );
+			return !_recordModel.mapModel.isBlock( node.row, node.col ) && 
+				   ( holder == null || holder != null && Unit.isBrother( holder, walker ) );
 		}
 		
 		public function getUnit( id:String ) :Unit
@@ -429,6 +437,13 @@ package controlers.layers
 			return cost;
 		}
 		
+		/**
+		 * 寻路 
+		 * @param walker
+		 * @param target
+		 * @return 
+		 * 
+		 */		
 		public function findPath( walker:Unit, target:Node ):Path
 		{
 			if ( walker == null || target == null )

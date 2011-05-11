@@ -89,7 +89,7 @@ package com.norris.fuzzy.map.astar {
 		 * @param	The Node for which you want to know the the neighbors.
 		 * @return Array of Node instances.
 		 */
-		private function getNeighbors(n:Node):Array {
+		public function getNeighbors(n:Node):Array {
 			var arr:Array = n.neighbors;
 			var c:int = n.col;
 			var r:int = n.row;

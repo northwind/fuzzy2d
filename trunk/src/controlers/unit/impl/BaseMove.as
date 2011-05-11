@@ -86,7 +86,6 @@ package controlers.unit.impl
 		 */		
 		public function get range():IRange
 		{
-			_dirty = true;
 			_range.measure();
 			
 			return _range;
@@ -151,13 +150,24 @@ package controlers.unit.impl
 			oriDirect = figure.direct;
 			
 			_target = to;
-			var path:Path = unit.layer.findPath( unit, to );
+			var path:Path = new Path();
+			while ( to.parent != null && to != unit.node ) {
+				path.addNode( to );
+				to = to.parent;
+			}
+			path.nodes.reverse();
+			path.nodes.unshift( unit.node );
 			
 			moving = true;
 			//暂时从列表中移除
 			unit.layer.delUnitByNode( unit.node );
 			
 			walkPath( path, callback );
+		}
+		
+		public function moveTo( to:Node, callback:Function = null ) : void
+		{
+			
 		}
 		
 		private function walkPath( path:Path, callback:Function = null ) : void
