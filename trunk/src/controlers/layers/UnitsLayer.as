@@ -174,38 +174,38 @@ package controlers.layers
 				return;
 			
 			var unit:Unit = getUnitByPos( event.row, event.col );
-			if ( _selectUnit == null ){
-				//当前没有操作对象且点在空地上时，什么都不做
-				if ( unit == null )
-					return;
+			if ( unit == null || unit.isStandby || ( _selectUnit != null && _selectUnit == unit ) )
+				return;
 				
-				_selectUnit = unit;
-				_selectUnit.select();
+			select( unit );
 				
-				//隐藏提示框
-				unitTipDelayTimer.reset();
-				hideUnitInfo();
-			}else{
-//				if ( _selectUnit != unit ){
-//					_selectUnit.unselect();
-//				}
-				
-				if ( unit == null ){
-					return;
-				}else{
-					_selectUnit = unit;
-					_selectUnit.select();
-				}
-				
-			}
 			return;
 		}
 		
-		public function unselect() : void
+		public function select( unit:Unit ) : void
 		{
-			if ( _selectUnit == null )
+			_selectUnit = unit;
+
+			unit.select();
+			
+			actionLayer.bind( unit ); 
+			actionLayer.beginAction();
+			
+//			tipsLayer.topTip( "哦耶，我被选中了." );
+//			talkLayer.speak( unit, "哦耶，我被选中了.童话：从前有只没有名字的兔子，总是喜欢跟小动物们说各种冷笑话，并把别人的冷笑话当成自己的，还宣称它讲的冷笑话是全世界最独一无二的。有一天，当老虎发现兔子在私下里说，兔子才是森林里说话最有价值的群体，还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。科学家经过检测，发现地球周围确实存在时空漩涡，其各项参数和爱因斯坦广义相对论预言的完全符合。根据爱因斯坦的相对论，空间和时间是交织在一起的，形成一种被他称为“时空”的四维结构。地球的质量会在这种结构上产生“凹陷”，这很像是一个成年人站在蹦床上陷进去的情形.{p}还能靠说笑话赚钱，老虎就生气把兔子吃掉了，但这样的兔子还有好多好多。", function():void{
+//				trace( "speak done." );
+//			} );
+			
+			//隐藏提示框
+			unitTipDelayTimer.reset();
+			hideUnitInfo();
+		}
+		
+		public function unselect( unit:Unit ) : void
+		{
+			if ( _selectUnit == null || _selectUnit != unit )
 				return;
-			_selectUnit.unselect();
+			
 			_selectUnit = null;
 		}
 		

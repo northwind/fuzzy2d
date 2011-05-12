@@ -65,7 +65,7 @@ package controlers.unit.impl
 			_dirty = true;
 			_callback = callback;
 			
-			figure.attackTo( node, callback );
+			figure.attackTo( node );
 			if ( _resource.isFinish() ){
 				playSWF();
 			}else{

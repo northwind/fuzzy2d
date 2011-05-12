@@ -77,10 +77,16 @@ package controlers.unit.impl
 			unit.layer.tileLayer.clear();
 		}
 		
+		/**
+		 * 单点攻击 
+		 * @param node
+		 * @return 
+		 * 
+		 */		
 		public function canApply( node:Node ):Boolean
 		{
 			var target:Unit = unit.layer.getUnitByNode( node );
-			return _range.contains( node ) && Unit.isEnemy( target, this.unit );
+			return _range.contains( node ) && target != null && Unit.isEnemy( target, this.unit );
 		}
 		
 		public function get active() :Boolean
