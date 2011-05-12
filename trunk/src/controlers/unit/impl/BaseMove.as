@@ -165,9 +165,24 @@ package controlers.unit.impl
 			walkPath( path, callback );
 		}
 		
-		public function moveTo( to:Node, callback:Function = null ) : void
+		public function moveTo( row:int, col:int, callback:Function = null ) : void
 		{
+			var to:Node = unit.layer.tileLayer.getNode( row, col );
+			if ( to == null || moving ){
+				if ( callback != null )
+					callback();
+				return;
+			}
 			
+			_dirty = true;
+			moving = true;
+			
+			var path:Path = unit.layer.tileLayer.findPath( unit.node, to );
+			
+			//暂时从列表中移除
+			unit.layer.delUnitByNode( unit.node );
+			
+			walkPath( path, callback );
 		}
 		
 		private function walkPath( path:Path, callback:Function = null ) : void

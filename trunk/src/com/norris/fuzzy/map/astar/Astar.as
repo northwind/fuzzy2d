@@ -8,7 +8,7 @@ package com.norris.fuzzy.map.astar {
 		
 		public var allowDiag:Boolean;
 		
-		public var maxSearchTimes:uint = 100;		//最大循环次数
+		public var maxSearchTimes:uint = 1000;		//最大循环次数
 		private var _searchTimes:uint = 0;
 		
 		public static const DIAG:Number = Math.sqrt(2);		//拐弯的cost
@@ -21,7 +21,8 @@ package com.norris.fuzzy.map.astar {
 		}
 		
 		/**
-		 * Performs an A* search from one tile (Node) to another, using a grid (ISearchable). 
+		 * Performs an A* search from one tile (Node) to another, using a grid (ISearchable).
+		 * TODO 简化A*操作 
 		 * @param	The starting Node point on the grid.
 		 * @param	The target Node point on the grid.
 		 * @return SearchResults class instance. If the search yielded a path then SearchResults.getIsSuccess() method returns true, and SearchResults.getPath() returns a Path instance that defines the path.
