@@ -41,7 +41,7 @@ package controlers.layers
 	 * @author norris
 	 * 
 	 */	
-	public class UnitsLayer extends BaseLayer implements ISearchable
+	public class UnitsLayer extends BaseLayer
 	{
 		public var tileLayer:TileLayer;
 		public var tipsLayer:TipsLayer;
@@ -54,16 +54,10 @@ package controlers.layers
 		public var teams:Array = [];
 		public var myTeam:Team;
 		
-		//使用unitsLayer做为Astar寻路的容器
-		private var astar:Astar;
-		private var walker:Unit;
 		private var _recordModel:RecordModel;
 		private var _units:Object = {};
 		private var _unitsPos:Object = {};
 		private var _sortedItems:Array = [];
-		
-		private var _lastMoveRow:int = 6;
-		private var _lastMoveCol:int = 20;
 		
 		private var _selectUnit:Unit;
 
@@ -80,7 +74,6 @@ package controlers.layers
 			super();
 			
 			_recordModel = model;
-			astar= new Astar( this );
 			
 			unitTipTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTipTimerCompleted );
 			unitTipDelayTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onDelayTimerCompleted ); 
@@ -410,52 +403,6 @@ package controlers.layers
 				var disp:IMapItem = _sortedItems[i] as IMapItem;
 				this.view.addChildAt(disp.view, i);
 			}
-		}
-		
-		public function getCols():int 
-		{
-			return tileLayer.cols;
-		}
-		
-		public function getRows():int
-		{
-			return tileLayer.rows;
-		}
-		
-		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
-		{
-			var cost:Number = 1;
-			if ( staticLayer.isBlock( n1.row, n1.col ) || staticLayer.isBlock( n2.row, n2.col ) )
-				cost = 10000;
-			else {
-				//如果是寻路者的敌人则不让通过
-				var u1:Unit = this.getUnitByNode( n1 ), u2:Unit = this.getUnitByNode( n2 );
-				if ( u1 && Unit.isEnemy( walker, u1 ) ||
-					  u2 && Unit.isEnemy( walker, u2 ) )
-					cost = 10000;
-			}
-			return cost;
-		}
-		
-		/**
-		 * 寻路 
-		 * @param walker
-		 * @param target
-		 * @return 
-		 * 
-		 */		
-		public function findPath( walker:Unit, target:Node ):Path
-		{
-			if ( walker == null || target == null )
-				return null;
-			
-			this.walker = walker;
-			return astar.search( walker.node, target );
-		}
-		
-		public function getNode( row:int, col:int ):Node
-		{
-			return tileLayer.getNode( row, col );
 		}
 		
 		//同一阵营 不同队伍

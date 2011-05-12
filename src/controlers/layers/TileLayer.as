@@ -10,6 +10,7 @@ package controlers.layers
 	import com.norris.fuzzy.map.astar.Astar;
 	import com.norris.fuzzy.map.astar.ISearchable;
 	import com.norris.fuzzy.map.astar.Node;
+	import com.norris.fuzzy.map.astar.Path;
 	import com.norris.fuzzy.map.geom.Coordinate;
 	
 	import controlers.events.TileEvent;
@@ -41,7 +42,7 @@ package controlers.layers
 	 * @author Administrator
 	 * 
 	 */	
-	public class TileLayer extends BaseLayer
+	public class TileLayer extends BaseLayer implements ISearchable
 	{
 		public var coordLayer :DebugMsgLayer;
 		public var scrollLayer:ScrollLayerContainer;
@@ -145,7 +146,7 @@ package controlers.layers
 		{
 			this.removeEventListener(Event.COMPLETE, onSetupCompleted );
 			
-			astar= new Astar( unitsLayer );
+			astar= new Astar( this );
 			Range.tileLayer = this;			
 		}
 		
@@ -470,6 +471,36 @@ package controlers.layers
 			_select.x = coord.x;
 			_select.y = coord.y;
 		}
+
+		public function getCols():int 
+		{
+			return this.cols;
+		}
 		
+		public function getRows():int
+		{
+			return this.rows;
+		}
+		
+		public	function getNodeTransitionCost(n1:Node, n2:Node):Number
+		{
+			var cost:Number = 1;
+			if ( _model.isBlock( n1.row, n1.col ) || _model.isBlock( n2.row, n2.col ) )
+				cost = 10000;
+			
+			return cost;
+		}
+		
+		/**
+		 * 寻路 
+		 * @param walker
+		 * @param target
+		 * @return 
+		 * 
+		 */		
+		public function findPath( from:Node, to:Node ):Path
+		{
+			return astar.search( from, to );
+		}
 	}
 }

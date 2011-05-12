@@ -16,6 +16,6 @@ package controlers.unit
 		 * @param callback
 		 * 
 		 */		
-		function moveTo( to:Node, callback:Function = null ) : void;
+		function moveTo( row:int, col:int , callback:Function = null ) : void;
 	}
 }
