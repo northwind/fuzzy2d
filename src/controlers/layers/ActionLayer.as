@@ -89,7 +89,9 @@ package controlers.layers
 			//------------------------- 角色状态 ---------------------
 			stack = new StateStack();
 			stack.onEmpty = function():void{
-				_unit.unselect();
+				clearAction();
+				unitsLayer.unselect( _unit );
+				unbind();
 			};
 			//初始化
 			initState = new ActionState( function():void{
@@ -127,17 +129,18 @@ package controlers.layers
 			movingState.nextState = movedState;
 			
 			//攻击后
-			movedState = new ActionState( function():void{
+			attackedState = new ActionState( function():void{
 				stack.push( standbyState );
 			});
 			
 			//准备攻击
 			attackingState = new RangeActionState();
 			attackingState.actionLayer = this;
-			attackingState.nextState = movedState;
+			attackingState.nextState = attackedState;
 			
 			//待机
 			standbyState = new ActionState( function():void{
+				clearAction();
 				_unit.standby();
 				stack.clear();
 			});
@@ -161,6 +164,7 @@ package controlers.layers
 			
 			sBtn = new BlowIconButton( "待机" );
 			sBtn.dataSource = MyWorld.instance.resourceMgr.getResource( "unit_standby" );
+			sBtn.addEventListener(MouseEvent.CLICK, onSBtnClick );
 			IconButtonMgr.reg( "standby", sBtn );
 			
 			cBtn = new BlowIconButton( "取消" );
@@ -171,9 +175,9 @@ package controlers.layers
 		
 		public function bind( unit:Unit ) :void
 		{
-			var mapItem:IMapItem = unit.figure.mapItem;
-			var node:Node = tileLayer.getNode( mapItem.row, mapItem.col );
-			
+			if ( this._unit && this._unit != unit )
+				this.stack.clear();
+				
 			this._unit = unit;
 			
 			mBtn.able = unit.moveable;
@@ -394,6 +398,12 @@ package controlers.layers
 		{
 			this.stack.pop();
 		}
+		
+		protected function onSBtnClick(event:MouseEvent):void
+		{
+			this.stack.push( this.standbyState );
+		}
+		
 	}
 }
 import controlers.events.TileEvent;
@@ -511,7 +521,7 @@ internal class RangeActionState extends ActionState
 			} );
 		}
 		else{
-			//TIP
+			actionLayer.tipsLayer.topTip( "换个地吧" );
 		}
 	}
 	

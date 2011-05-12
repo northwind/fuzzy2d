@@ -176,7 +176,21 @@ package controlers.unit.impl
 		
 		public function attackTo( node:Node = null, callback:Function = null ) : void
 		{
+			var direct:uint = BaseFigure.getDirect( unit.node , node );
+			var fn:String = "attack" + direct;
+			try
+			{
+				_mapItem.view[ fn ]();
+			}
+			catch(error:Error) {
+				Logger.error( this.model.name + " has no function : " +  fn );
+			}
 			
+			//攻击后自动转向
+			turnTo( direct );
+			
+			if ( callback != null )
+				callback();
 		}		
 		/**
 		 * 计算9宫格方向 
