@@ -10,6 +10,7 @@ package models.event
 		public static var CHANGE_HP:String = "change_hp";
 		
 		public var unit:UnitModel;
+		public var offset:Number;
 		
 		public function UnitModelEvent( type:String, unit:UnitModel )
 		{

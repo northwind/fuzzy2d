@@ -16,6 +16,7 @@ package controlers.unit
 	import flash.utils.Timer;
 	
 	import models.impl.UnitModel;
+	import models.event.UnitModelEvent;
 	
 	[Event(name="move", type="controlers.events.UnitEvent")]
 	
@@ -51,13 +52,16 @@ package controlers.unit
 		private var timer:Timer = new Timer( 200, 1 );
 		private var callback:Function;
 		
-		public function Unit( model:UnitModelComponent = null )
+		public function Unit( model:UnitModelComponent )
 		{
 			super();
 			
-			if ( model != null )
+			if ( model != null ){
 				this.addComponent( model );
-			
+				
+				model.addEventListener(UnitModelEvent.CHANGE_HP, onChangeHP );
+				
+			}
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerCompleted );
 		}
 		
@@ -102,6 +106,15 @@ package controlers.unit
 		public function set stuffable( value:IStuffable ) : void
 		{
 			stuffs.push( value );
+		}
+		
+		protected function onChangeHP(event:UnitModelEvent):void
+		{
+			var tempX:Number = Math.max( 10, node.originX + 30 );
+			var tempY:Number = Math.max( 10,  node.originY - 40 );
+			
+			this.layer.animationLayer.showNumber( event.offset, event.offset < 0 ? 0xff0000 : 0x00ff00, 
+				tempX, tempY );
 		}
 		
 		//同一阵营 不同队伍

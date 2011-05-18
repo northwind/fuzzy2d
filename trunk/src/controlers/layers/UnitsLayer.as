@@ -26,6 +26,7 @@ package controlers.layers
 	import flash.utils.Timer;
 	
 	import models.event.ModelEvent;
+	import models.event.UnitModelEvent;
 	import models.impl.MapModel;
 	import models.impl.RecordModel;
 	import models.impl.SkillModel;
@@ -113,9 +114,9 @@ package controlers.layers
 				
 				//初始化角色
 				for each( var model:UnitModelComponent in teamModel.members.getAll() ){
-					unit = new Unit();
+					unit = new Unit( model );
 					unit.layer = this;
-					unit.addComponent( model );
+//					unit.addComponent( model );
 					unit.addComponent( new BaseMove() );
 					unit.addComponent( new BaseFigure() );
 					if ( model.bodyAttack != 0 )

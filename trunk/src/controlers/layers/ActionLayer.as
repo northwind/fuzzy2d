@@ -238,7 +238,7 @@ package controlers.layers
 			var stuff:StuffModel, btn:RangeIconButton;
 			for (var i:int = 0; i < this._unit.stuffs.length; i++) 
 			{
-				stuff = (this._unit.stuffs[ i ] as IStuffable ).model;
+				stuff = (this._unit.stuffs[ i ] as IStuffable ).stuffModel;
 				if ( stuff != null ){
 					btn = IconButtonMgr.get( stuff.name ) as RangeIconButton;
 					if ( btn == null ){
@@ -246,6 +246,9 @@ package controlers.layers
 						btn = IconButtonMgr.create( stuff.name, stuff.desc, stuff.iconUrl, RangeIconButton ) as RangeIconButton;
 						btn.able = this._unit.stuffs[ i ] as IActionable;
 						btn.state = this.attackingState;
+						btn.addEventListener(MouseEvent.ROLL_OVER, onRangeBtnOver );
+						btn.addEventListener(MouseEvent.ROLL_OUT, onRangeBtnOut );
+						btn.addEventListener(MouseEvent.CLICK, onRangeBtnClick );
 					}
 					icons.push( btn );
 				}

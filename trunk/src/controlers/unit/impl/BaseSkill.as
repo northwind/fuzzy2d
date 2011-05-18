@@ -47,6 +47,7 @@ package controlers.unit.impl
 			unit.addEventListener(UnitEvent.STANDBY, onStandby );
 			_active = true;
 			_range = new AttackRange( unit, _model.range, _model.rangeType );
+			_range.self = true;
 			
 			_resource = MyWorld.instance.resourceMgr.getResource( _model.src ) as SWFResource;
 			if ( _resource == null ){
@@ -123,7 +124,6 @@ package controlers.unit.impl
 		 */		
 		public function canApply( node:Node ):Boolean
 		{
-			return true;
 			if ( !_range.contains( node ) )
 				return false;
 			
