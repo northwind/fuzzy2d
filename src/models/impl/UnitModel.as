@@ -1,9 +1,11 @@
 package models.impl
 {
+	import com.hurlant.eval.ast.Void;
 	import com.norris.fuzzy.core.cop.IComponent;
 	import com.norris.fuzzy.core.log.Logger;
 	
 	import controlers.unit.Skill;
+	import controlers.unit.Unit;
 	
 	import flash.events.Event;
 	
@@ -74,16 +76,6 @@ package models.impl
 		public function get currentHP():int
 		{
 			return _currentHP;
-		}
-
-		public function set currentHP(value:int):void
-		{
-			value = Math.max( 0, value );
-			if ( _currentHP == value )
-				return;
-
-			_currentHP = value;
-			this.dispatchEvent( new UnitModelEvent( UnitModelEvent.CHANGE_HP, this ) );
 		}
 
 		/**
@@ -255,7 +247,7 @@ package models.impl
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "attack", id:this.id, row:row, col:col, to:to.id }, null, null ) );
 			
-			to.currentHP -= currentAttack;
+//			to.currentHP -= currentAttack;
 		}
 		
 		//使用技能
@@ -272,9 +264,9 @@ package models.impl
 		}
 		
 		//使用物品
-		public function useStuff( n:uint, to:UnitModel, row:int, col:int ) :void
+		public function useStuff( stuff:StuffModel, n:uint, to:UnitModel, row:int, col:int ) :void
 		{
-			if ( n >= _stuffs.length )
+			if ( n > _stuffs.length )
 				return;
 			
 			this.row = row;
@@ -282,9 +274,26 @@ package models.impl
 			
 			ProxyServer.send( ProxyServer.createRequest( DataRequest.TYPE_Battle, 
 				{ action : "stuff", id:this.id, row:row, col:col, to:to.id }, null, null ) );
+			
+			if ( stuff.id == "1" ){
+				changeHP( 50 );
+			}
 		}
 		
-		
+		private function changeHP( add:int ) : void
+		{
+			var ori:int = _currentHP;
+			_currentHP = Math.min( this.bodyHP + this.fixHP, _currentHP + add );
+			_currentHP = Math.max( 0, _currentHP );
+			
+			var event:UnitModelEvent = new UnitModelEvent( UnitModelEvent.CHANGE_HP, this );
+			event.offset = _currentHP - ori;
+			
+			if ( event.offset == 0 )
+				return;
+			
+			this.dispatchEvent( event );
+		}
 		
 		private static const _mapper : Object =  {
 			r : "row", c : "col", cH : "_currentHP", bH : "bodyHP", fH : "fixHP", oH : "offsetHP",

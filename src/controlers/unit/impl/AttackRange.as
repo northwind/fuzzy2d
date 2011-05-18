@@ -7,6 +7,7 @@ package controlers.unit.impl
 	{
 		public var block:Boolean;		//是否包含障碍单元
 		public var overlay:Boolean;		//是否显示已有移动单位的单元格
+		public var self:Boolean;		//是否包括自己
 		
 		public function AttackRange( unit:Unit, len:uint, type:int )
 		{
@@ -16,9 +17,6 @@ package controlers.unit.impl
 		
 		override protected function onMeasure() : void
 		{
-			if ( len == 0 )
-				return;
-			
 			var diff:int, i :int, j:int;
 			
 			switch(type)
@@ -117,7 +115,8 @@ package controlers.unit.impl
 				}
 			}
 			
-			
+			if( self )
+				addNode( unit.node ); 
 		} 
 	}
 }

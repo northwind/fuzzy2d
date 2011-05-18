@@ -3,6 +3,7 @@ package server.impl
 	import com.norris.fuzzy.map.item.MapItemType;
 	import models.impl.*;
 	import controlers.unit.impl.*;
+	import controlers.unit.impl.RangeType;
 	
 	public class FakeResponse
 	{
@@ -280,10 +281,12 @@ package server.impl
 					de	: "恢复HP",
 					im	: "assets/add_48.png",
 					an  : "redStar",
-					rg  : 1,
-					rt  : 1,
+					rg  : 0,
+					rt  : RangeType.CROSS,
 					ef  : EffectType.SELF,
 					ct  : 1,
+					sr	: "assets/magics1.swf",
+					sb  : "redstar",
 					ln  : {}
 				};
 					break;
@@ -299,6 +302,8 @@ package server.impl
 					an : "storm",	
 					ef	: EffectType.FRIEND,
 					ct : 3,
+					sr	: "assets/magics1.swf",
+					sb  : "zhuque",
 					ln : {}
 				};
 				break;
