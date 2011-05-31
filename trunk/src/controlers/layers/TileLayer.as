@@ -326,9 +326,9 @@ package controlers.layers
 					if ( !isValid( i, j ) )
 						continue;
 					
-//					var t:GridTile = new GridTile();
+					var t:GridTile = new GridTile();
 //					var t:DebugNumberTile = new DebugNumberTile( i,j );
-					var t:DebugBlockTile = new DebugBlockTile( i,j, _model.isBlock( i, j ) );
+//					var t:DebugBlockTile = new DebugBlockTile( i,j, _model.isBlock( i, j ) );
 					
 					var tx:Number = i * _tileHeight;
 					var tz:Number = -j * _tileWidth;
