@@ -18,7 +18,7 @@ package server.impl
 //				oX : 0, oY: 0,
 				
 					bg		: {
-						src   : "assets/bgtest8.png",
+						src   : "assets/bg-2.png",
 						oT   : 50,
 						oL	: 50,
 						oR   : 50,
@@ -346,38 +346,38 @@ package server.impl
 				},{
 					fa : 0, tm : 1, na : "敌军",
 					m : [{
-						id: 7,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵4", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 7,  r :  1,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵4", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  v : 1,
-						na : "杂兵1", fg: "2", lv:2, rg  : 3, rt : 6 , st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 3,  r :  15,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,  v : 1,
+//						na : "杂兵1", fg: "2", lv:2, rg  : 3, rt : 6 , st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
 //						id: 21,  r :  19,  c : 22,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
 //						na : "杂兵5", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id:22,  r :  19,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵6", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id:22,  r :  19,  c : 21,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵6", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 23,  r :  19,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵7", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 23,  r :  19,  c : 20,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵7", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 24,  r :  19,  c : 19,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵8", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 24,  r :  19,  c : 19,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵8", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 25,  r :  19,  c : 18,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 25,  r :  19,  c : 18,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 26,  r :  19,  c : 17,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 26,  r :  19,  c : 17,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 27,  r :  19,  c : 16,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 27,  r :  19,  c : 16,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 28,  r :  19,  c : 24,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 28,  r :  19,  c : 24,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					},{
-						id: 29,  r :  19,  c : 23,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
-						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
+//						id: 29,  r :  19,  c : 23,  cH : 110, oH : 30, cA : 20, oA:2,  d : 225,   v : 1,
+//						na : "杂兵9", fg: "2", lv:2, rg  : 3, rt : 6, st:4, bH : 100, fH : 50, bA : 50, fA : 25
 					}]
 				}],
 				
